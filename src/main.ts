@@ -1,4 +1,5 @@
 import { Firebot } from "firebot-custom-scripts-types";
+import { registerGame } from "./firebot/games/register-game";
 
 interface Params {
   message: string;
@@ -7,9 +8,9 @@ interface Params {
 const script: Firebot.CustomScript<Params> = {
   getScriptManifest: () => {
     return {
-      name: "Starter Custom Script",
-      description: "A starter custom script for build",
-      author: "SomeDev",
+      name: "Firebot RPG",
+      description: "A chat based RPG.",
+      author: "Firebottle",
       version: "1.0",
       firebotVersion: "5",
     };
@@ -18,15 +19,17 @@ const script: Firebot.CustomScript<Params> = {
     return {
       message: {
         type: "string",
-        default: "Hello World!",
-        description: "Message",
-        secondaryDescription: "Enter a message here",
+        default: "REMOVE ME",
+        description: "Welcome!",
+        secondaryDescription: "Typescript seems to require that I have this here.",
       },
     };
   },
   run: (runRequest) => {
-    const { logger } = runRequest.modules;
-    logger.info(runRequest.parameters.message);
+    const { logger, gameManager} = runRequest.modules;
+    logger.info("Starting Firebot RPG...");
+
+    registerGame(gameManager);
   },
 };
 
