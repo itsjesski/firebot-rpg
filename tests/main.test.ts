@@ -1,4 +1,4 @@
-import { RunRequest, ScriptModules } from "firebot-custom-scripts-types";
+import { RunRequest, ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { ArgumentsOf } from "ts-jest/dist/utils/testing";
 import customScript from "../src/main";
 test("main default export is the custom script", () => {
