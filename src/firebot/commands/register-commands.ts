@@ -34,7 +34,7 @@ export function registerCommands(commandManager : CommandManager, firebotModules
             },
             subCommands: [
                 {
-                    id: 'stats',
+                    id: 'fbrpg:rpg-stats',
                     usage: 'stats',
                     name: '!rpg stats',
                     description: 'Shows the stats of your world.',
