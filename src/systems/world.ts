@@ -1,7 +1,7 @@
 import { RunRequest } from "@crowbartools/firebot-custom-scripts-types";
 import { getStreamerUsername } from "./utils";
 
-export type rpgWorld = {
+export type World = {
     "name": string,
     "type": string,
     "happiness": number,

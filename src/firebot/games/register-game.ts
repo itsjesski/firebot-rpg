@@ -1,7 +1,6 @@
 import { RunRequest, ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { SettingCategoryDefinition } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
 import { setupRPG } from "../../systems/setup";
-import { registerCommands } from "../commands/register-commands";
 
 const gameSettings: Record<string, SettingCategoryDefinition> = {
     generalSettings: {
@@ -81,8 +80,6 @@ export function registerGame(firebotRequest : RunRequest<any>): void {
     settingCategories: gameSettings,
     onLoad: () => {
       setupRPG(firebotRequest);
-      registerCommands(firebotRequest);
-      
     },
     onUnload: () => {},
     onSettingsUpdate: () => {},
