@@ -1,5 +1,5 @@
-import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
-import { CommandManager, SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
+import { RunRequest } from "@crowbartools/firebot-custom-scripts-types";
+import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
 
 function getSubCommands(){
     return [
@@ -97,8 +97,8 @@ function getSubCommands(){
     ];
 }
 
-export function registerCommands(commandManager : CommandManager, firebotModules: ScriptModules){
-
+export function registerCommands(firebotRequest : RunRequest<any>){
+    const commandManager = firebotRequest.modules.commandManager;
     const subCommandUsages = getSubCommands().map(a => a.name);
     
     commandManager.registerSystemCommand({
@@ -180,7 +180,7 @@ export function registerCommands(commandManager : CommandManager, firebotModules
                 }
                 default: {
                     // Invalid sub command.
-                    firebotModules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`, 'bot');
+                    firebotRequest.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`, 'bot');
                     return;
                 }
             }

@@ -1,5 +1,6 @@
-import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
+import { RunRequest, ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { SettingCategoryDefinition } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
+import { setupRPG } from "../../systems/setup";
 import { registerCommands } from "../commands/register-commands";
 
 const gameSettings: Record<string, SettingCategoryDefinition> = {
@@ -67,8 +68,8 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
     },
   };
 
-export function registerGame(firebotModules: ScriptModules): void {
-  const { logger, gameManager, commandManager } = firebotModules;
+export function registerGame(firebotRequest : RunRequest<any>): void {
+  const { logger, gameManager } = firebotRequest.modules;
   logger.info("Starting Firebot RPG...");
 
   gameManager.registerGame({
@@ -79,8 +80,8 @@ export function registerGame(firebotModules: ScriptModules): void {
     icon: 'fa-swords',
     settingCategories: gameSettings,
     onLoad: () => {
-      
-      registerCommands(commandManager, firebotModules);
+      setupRPG(firebotRequest);
+      registerCommands(firebotRequest);
       
     },
     onUnload: () => {},

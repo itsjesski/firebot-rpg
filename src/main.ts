@@ -14,7 +14,7 @@ const script: Firebot.CustomScript<{}> = {
   },
   getDefaultParameters: () => {return {};},
   run: (runRequest) => {
-    registerGame(runRequest.modules);
+    registerGame(runRequest);
   },
 };
 
