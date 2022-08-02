@@ -179,7 +179,8 @@ export function registerCommands(commandManager : CommandManager, firebotModules
                     return;
                 }
                 default: {
-                    // TODO: Implement
+                    // Invalid sub command.
+                    firebotModules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`, 'bot');
                     return;
                 }
             }
