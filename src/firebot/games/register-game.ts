@@ -1,6 +1,18 @@
 import { RunRequest, ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { SettingCategoryDefinition } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
-import { setupRPG } from "../../systems/setup";
+import { registerCommands } from "../../firebot/commands/register-commands";
+import { verifyWorld } from "../../systems/world";
+
+export type GameSettings = {
+  generalSettings: {
+    currencyId: string;
+  },
+  worldSettings: {
+    name: string;
+    type: string;
+    citizens: string;
+  }
+};
 
 const gameSettings: Record<string, SettingCategoryDefinition> = {
     generalSettings: {
@@ -22,12 +34,12 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
         }
       }
     },
-    kingdomSettings: {
+    worldSettings: {
       title: "Kingdom Settings",
       description: "Your kingdom settings.",
       sortRank: 2,
       settings: {
-        kingdomName: {
+        name: {
           type: "string",
           title: "Name",
           description: "What would you like your game area to be called?",
@@ -39,7 +51,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
             required: true
           }
         },
-        kingdomType: {
+        type: {
           type: "string",
           title: "Type",
           description: "What is your game area type?",
@@ -51,7 +63,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
             required: true
           }
         },
-        kingdomCitizens: {
+        citizens: {
           type: "string",
           title: "Citizens",
           description: "What type of people inhabit your kingdom?",
@@ -69,7 +81,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
 
 export function registerGame(firebotRequest : RunRequest<any>): void {
   const { logger, gameManager } = firebotRequest.modules;
-  logger.info("Starting Firebot RPG...");
+  logger.info("RPG: Starting Firebot RPG...");
 
   gameManager.registerGame({
     id: 'fbrpg',
@@ -79,9 +91,12 @@ export function registerGame(firebotRequest : RunRequest<any>): void {
     icon: 'fa-swords',
     settingCategories: gameSettings,
     onLoad: () => {
-      setupRPG(firebotRequest);
+      registerCommands(firebotRequest);
+      verifyWorld(firebotRequest);
     },
     onUnload: () => {},
-    onSettingsUpdate: () => {},
+    onSettingsUpdate: () => {
+      verifyWorld(firebotRequest);
+    },
   })
 }
