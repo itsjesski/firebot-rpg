@@ -1,5 +1,6 @@
 import { RunRequest } from "@crowbartools/firebot-custom-scripts-types";
 import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
+import { getFirebot } from "../../systems/utils";
 
 function getSubCommands(){
     return [
@@ -97,7 +98,8 @@ function getSubCommands(){
     ];
 }
 
-export function registerCommands(firebotRequest : RunRequest<any>){
+export function registerCommands(){
+    const firebotRequest = getFirebot();
     const commandManager = firebotRequest.modules.commandManager;
     const subCommandUsages = getSubCommands().map(a => a.name);
     

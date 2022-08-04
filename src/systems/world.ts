@@ -1,5 +1,7 @@
 import { RunRequest } from "@crowbartools/firebot-custom-scripts-types";
-import { getAllGameSettings, getStreamerUsername } from "./utils";
+import { getAllGameSettings, getFirebot, getStreamerUsername } from "./utils";
+
+export const worldKey = 'fbrpg-world';
 
 export type WorldStats = {
     "happiness": number,
@@ -12,9 +14,10 @@ export type WorldStats = {
  * @param firebotRequest 
  * @returns 
  */
-export async function getWorldStats(firebotRequest : RunRequest<any>) : Promise<WorldStats>{
-    const streamerName = getStreamerUsername(firebotRequest);
-    const worldStats : WorldStats = await firebotRequest.modules.userDb.getUserMetadata(streamerName, 'fbrpg-world');
+export async function getWorldStats() : Promise<WorldStats>{
+    const firebotRequest = getFirebot();
+    const streamerName = getStreamerUsername();
+    const worldStats : WorldStats = await firebotRequest.modules.userDb.getUserMetadata(streamerName, worldKey);
 
     return worldStats;
 }
@@ -24,8 +27,8 @@ export async function getWorldStats(firebotRequest : RunRequest<any>) : Promise<
  * @param firebotRequest 
  * @returns 
  */
-export function getWorldSettings(firebotRequest : RunRequest<any>){
-    const settings = getAllGameSettings(firebotRequest);
+export function getWorldSettings(){
+    const settings = getAllGameSettings();
     return settings.worldSettings;
 }
 
@@ -35,10 +38,11 @@ export function getWorldSettings(firebotRequest : RunRequest<any>){
  * @param property 
  * @param value 
  */
-async function updateWorldProperty(firebotRequest : RunRequest<any>, property : string, value : any){
+async function updateWorldProperty(property : string, value : any){
+    const firebotRequest = getFirebot();
     const {logger} = firebotRequest.modules;
-    const streamerName = getStreamerUsername(firebotRequest);
-    const rpgMeta = getWorldStats(firebotRequest);
+    const streamerName = getStreamerUsername();
+    const rpgMeta = getWorldStats();
 
     // World doesn't exist.
     if(rpgMeta == null){
@@ -47,19 +51,20 @@ async function updateWorldProperty(firebotRequest : RunRequest<any>, property : 
     }
 
     logger.debug(`RPG: Setting world ${property} to ${value}.`);
-    await firebotRequest.modules.userDb.updateUserMetadata(streamerName, 'fbrpg-world', value, property);
+    await firebotRequest.modules.userDb.updateUserMetadata(streamerName, worldKey, value, property);
 }
 
 /**
  * Sets one of the world stats to a specific thing, making sure to cap min and maximum values.
  * @param firebotRequest 
  */
-export async function setWorldStat(firebotRequest : RunRequest<any>, stat:string, value : string){
+export async function setWorldStat(stat:string, value : string){
+    const firebotRequest = getFirebot();
     const {logger} = firebotRequest.modules;
     logger.debug(`RPG: Trying to update world ${stat}...`);
 
-    const streamerName = getStreamerUsername(firebotRequest);
-    const worldStats = await getWorldStats(firebotRequest);
+    const streamerName = getStreamerUsername();
+    const worldStats = await getWorldStats();
     const firstChar = value.charAt(0);
     const newValue = parseInt(value);
     let worldValue = 0;
@@ -94,7 +99,7 @@ export async function setWorldStat(firebotRequest : RunRequest<any>, stat:string
         worldValue === 100;
     }
 
-    await updateWorldProperty(firebotRequest, stat, worldValue);
+    await updateWorldProperty(stat, worldValue);
 }
 
 /**
@@ -102,12 +107,13 @@ export async function setWorldStat(firebotRequest : RunRequest<any>, stat:string
  * Also serves to build the initial world.
  * @param firebotRequest
  */
-export async function verifyWorld(firebotRequest : RunRequest<any>){
-    const streamerName = getStreamerUsername(firebotRequest);
+export async function verifyWorld(){
+    const firebotRequest = getFirebot();
+    const streamerName = getStreamerUsername();
     const {logger} = firebotRequest.modules;
     logger.debug(`RPG: Verifying the world state...`);
 
-    const worldStats = await getWorldStats(firebotRequest);
+    const worldStats = await getWorldStats();
 
     if(worldStats == null){
         logger.debug(`RPG: World doesn't exist yet! Creating a new one.`);
@@ -116,6 +122,6 @@ export async function verifyWorld(firebotRequest : RunRequest<any>){
             "resources": 0,
             "research": 0
         };
-        await firebotRequest.modules.userDb.updateUserMetadata(streamerName, 'fbrpg-world', newWorld);
+        await firebotRequest.modules.userDb.updateUserMetadata(streamerName, worldKey, newWorld);
     }
 }
