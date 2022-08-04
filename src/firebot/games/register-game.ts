@@ -1,4 +1,3 @@
-import { RunRequest, ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { SettingCategoryDefinition } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
 import { registerCommands } from "../../firebot/commands/register-commands";
 import { getFirebot } from "../../systems/utils";

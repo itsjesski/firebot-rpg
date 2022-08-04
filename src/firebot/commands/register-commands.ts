@@ -1,4 +1,3 @@
-import { RunRequest } from "@crowbartools/firebot-custom-scripts-types";
 import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
 import { getFirebot } from "../../systems/utils";
 

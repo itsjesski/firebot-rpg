@@ -1,4 +1,3 @@
-import { RunRequest } from "@crowbartools/firebot-custom-scripts-types";
 import { getFirebot } from "./utils";
 
 /**

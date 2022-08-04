@@ -1,4 +1,3 @@
-import { RunRequest } from "@crowbartools/firebot-custom-scripts-types";
 import { getAllGameSettings, getFirebot, getStreamerUsername } from "./utils";
 
 export const worldKey = 'fbrpg-world';
