@@ -17,7 +17,8 @@ export function getStreamerUsername(){
 }
 
 export function getAllGameSettings() : GameSettings | null{
-    const settings = getFirebot().modules.gameManager.getGameSettings('fbrpg');
-    // @ts-ignore : Settings returned from firebot.
-    return settings;
+    const firebot = getFirebot();
+    const {gameManager, logger} = firebot.modules;
+    const settings = gameManager.getGameSettings('fbrpg');
+    return settings.settings as GameSettings;
 }

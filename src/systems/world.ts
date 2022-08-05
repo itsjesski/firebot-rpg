@@ -9,6 +9,33 @@ export type WorldStats = {
 }
 
 /**
+ * Get world name from our settings.
+ * @returns 
+ */
+export function getWorldName() : string{
+    const gameSettings = getAllGameSettings();
+    return gameSettings.worldSettings.name;
+}
+
+/**
+ * Get the world type from our settings.
+ * @returns 
+ */
+export function getWorldType() : string{
+    const gameSettings = getAllGameSettings();
+    return gameSettings.worldSettings.type;
+}
+
+/**
+ * Gets the type of citizens from our world.
+ * @returns 
+ */
+export function getWorldCitizens() : string{
+    const gameSettings = getAllGameSettings();
+    return gameSettings.worldSettings.citizens;
+}
+
+/**
  * Gets our world data from the streamer account meta.
  * @param firebot 
  * @returns 

@@ -35,8 +35,8 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
       }
     },
     worldSettings: {
-      title: "Kingdom Settings",
-      description: "Your kingdom settings.",
+      title: "World Settings",
+      description: "Your world settings.",
       sortRank: 2,
       settings: {
         name: {

@@ -1,5 +1,6 @@
 import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
 import { getFirebot } from "../../systems/utils";
+import { worldCommand } from "./rpg-world";
 
 function getSubCommands(){
     return [
@@ -140,7 +141,7 @@ export function registerCommands(){
             const commandUsed = args[0];
             switch(commandUsed) {
                 case "world": {
-                    // TODO: Implement
+                    worldCommand();
                     return;
                 }
                 case "stats": {
@@ -181,7 +182,7 @@ export function registerCommands(){
                 }
                 default: {
                     // Invalid sub command.
-                    firebot.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`, 'bot');
+                    firebot.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`);
                     return;
                 }
             }

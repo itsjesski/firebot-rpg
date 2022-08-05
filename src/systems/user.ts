@@ -1,5 +1,19 @@
 import { getFirebot } from "./utils";
 
+export type Character = {
+    str: number;
+    dex: number;
+    int: number;
+    held: any;
+    armor: any;
+    weapon: any;
+    potion: any;
+    class: any;
+    title: any;
+    spell: any;
+    companion: any;
+}
+
 /**
  * Returns the raw character meta data.
  * @param firebot 
