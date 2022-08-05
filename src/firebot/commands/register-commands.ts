@@ -98,8 +98,8 @@ function getSubCommands(){
 }
 
 export function registerCommands(){
-    const firebotRequest = getFirebot();
-    const commandManager = firebotRequest.modules.commandManager;
+    const firebot = getFirebot();
+    const commandManager = firebot.modules.commandManager;
     const subCommandUsages = getSubCommands().map(a => a.name);
     
     commandManager.registerSystemCommand({
@@ -181,7 +181,7 @@ export function registerCommands(){
                 }
                 default: {
                     // Invalid sub command.
-                    firebotRequest.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`, 'bot');
+                    firebot.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`, 'bot');
                     return;
                 }
             }

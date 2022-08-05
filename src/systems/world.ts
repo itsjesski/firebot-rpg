@@ -10,20 +10,21 @@ export type WorldStats = {
 
 /**
  * Gets our world data from the streamer account meta.
- * @param firebotRequest 
+ * @param firebot 
  * @returns 
  */
 export async function getWorldStats() : Promise<WorldStats>{
-    const firebotRequest = getFirebot();
+    const firebot = getFirebot();
+    const {userDb} = firebot.modules;
     const streamerName = getStreamerUsername();
-    const worldStats : WorldStats = await firebotRequest.modules.userDb.getUserMetadata(streamerName, worldKey);
+    const worldStats : WorldStats = await userDb.getUserMetadata(streamerName, worldKey);
 
     return worldStats;
 }
 
 /**
  * Returns the settings for our world.
- * @param firebotRequest 
+ * @param firebot 
  * @returns 
  */
 export function getWorldSettings(){
@@ -33,13 +34,13 @@ export function getWorldSettings(){
 
 /**
  * Generic function for updating any world property.
- * @param firebotRequest 
+ * @param firebot 
  * @param property 
  * @param value 
  */
 async function updateWorldProperty(property : string, value : any){
-    const firebotRequest = getFirebot();
-    const {logger} = firebotRequest.modules;
+    const firebot = getFirebot();
+    const {logger, userDb} = firebot.modules;
     const streamerName = getStreamerUsername();
     const rpgMeta = getWorldStats();
 
@@ -50,16 +51,16 @@ async function updateWorldProperty(property : string, value : any){
     }
 
     logger.debug(`RPG: Setting world ${property} to ${value}.`);
-    await firebotRequest.modules.userDb.updateUserMetadata(streamerName, worldKey, value, property);
+    await userDb.updateUserMetadata(streamerName, worldKey, value, property);
 }
 
 /**
  * Sets one of the world stats to a specific thing, making sure to cap min and maximum values.
- * @param firebotRequest 
+ * @param firebot 
  */
 export async function setWorldStat(stat:string, value : string){
-    const firebotRequest = getFirebot();
-    const {logger} = firebotRequest.modules;
+    const firebot = getFirebot();
+    const {logger} = firebot.modules;
     logger.debug(`RPG: Trying to update world ${stat}...`);
 
     const streamerName = getStreamerUsername();
@@ -104,12 +105,12 @@ export async function setWorldStat(stat:string, value : string){
 /**
  * Verifies the world is properly built. If it's not, then it sets missing settings to default.
  * Also serves to build the initial world.
- * @param firebotRequest
+ * @param firebot
  */
 export async function verifyWorld(){
-    const firebotRequest = getFirebot();
+    const firebot = getFirebot();
     const streamerName = getStreamerUsername();
-    const {logger} = firebotRequest.modules;
+    const {logger, userDb} = firebot.modules;
     logger.debug(`RPG: Verifying the world state...`);
 
     const worldStats = await getWorldStats();
@@ -121,6 +122,6 @@ export async function verifyWorld(){
             "resources": 0,
             "research": 0
         };
-        await firebotRequest.modules.userDb.updateUserMetadata(streamerName, worldKey, newWorld);
+        await userDb.updateUserMetadata(streamerName, worldKey, newWorld);
     }
 }

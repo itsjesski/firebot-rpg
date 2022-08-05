@@ -12,8 +12,8 @@ export function getFirebot() : RunRequest<any>{
 }
 
 export function getStreamerUsername(){
-    const firebotRequest = getFirebot();
-    return firebotRequest.firebot.accounts.streamer.username;
+    const firebot = getFirebot();
+    return firebot.firebot.accounts.streamer.username;
 }
 
 export function getAllGameSettings() : GameSettings | null{

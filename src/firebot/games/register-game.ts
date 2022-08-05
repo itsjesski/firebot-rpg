@@ -80,8 +80,8 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
   };
 
 export function registerGame(): void {
-  const firebotRequest = getFirebot();
-  const { logger, gameManager } = firebotRequest.modules;
+  const firebot = getFirebot();
+  const { logger, gameManager } = firebot.modules;
   logger.info("RPG: Starting Firebot RPG...");
 
   gameManager.registerGame({

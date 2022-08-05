@@ -2,13 +2,14 @@ import { getFirebot } from "./utils";
 
 /**
  * Returns the raw character meta data.
- * @param firebotRequest 
+ * @param firebot 
  * @param username 
  * @returns 
  */
 export async function getCharacterData(username: string){
-    const firebotRequest = getFirebot();
-    const characterMeta = await firebotRequest.modules.userDb.getUserMetadata(username, 'fbrpg');
+    const firebot = getFirebot();
+    const {userDb} = firebot.modules;
+    const characterMeta = await userDb.getUserMetadata(username, 'fbrpg');
     return characterMeta;
 }
 
