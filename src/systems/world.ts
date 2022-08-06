@@ -90,7 +90,6 @@ export async function setWorldStat(stat:string, value : string){
     const {logger} = firebot.modules;
     logger.debug(`RPG: Trying to update world ${stat}...`);
 
-    const streamerName = getStreamerUsername();
     const worldStats = await getWorldStats();
     const firstChar = value.charAt(0);
     const newValue = parseInt(value);

@@ -1,5 +1,7 @@
 import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
+import { verifyCharacter } from "../../systems/user";
 import { getFirebot } from "../../systems/utils";
+import { rpgStatsCommand } from "./rpg-stats";
 import { worldCommand } from "./rpg-world";
 
 function getSubCommands(){
@@ -100,7 +102,7 @@ function getSubCommands(){
 
 export function registerCommands(){
     const firebot = getFirebot();
-    const commandManager = firebot.modules.commandManager;
+    const {commandManager, logger} = firebot.modules;
     const subCommandUsages = getSubCommands().map(a => a.name);
     
     commandManager.registerSystemCommand({
@@ -138,54 +140,60 @@ export function registerCommands(){
                 return;
             }
 
-            const commandUsed = args[0];
-            switch(commandUsed) {
-                case "world": {
-                    worldCommand();
-                    return;
+            // Verify the user has a character build before running any other command.
+            verifyCharacter(userCommand).then(() => {
+                // Now, parse the subcommand.
+                const commandUsed = args[0];
+                switch(commandUsed) {
+                    case "world": {
+                        worldCommand();
+                        return;
+                    }
+                    case "stats": {
+                        rpgStatsCommand(userCommand);
+                        return;
+                    }
+                    case "inv": {
+                        // TODO: Implement
+                        return;
+                    }
+                    case "held": {
+                        // TODO: Implement
+                        return;
+                    }
+                    case "equip": {
+                        // TODO: Implement
+                        return;
+                    }
+                    case "adventure": {
+                        // TODO: Implement
+                        return;
+                    }
+                    case "shop": {
+                        // TODO: Implement
+                        return;
+                    }
+                    case "shop-sell": {
+                        // TODO: Implement
+                        return;
+                    }
+                    case "shop-buy": {
+                        // TODO: Implement
+                        return;
+                    }
+                    case "shop-donate": {
+                        // TODO: Implement
+                        return;
+                    }
+                    default: {
+                        // Invalid sub command.
+                        firebot.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`);
+                        return;
+                    }
                 }
-                case "stats": {
-                    // TODO: Implement
-                    return;
-                }
-                case "inv": {
-                    // TODO: Implement
-                    return;
-                }
-                case "held": {
-                    // TODO: Implement
-                    return;
-                }
-                case "equip": {
-                    // TODO: Implement
-                    return;
-                }
-                case "adventure": {
-                    // TODO: Implement
-                    return;
-                }
-                case "shop": {
-                    // TODO: Implement
-                    return;
-                }
-                case "shop-sell": {
-                    // TODO: Implement
-                    return;
-                }
-                case "shop-buy": {
-                    // TODO: Implement
-                    return;
-                }
-                case "shop-donate": {
-                    // TODO: Implement
-                    return;
-                }
-                default: {
-                    // Invalid sub command.
-                    firebot.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`);
-                    return;
-                }
-            }
+            }).catch((err) => {
+                logger.error(err);
+            });
         }
     });
     
