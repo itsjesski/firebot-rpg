@@ -1,4 +1,4 @@
-import { getAllGameSettings, getFirebot, getStreamerUsername } from "./utils";
+import { getFirebot, getStreamerUsername } from "./utils";
 
 export const worldKey = 'fbrpg-world';
 
@@ -6,33 +6,6 @@ export type WorldStats = {
     "happiness": number,
     "resources": number,
     "research": number,
-}
-
-/**
- * Get world name from our settings.
- * @returns 
- */
-export function getWorldName() : string{
-    const gameSettings = getAllGameSettings();
-    return gameSettings.worldSettings.name;
-}
-
-/**
- * Get the world type from our settings.
- * @returns 
- */
-export function getWorldType() : string{
-    const gameSettings = getAllGameSettings();
-    return gameSettings.worldSettings.type;
-}
-
-/**
- * Gets the type of citizens from our world.
- * @returns 
- */
-export function getWorldCitizens() : string{
-    const gameSettings = getAllGameSettings();
-    return gameSettings.worldSettings.citizens;
 }
 
 /**
@@ -47,16 +20,6 @@ export async function getWorldStats() : Promise<WorldStats>{
     const worldStats : WorldStats = await userDb.getUserMetadata(streamerName, worldKey);
 
     return worldStats;
-}
-
-/**
- * Returns the settings for our world.
- * @param firebot 
- * @returns 
- */
-export function getWorldSettings(){
-    const settings = getAllGameSettings();
-    return settings.worldSettings;
 }
 
 /**
@@ -144,10 +107,14 @@ export async function verifyWorld(){
     if(worldStats == null){
         logger.debug(`RPG: World doesn't exist yet! Creating a new one.`);
         const newWorld : WorldStats = {
-            "happiness": 100,
-            "resources": 0,
+            "happiness": 50,
+            "resources": 50,
             "research": 0
         };
         await userDb.updateUserMetadata(streamerName, worldKey, newWorld);
     }
+}
+
+export async function worldCycle(){
+
 }

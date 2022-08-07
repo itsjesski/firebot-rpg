@@ -1,5 +1,6 @@
+import { getWorldCitizens, getWorldName, getWorldType } from "../../systems/settings";
 import { getFirebot } from "../../systems/utils";
-import { getWorldCitizens, getWorldName, getWorldStats, getWorldType } from "../../systems/world";
+import { getWorldStats } from "../../systems/world";
 
 export async function worldCommand(){
     const firebot = getFirebot();
