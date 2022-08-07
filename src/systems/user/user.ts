@@ -1,5 +1,5 @@
 import { UserCommand } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
-import { getFirebot } from "./utils";
+import { getFirebot } from "../utils";
 
 const characterKey = "fbrpg-character";
 

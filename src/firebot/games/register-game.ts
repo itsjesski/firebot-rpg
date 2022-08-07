@@ -1,7 +1,7 @@
 import { SettingCategoryDefinition } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
 import { registerCommands } from "../../firebot/commands/register-commands";
 import { getFirebot } from "../../systems/utils";
-import { verifyWorld } from "../../systems/world";
+import { verifyWorld } from "../../systems/world/world-stats";
 
 export type GameSettings = {
   generalSettings: {

@@ -1,5 +1,5 @@
 import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
-import { verifyCharacter } from "../../systems/user";
+import { verifyCharacter } from "../../systems/user/user";
 import { getFirebot } from "../../systems/utils";
 import { rpgStatsCommand } from "./rpg-stats";
 import { worldCommand } from "./rpg-world";

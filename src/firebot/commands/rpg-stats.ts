@@ -1,5 +1,5 @@
 import { UserCommand } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
-import { getCharacterData } from "../../systems/user";
+import { getCharacterData } from "../../systems/user/user";
 import { getFirebot } from "../../systems/utils";
 
 export async function rpgStatsCommand(userCommand : UserCommand){

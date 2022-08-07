@@ -1,4 +1,4 @@
-import { getFirebot, getStreamerUsername } from "./utils";
+import { getFirebot, getNumberOfOnlineUsers, getPercentage, getStreamerUsername, getStreamOnlineStatus } from "../utils";
 
 export const worldKey = 'fbrpg-world';
 
@@ -48,45 +48,35 @@ async function updateWorldProperty(property : string, value : any){
  * Sets one of the world stats to a specific thing, making sure to cap min and maximum values.
  * @param firebot 
  */
-export async function setWorldStat(stat:string, value : string){
+export async function setWorldStat(stat: string, value: number, setExactly?: boolean){
     const firebot = getFirebot();
     const {logger} = firebot.modules;
     logger.debug(`RPG: Trying to update world ${stat}...`);
 
     const worldStats = await getWorldStats();
-    const firstChar = value.charAt(0);
-    const newValue = parseInt(value);
     let worldValue = 0;
 
+    if( value == null || worldStats == null){
+        logger.error(`RPG: Trying to set ${stat} to invalid value.`);
+        return;
+    }
+
+
+    // This allows us to set a world stat to a specific number.
+    if(setExactly){
+        worldValue = worldValue = Math.min(Math.max(value, 0), 100);
+        await updateWorldProperty(stat, value);
+        return;
+    }
+
+    // The rest of this lets us add or remove from the current value.
     if(worldStats != null){
         // @ts-ignore
         worldValue = worldStats[stat];
     }
 
-    if(worldValue == null || newValue == null || worldStats == null){
-        logger.error(`RPG: Trying to set ${stat} to invalid value.`);
-        return;
-    }
-
-    // Here we determine if we're setting an exact value, adding, or subtracting.
-    switch (firstChar){
-        case "+":
-        case "-":
-            worldValue = worldValue + newValue;
-        break;
-        default:
-            worldValue = newValue;
-    }
-
-    // Don't allow values below zero.
-    if(worldValue < 0) {
-        worldValue === 0;
-    }
-
-    // Don't allow happiness over 100.
-    if(worldValue > 100){
-        worldValue === 100;
-    }
+    // Clamp our world stats to 0 and 100.
+    worldValue = Math.min(Math.max(worldValue + value, 0), 100);
 
     await updateWorldProperty(stat, worldValue);
 }
@@ -115,6 +105,3 @@ export async function verifyWorld(){
     }
 }
 
-export async function worldCycle(){
-
-}
