@@ -1,10 +1,16 @@
 import { clearWorldTendency, worldTendencyPools } from "./world-tendency";
 import { setWorldStat } from "./world-stats";
+import { getFirebot } from "../utils";
 
 /**
  * Updates our world stats based on our world tendency pools for this cycle.
  */
 async function worldCycleUpdateStats(){
+    const firebot = getFirebot();
+    const {logger} = firebot.modules;
+
+    logger.debug("RPG: Updating world stats for this cycle.");
+
     for (let stat in worldTendencyPools) {
         if (worldTendencyPools.hasOwnProperty(stat)) {
             // Compare our stat pools to the number of active users.
@@ -42,5 +48,5 @@ async function worldCycleUpdateStats(){
  */
 export async function worldCycle(){
     await worldCycleUpdateStats();
-    await clearWorldTendency();
+    clearWorldTendency();
 }

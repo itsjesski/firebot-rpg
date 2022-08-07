@@ -17,7 +17,7 @@ export function getStreamerUsername(){
 
 export async function getNumberOfOnlineUsers(){
     const firebot = getFirebot();
-    const {logger, userDb} = firebot.modules;
+    const {userDb} = firebot.modules;
     const onlineUsers = await userDb.getOnlineUsers();
     return onlineUsers.length;
 }
