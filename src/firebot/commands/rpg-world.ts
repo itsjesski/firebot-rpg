@@ -1,7 +1,11 @@
-import { logger, sendChatMessage, getWorldMeta} from "../firebot";
-import { getWorldCitizens, getWorldName, getWorldType } from "../../systems/settings";
+import {
+    getWorldCitizens,
+    getWorldName,
+    getWorldType,
+} from '../../systems/settings';
+import { logger, sendChatMessage, getWorldMeta } from '../firebot';
 
-export async function worldCommand(){
+export async function worldCommand() {
     logger('debug', 'Sending world command.');
 
     const worldName = getWorldName();
@@ -9,6 +13,12 @@ export async function worldCommand(){
     const worldCitizens = getWorldCitizens();
     const worldStats = await getWorldMeta();
 
-    const message = `The ${worldType} of ${worldName} currently has ${worldStats.resources} resources, ${worldStats.research} research, and the ${worldCitizens.toLowerCase()} are ${worldStats.happiness}% happy.`;
+    const message = `The ${worldType} of ${worldName} currently has ${
+        worldStats.resources
+    } resources, ${
+        worldStats.research
+    } research, and the ${worldCitizens.toLowerCase()} are ${
+        worldStats.happiness
+    }% happy.`;
     sendChatMessage(message);
 }

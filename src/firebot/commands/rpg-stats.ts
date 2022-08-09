@@ -1,8 +1,9 @@
-import { UserCommand } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
-import { logger, sendChatMessage } from "../firebot";
-import { getCharacterData } from "../../systems/user/user";
+import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
-export async function rpgStatsCommand(userCommand : UserCommand){
+import { getCharacterData } from '../../systems/user/user';
+import { logger, sendChatMessage } from '../firebot';
+
+export async function rpgStatsCommand(userCommand: UserCommand) {
     logger('debug', 'Sending world command.');
 
     const username = userCommand.commandSender;

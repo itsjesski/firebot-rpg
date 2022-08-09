@@ -1,10 +1,11 @@
-import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
-import { verifyCharacter } from "../../systems/user/user";
-import { logger, registerSystemCommand, sendChatMessage } from "../firebot";
-import { rpgStatsCommand } from "./rpg-stats";
-import { worldCommand } from "./rpg-world";
+import { SystemCommandTriggerEvent } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
-function getSubCommands(){
+import { verifyCharacter } from '../../systems/user/user';
+import { logger, registerSystemCommand, sendChatMessage } from '../firebot';
+import { rpgStatsCommand } from './rpg-stats';
+import { worldCommand } from './rpg-world';
+
+function getSubCommands() {
     return [
         {
             id: 'fbrpg:rpg-world',
@@ -100,100 +101,108 @@ function getSubCommands(){
     ];
 }
 
-export function registerCommands(){
-    const subCommandUsages = getSubCommands().map(a => a.name);
+export function registerCommands() {
+    const subCommandUsages = getSubCommands().map((a) => a.name);
 
     registerSystemCommand({
         definition: {
-            id: "fbrpg:rpg",
-            name: "Firebot RPG",
-            description: "Allows users to play the RPG.",
-            baseCommandDescription: "Shows RPG commands.",
+            id: 'fbrpg:rpg',
+            name: 'Firebot RPG',
+            description: 'Allows users to play the RPG.',
+            baseCommandDescription: 'Shows RPG commands.',
             active: true,
-            trigger: "!rpg",
+            trigger: '!rpg',
             sortTags: ['rpg'],
             effects: {
                 list: [
                     {
-                        "chatter": "Bot",
-                        "message": `Try these rpg commands: ${subCommandUsages.join(', ')}.`,
-                        "type": "firebot:chat",
-                    }
-                ]
+                        chatter: 'Bot',
+                        message: `Try these rpg commands: ${subCommandUsages.join(
+                            ', '
+                        )}.`,
+                        type: 'firebot:chat',
+                    },
+                ],
             },
             restrictionData: {
-                mode: "any",
+                mode: 'any',
                 sendFailMessage: true,
-                failMessage: "Sorry, you could not use this command because {reason}.",
-                restrictions: []
+                failMessage:
+                    'Sorry, you could not use this command because {reason}.',
+                restrictions: [],
             },
-            subCommands: getSubCommands()
+            subCommands: getSubCommands(),
         },
-        onTriggerEvent: function (event: SystemCommandTriggerEvent): void | PromiseLike<void> {
-            const { commandOptions, userCommand } = event;
-            const args = userCommand.args;
+        onTriggerEvent(
+            event: SystemCommandTriggerEvent
+        ): void | PromiseLike<void> {
+            const { userCommand } = event;
+            const { args } = userCommand;
 
             // Base !rpg command was used.
-            if(args.length === 0){
+            if (args.length === 0) {
                 return;
             }
 
             // Verify the user has a character build before running any other command.
-            verifyCharacter(userCommand).then(() => {
-                // Now, parse the subcommand.
-                const commandUsed = args[0];
-                switch(commandUsed) {
-                    case "world": {
-                        worldCommand();
-                        return;
+            verifyCharacter(userCommand)
+                .then(() => {
+                    // Now, parse the subcommand.
+                    const commandUsed = args[0];
+                    switch (commandUsed) {
+                        case 'world': {
+                            worldCommand();
+                            return;
+                        }
+                        case 'stats': {
+                            rpgStatsCommand(userCommand);
+                            return;
+                        }
+                        case 'inv': {
+                            // TODO: Implement
+                            return;
+                        }
+                        case 'held': {
+                            // TODO: Implement
+                            return;
+                        }
+                        case 'equip': {
+                            // TODO: Implement
+                            return;
+                        }
+                        case 'adventure': {
+                            // TODO: Implement
+                            return;
+                        }
+                        case 'shop': {
+                            // TODO: Implement
+                            return;
+                        }
+                        case 'shop-sell': {
+                            // TODO: Implement
+                            return;
+                        }
+                        case 'shop-buy': {
+                            // TODO: Implement
+                            return;
+                        }
+                        case 'shop-donate': {
+                            // TODO: Implement
+                            return;
+                        }
+                        default: {
+                            // Invalid sub command.
+                            sendChatMessage(
+                                `Invalid rpg command. Try one of these: ${subCommandUsages.join(
+                                    ', '
+                                )}.`
+                            );
+                        }
                     }
-                    case "stats": {
-                        rpgStatsCommand(userCommand);
-                        return;
-                    }
-                    case "inv": {
-                        // TODO: Implement
-                        return;
-                    }
-                    case "held": {
-                        // TODO: Implement
-                        return;
-                    }
-                    case "equip": {
-                        // TODO: Implement
-                        return;
-                    }
-                    case "adventure": {
-                        // TODO: Implement
-                        return;
-                    }
-                    case "shop": {
-                        // TODO: Implement
-                        return;
-                    }
-                    case "shop-sell": {
-                        // TODO: Implement
-                        return;
-                    }
-                    case "shop-buy": {
-                        // TODO: Implement
-                        return;
-                    }
-                    case "shop-donate": {
-                        // TODO: Implement
-                        return;
-                    }
-                    default: {
-                        // Invalid sub command.
-                        sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`);
-                        return;
-                    }
-                }
-            }).catch((err) => {
-                logger('error', err);
-            });
-        }
+                })
+                .catch((err) => {
+                    logger('error', err);
+                });
+        },
     });
-
-    
 }
