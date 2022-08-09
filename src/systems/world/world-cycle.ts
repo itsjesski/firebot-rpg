@@ -26,9 +26,10 @@ async function worldCycleUpdateStats(){
                 continue;
             }
 
-            // Changes are needed, lets shrink our number and clamp it between 1 and 5.
+            // Changes are needed, lets shrink our number and clamp it between 1 and 2.
+            // Adjust this value to have more wild fluctuations between cycles.
             let adjustedValue = Math.round((Math.abs(netTendency) / 10));
-            adjustedValue = Math.min(Math.max(adjustedValue, 1), 5);
+            adjustedValue = Math.min(Math.max(adjustedValue, 1), 2);
 
             // If value change will be negative, make our adjusted value negative.
             if(!isPositive){

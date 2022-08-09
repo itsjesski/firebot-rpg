@@ -1,9 +1,17 @@
 import { getStreamerUsername, getCharacterMeta, logger, updateCharacterMeta, updateWorldMeta, getWorldMeta } from "../../firebot/firebot";
 
 export type WorldStats = {
-    "happiness": number,
-    "resources": number,
-    "research": number,
+    "happiness": number;
+    "resources": number;
+    "research": number;
+    "upgrades": {
+        "blacksmith": number;
+        "defenses": number;
+        "stable": number;
+        "tavern": number;
+        "tower": number;
+        "shipyard": number;
+    }
 }
 
 /**
@@ -76,7 +84,15 @@ export async function verifyWorld(){
         const newWorld : WorldStats = {
             "happiness": 50,
             "resources": 50,
-            "research": 0
+            "research": 0,
+            "upgrades": {
+                "blacksmith": 0,
+                "defenses": 0,
+                "stable": 0,
+                "tavern": 0,
+                "tower": 0,
+                "shipyard": 0
+            }
         };
         await updateWorldMeta(newWorld);
     }
