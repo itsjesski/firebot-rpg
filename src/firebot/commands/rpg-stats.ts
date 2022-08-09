@@ -8,6 +8,6 @@ export async function rpgStatsCommand(userCommand : UserCommand){
     const username = userCommand.commandSender;
     const character = await getCharacterData(username);
 
-    const message = `${character.class.name} ${username} ${character.title.name} has: ${character.str} STR, ${character.dex} DEX, ${character.int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
+    const message = `${character.title.name} ${character.name} the ${character.class.name} has: ${character.str} STR, ${character.dex} DEX, ${character.int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
     sendChatMessage(message);
 }
