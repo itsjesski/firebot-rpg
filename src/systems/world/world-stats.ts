@@ -1,25 +1,9 @@
-import { getFirebot, getNumberOfOnlineUsers, getPercentage, getStreamerUsername, getStreamOnlineStatus } from "../utils";
-
-export const worldKey = 'fbrpg-world';
+import { getStreamerUsername, getCharacterMeta, logger, updateCharacterMeta, updateWorldMeta, getWorldMeta } from "../../firebot/firebot";
 
 export type WorldStats = {
     "happiness": number,
     "resources": number,
     "research": number,
-}
-
-/**
- * Gets our world data from the streamer account meta.
- * @param firebot 
- * @returns 
- */
-export async function getWorldStats() : Promise<WorldStats>{
-    const firebot = getFirebot();
-    const {userDb} = firebot.modules;
-    const streamerName = getStreamerUsername();
-    const worldStats : WorldStats = await userDb.getUserMetadata(streamerName, worldKey);
-
-    return worldStats;
 }
 
 /**
@@ -29,19 +13,16 @@ export async function getWorldStats() : Promise<WorldStats>{
  * @param value 
  */
 async function updateWorldProperty(property : string, value : any){
-    const firebot = getFirebot();
-    const {logger, userDb} = firebot.modules;
-    const streamerName = getStreamerUsername();
-    const rpgMeta = getWorldStats();
+    const rpgMeta = getWorldMeta();
 
     // World doesn't exist.
     if(rpgMeta == null){
-        logger.error(`RPG: Couldn't update world property as world stats could not be found.`);
+        logger('error', `Couldn't update world property as world stats could not be found.`);
         return;
     }
 
-    logger.debug(`RPG: Setting world ${property} to ${value}.`);
-    await userDb.updateUserMetadata(streamerName, worldKey, value, property);
+    logger('debug', `Setting world ${property} to ${value}.`);
+    await updateWorldMeta(value, property);
 }
 
 /**
@@ -49,15 +30,13 @@ async function updateWorldProperty(property : string, value : any){
  * @param firebot 
  */
 export async function setWorldStat(stat: string, value: number, setExactly?: boolean){
-    const firebot = getFirebot();
-    const {logger} = firebot.modules;
-    logger.debug(`RPG: Trying to update world ${stat}...`);
+    logger('debug', `Trying to update world ${stat}...`);
 
-    const worldStats = await getWorldStats();
+    const worldStats = await getWorldMeta();
     let worldValue = 0;
 
     if( value == null || worldStats == null){
-        logger.error(`RPG: Trying to set ${stat} to invalid value.`);
+        logger('error', `Trying to set ${stat} to invalid value.`);
         return;
     }
 
@@ -87,21 +66,19 @@ export async function setWorldStat(stat: string, value: number, setExactly?: boo
  * @param firebot
  */
 export async function verifyWorld(){
-    const firebot = getFirebot();
     const streamerName = getStreamerUsername();
-    const {logger, userDb} = firebot.modules;
-    logger.debug(`RPG: Verifying the world state...`);
+    logger('debug', `Verifying the world state...`);
 
-    const worldStats = await getWorldStats();
+    const worldStats = await getWorldMeta();
 
     if(worldStats == null){
-        logger.debug(`RPG: World doesn't exist yet! Creating a new one.`);
+        logger('debug', `World doesn't exist yet! Creating a new one.`);
         const newWorld : WorldStats = {
             "happiness": 50,
             "resources": 50,
             "research": 0
         };
-        await userDb.updateUserMetadata(streamerName, worldKey, newWorld);
+        await updateWorldMeta(newWorld);
     }
 }
 

@@ -1,4 +1,4 @@
-import { getNumberOfOnlineUsers, getStreamOnlineStatus } from "./utils";
+import { getNumberOfOnlineUsers, getStreamOnlineStatus } from "../firebot/firebot";
 import { worldCycle } from "./world/world-cycle";
 
 const gameCycleInterval = 60;

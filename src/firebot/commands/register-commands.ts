@@ -1,6 +1,6 @@
 import { SystemCommandTriggerEvent } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
 import { verifyCharacter } from "../../systems/user/user";
-import { getFirebot } from "../../systems/utils";
+import { logger, registerSystemCommand, sendChatMessage } from "../firebot";
 import { rpgStatsCommand } from "./rpg-stats";
 import { worldCommand } from "./rpg-world";
 
@@ -101,11 +101,9 @@ function getSubCommands(){
 }
 
 export function registerCommands(){
-    const firebot = getFirebot();
-    const {commandManager, logger} = firebot.modules;
     const subCommandUsages = getSubCommands().map(a => a.name);
-    
-    commandManager.registerSystemCommand({
+
+    registerSystemCommand({
         definition: {
             id: "fbrpg:rpg",
             name: "Firebot RPG",
@@ -187,14 +185,15 @@ export function registerCommands(){
                     }
                     default: {
                         // Invalid sub command.
-                        firebot.modules.twitchChat.sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`);
+                        sendChatMessage(`Invalid rpg command. Try one of these: ${subCommandUsages.join(', ')}.`);
                         return;
                     }
                 }
             }).catch((err) => {
-                logger.error(err);
+                logger('error', err);
             });
         }
     });
+
     
 }

@@ -1,4 +1,4 @@
-import { getFirebot } from "../utils";
+import { logger } from "../../firebot/firebot";
 
 export type WorldTendency = {
     "happiness": {
@@ -38,14 +38,11 @@ export let worldTendencyPools : WorldTendency = {
  * @returns 
  */
 export function updateWorldTendency(stat: string, value: number){
-    const firebot = getFirebot();
-    const {logger} = firebot.modules;
-
     // @ts-ignore
     let currentAmount = worldTendencyPools[stat];
 
     if(currentAmount == null){
-        logger.error(`RPG: Couldn't find stat ${stat} in world stat pool.`);
+        logger('error', `RPG: Couldn't find stat ${stat} in world stat pool.`);
         return;
     }
 
@@ -57,10 +54,7 @@ export function updateWorldTendency(stat: string, value: number){
  * This clears the world stat pool at the end of a cycle.
  */
 export function clearWorldTendency(){
-    const firebot = getFirebot();
-    const {logger} = firebot.modules;
-
-    logger.debug("RPG: Clearing this cycle's world stat pool.");
+    logger('debug', "Clearing this cycle's world stat pool.");
 
     for (let stat in worldTendencyPools) {
         // @ts-ignore

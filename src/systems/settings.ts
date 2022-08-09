@@ -1,16 +1,4 @@
-import { GameSettings } from "../firebot/games/register-game";
-import { getFirebot } from "./utils";
-
-/**
- * Get all game settings
- * @returns 
- */
-export function getAllGameSettings() : GameSettings | null{
-    const firebot = getFirebot();
-    const {gameManager, logger} = firebot.modules;
-    const settings = gameManager.getGameSettings('fbrpg');
-    return settings.settings as GameSettings;
-}
+import { getGameSettings } from "../firebot/firebot";
 
 /**
  * Returns the settings for our world.
@@ -18,7 +6,7 @@ export function getAllGameSettings() : GameSettings | null{
  * @returns 
  */
 export function getWorldSettings(){
-    const settings = getAllGameSettings();
+    const settings = getGameSettings();
     return settings.worldSettings;
 }
 
@@ -41,7 +29,7 @@ export function getWorldType() : string{
 }
 
 /**
- * Gets the type of citizens from our world.
+ * Gets the type of citizens for our world.
  * @returns 
  */
 export function getWorldCitizens() : string{

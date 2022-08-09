@@ -1,6 +1,6 @@
 import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
-import { registerGame } from "./firebot/games/register-game";
-import { setFirebot } from "./systems/utils";
+import { registerRPG } from "./firebot/games/register-game";
+import { setFirebot } from "./firebot/firebot";
 
 const script: Firebot.CustomScript<{}> = {
   getScriptManifest: () => {
@@ -18,7 +18,7 @@ const script: Firebot.CustomScript<{}> = {
     setFirebot(runRequest);
 
     // Register the game in Firebot.
-    registerGame();
+    registerRPG();
   },
 };
 

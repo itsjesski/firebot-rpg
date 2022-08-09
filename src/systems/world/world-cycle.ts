@@ -1,15 +1,13 @@
 import { clearWorldTendency, worldTendencyPools } from "./world-tendency";
 import { setWorldStat } from "./world-stats";
-import { getFirebot } from "../utils";
+import { getPercentage } from "../utils";
+import { logger } from "../../firebot/firebot";
 
 /**
  * Updates our world stats based on our world tendency pools for this cycle.
  */
 async function worldCycleUpdateStats(){
-    const firebot = getFirebot();
-    const {logger} = firebot.modules;
-
-    logger.debug("RPG: Updating world stats for this cycle.");
+    logger('debug', `Updating world stats for this cycle.`);
 
     for (let stat in worldTendencyPools) {
         if (worldTendencyPools.hasOwnProperty(stat)) {

@@ -1,6 +1,6 @@
 import { SettingCategoryDefinition } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
 import { registerCommands } from "../../firebot/commands/register-commands";
-import { getFirebot } from "../../systems/utils";
+import { logger, registerGame } from "../firebot";
 import { verifyWorld } from "../../systems/world/world-stats";
 
 export type GameSettings = {
@@ -79,12 +79,10 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
     },
   };
 
-export function registerGame(): void {
-  const firebot = getFirebot();
-  const { logger, gameManager } = firebot.modules;
-  logger.info("RPG: Starting Firebot RPG...");
-
-  gameManager.registerGame({
+export function registerRPG(): void {
+  logger("info", "RPG: Starting Firebot RPG...");
+  
+  registerGame({
     id: 'fbrpg',
     name: 'Firebot RPG',
     subtitle: 'A chat based RPG',
@@ -99,5 +97,5 @@ export function registerGame(): void {
     onSettingsUpdate: () => {
       verifyWorld();
     },
-  })
+  });
 }

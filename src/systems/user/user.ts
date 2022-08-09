@@ -1,7 +1,5 @@
 import { UserCommand } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
-import { getFirebot } from "../utils";
-
-const characterKey = "fbrpg-character";
+import { getCharacterMeta, logger, updateCharacterMeta } from "../../firebot/firebot";
 
 export type Character = {
     totalHP: number;
@@ -25,10 +23,8 @@ export type Character = {
  * @param username 
  * @returns 
  */
-export async function getCharacterData(username: string){
-    const firebot = getFirebot();
-    const {userDb} = firebot.modules;
-    const characterMeta = await userDb.getUserMetadata(username, characterKey);
+export async function getCharacterData(username: string) : Promise<Character>{
+    const characterMeta = await getCharacterMeta(username);
     return characterMeta;
 }
 
@@ -38,15 +34,13 @@ export async function getCharacterData(username: string){
  * @param firebot
  */
 export async function verifyCharacter(userCommand : UserCommand){
-    const firebot = getFirebot();
     const userName = userCommand.commandSender;
-    const {logger, userDb} = firebot.modules;
-    logger.debug(`RPG: Verifying the character state for ${userName}...`);
+    logger('debug', `Verifying the character state for ${userName}...`);
 
     const characterStats = await getCharacterData(userName);
 
     if(characterStats == null){
-        logger.debug(`RPG: ${userName} doesn't exist yet! Creating a new character.`);
+        logger('debug', `RPG: ${userName} doesn't exist yet! Creating a new character.`);
         const newCharacter : Character = {
             "totalHP": 10,
             "currentHP": 10,
@@ -74,7 +68,8 @@ export async function verifyCharacter(userCommand : UserCommand){
             "spell": {},
             "companion": {}
         };
-        await userDb.updateUserMetadata(userName, characterKey, newCharacter);
+
+        updateCharacterMeta(userName, newCharacter);
     }
 }
 
