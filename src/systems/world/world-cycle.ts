@@ -1,11 +1,8 @@
 import { getNumberOfOnlineUsers, logger } from '../../firebot/firebot';
+import { WorldTendency } from '../../types/world';
 import { getPercentage } from '../utils';
 import { setWorldStat } from './world-stats';
-import {
-    clearWorldTendency,
-    WorldTendency,
-    worldTendencyPools,
-} from './world-tendency';
+import { clearWorldTendency, worldTendencyPools } from './world-tendency';
 
 /**
  * Updates our world stats based on our world tendency pools for this cycle.

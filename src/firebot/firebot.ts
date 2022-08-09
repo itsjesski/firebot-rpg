@@ -2,7 +2,7 @@ import { RunRequest } from '@crowbartools/firebot-custom-scripts-types';
 import { SystemCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 import { FirebotGame } from '@crowbartools/firebot-custom-scripts-types/types/modules/game-manager';
 
-import { GameSettings } from '../types/game';
+import { GameSettings } from '../types/settings';
 import { Character } from '../types/user';
 import { WorldStats } from '../types/world';
 

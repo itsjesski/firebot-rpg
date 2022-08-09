@@ -1,19 +1,5 @@
 import { logger } from '../../firebot/firebot';
-
-export type WorldTendency = {
-    happiness: {
-        positive: number;
-        negative: number;
-    };
-    resources: {
-        positive: number;
-        negative: number;
-    };
-    research: {
-        positive: number;
-        negative: number;
-    };
-};
+import { WorldTendency } from '../../types/world';
 
 export const worldTendencyPools: WorldTendency = {
     happiness: {
