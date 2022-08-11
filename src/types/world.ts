@@ -26,3 +26,9 @@ export type WorldTendency = {
         negative: number;
     };
 };
+
+export type TendencyStat = {
+    happiness: number;
+    resources: number;
+    research: number;
+};

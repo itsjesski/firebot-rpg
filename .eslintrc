@@ -1,7 +1,14 @@
 {
     // Configuration for JavaScript files
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
     "extends": ["airbnb-base", "plugin:prettier/recommended"],
     "rules": {
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
+        "import/prefer-default-export": "off",
         "prettier/prettier": [
             "error",
             {

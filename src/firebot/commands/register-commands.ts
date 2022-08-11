@@ -2,6 +2,7 @@ import { SystemCommandTriggerEvent } from '@crowbartools/firebot-custom-scripts-
 
 import { verifyCharacter } from '../../systems/user/user';
 import { logger, registerSystemCommand, sendChatMessage } from '../firebot';
+import { rpgJob } from './rpg-job';
 import { rpgStatsCommand } from './rpg-stats';
 import { worldCommand } from './rpg-world';
 
@@ -53,13 +54,13 @@ function getSubCommands() {
             arg: 'equip',
         },
         {
-            id: 'fbrpg:rpg-adventure',
-            usage: 'adventure',
-            name: '!rpg adventure',
-            description: 'Sends the player off on an adventure.',
+            id: 'fbrpg:rpg-job',
+            usage: 'job',
+            name: '!rpg job',
+            description: 'Sends the player off on a job.',
             active: true,
-            trigger: 'adventure',
-            arg: 'adventure',
+            trigger: 'job',
+            arg: 'job',
         },
         {
             id: 'fbrpg:rpg-shop',
@@ -88,15 +89,6 @@ function getSubCommands() {
             trigger: 'shop-buy',
             arg: 'shop-buy',
             minArg: 2,
-        },
-        {
-            id: 'fbrpg:rpg-shop-donate',
-            usage: 'shop-donate',
-            name: '!rpg shop-donate',
-            description: 'Donates the currently held item to the kingdom.',
-            active: true,
-            trigger: 'shop-donate',
-            arg: 'shop-donate',
         },
     ];
 }
@@ -170,8 +162,8 @@ export function registerCommands() {
                             // TODO: Implement
                             return;
                         }
-                        case 'adventure': {
-                            // TODO: Implement
+                        case 'job': {
+                            rpgJob(userCommand);
                             return;
                         }
                         case 'shop': {
@@ -183,10 +175,6 @@ export function registerCommands() {
                             return;
                         }
                         case 'shop-buy': {
-                            // TODO: Implement
-                            return;
-                        }
-                        case 'shop-donate': {
                             // TODO: Implement
                             return;
                         }

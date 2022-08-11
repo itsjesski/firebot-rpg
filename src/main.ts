@@ -1,6 +1,6 @@
 import { Firebot } from '@crowbartools/firebot-custom-scripts-types';
 
-import { logger, setFirebot } from './firebot/firebot';
+import { setFirebot } from './firebot/firebot';
 import { registerRPG } from './firebot/games/register-game';
 
 const script: Firebot.CustomScript<{}> = {
@@ -16,11 +16,9 @@ const script: Firebot.CustomScript<{}> = {
     getDefaultParameters: () => {
         return {};
     },
-    run: (runRequest) => {
-        logger('info', 'Starting up Firebot RPG.');
-
+    run: async (runRequest) => {
         // Set our run request variable for use throughout the app.
-        setFirebot(runRequest);
+        await setFirebot(runRequest);
 
         // Register the game in Firebot.
         registerRPG();

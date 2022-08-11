@@ -8,7 +8,16 @@ import { WorldStats } from '../types/world';
 
 let firebot: RunRequest<any> | null = null;
 
-export function setFirebot(firebotRequest: RunRequest<any>): void {
+export async function setFirebot(
+    firebotRequest: RunRequest<any>
+): Promise<void> {
+    if (firebotRequest == null) {
+        firebotRequest.modules.logger.error(
+            'FBRPG: Firebot system was null. RPG will error out.'
+        );
+        return;
+    }
+
     firebot = firebotRequest;
 }
 
