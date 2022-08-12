@@ -130,3 +130,24 @@ export function logger(type: string, message: string): void {
             fblogger.info(`FBRPG: ${message}`);
     }
 }
+
+export async function giveCurrencyToUser(amount: number, username: string) {
+    const { currencyDb } = firebot.modules;
+    const gameSettings = getGameSettings();
+    const { currencyId } = gameSettings.generalSettings;
+
+    await currencyDb.adjustCurrencyForUser(
+        username,
+        currencyId,
+        amount,
+        'adjust'
+    );
+}
+
+export function getCurrencyName() {
+    const { currencyDb } = firebot.modules;
+    const gameSettings = getGameSettings();
+    const { currencyId } = gameSettings.generalSettings;
+
+    return currencyDb.getCurrencyById(currencyId).name;
+}
