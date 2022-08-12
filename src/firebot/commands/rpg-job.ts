@@ -1,6 +1,9 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
-import { jobList, Job } from '../../data/jobs';
+import { jobList } from '../../data/jobs';
+import { generateWeaponForUser } from '../../systems/equipment/weapons';
 import { addOrSubtractRandomPercentage } from '../../systems/utils';
+import { StoredArmor, StoredWeapon } from '../../types/equipment';
+import { Job } from '../../types/jobs';
 import {
     getCurrencyName,
     giveCurrencyToUser,
@@ -40,6 +43,25 @@ function rpgJobMessageBuilder(
     return jobMessage;
 }
 
+async function rpgLootGenerator(
+    username: string,
+    job: Job
+): Promise<StoredWeapon | StoredArmor> {
+    const lootType = job.loot.item.itemType;
+    let loot;
+
+    switch (lootType) {
+        case 'weapon':
+            loot = await generateWeaponForUser(username, job.loot.item.rarity);
+            break;
+        case 'armor':
+            break;
+        default:
+    }
+
+    return loot;
+}
+
 export async function rpgJob(userCommand: UserCommand) {
     const username = userCommand.commandSender;
     const selectJob: Job = jobList[Math.floor(Math.random() * jobList.length)];
@@ -50,6 +72,13 @@ export async function rpgJob(userCommand: UserCommand) {
 
     // Give currency to the user if this job rewards that.
     const currencyGiven = await giveJobCurrencyReward(selectJob, username);
+
+    // Generate our loot item if there is one.
+    if (selectJob.loot?.item?.itemType != null) {
+        // TODO: Pass item to message output, and apply it to the users held slot.
+        // eslint-disable-next-line no-unused-vars
+        const item = rpgLootGenerator(username, selectJob);
+    }
 
     // Create our response message.
     const jobMessage = rpgJobMessageBuilder(

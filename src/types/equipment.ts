@@ -1,3 +1,7 @@
+export type Rarity = 'basic' | 'rare' | 'epic' | 'legendary';
+
+export type ItemTypes = 'weapon' | 'armor';
+
 export type Enchantments = {
     earth: number;
     wind: number;
@@ -14,13 +18,12 @@ export type Weapon = {
     damage: string;
     damage_type: string;
     properties: string[];
-    rarity: 'basic' | 'rare' | 'epic' | 'legendary';
+    rarity: Rarity;
 };
 
 export type StoredWeapon = {
     id: number;
     nickname: string | null;
-    rarity: 'basic' | 'rare' | 'epic' | 'legendary';
     refinements: number;
     enchantments: Enchantments;
 };
@@ -31,13 +34,13 @@ export type Armor = {
     cost: number;
     armor_class: number;
     properties: string[];
-    rarity: 'basic' | 'rare' | 'epic' | 'legendary';
+    rarity: Rarity;
 };
 
 export type StoredArmor = {
     id: number;
     nickname: string | null;
-    rarity: 'basic' | 'rare' | 'epic' | 'legendary';
+    rarity: Rarity;
     refinements: number;
     enchantments: Enchantments;
 };

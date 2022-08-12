@@ -2,6 +2,13 @@ export function getPercentage(a: number, b: number): number {
     return (a * b) / 100;
 }
 
+export function sumOfObjectProperties(obj: { [x: string]: any }) {
+    return Object.keys(obj).reduce(
+        (sum, key) => sum + parseFloat(obj[key] || 0),
+        0
+    );
+}
+
 export function addOrSubtractRandomPercentage(num: number) {
     const posOrNeg = Math.random() < 0.5 ? -1 : 1;
 
@@ -18,4 +25,16 @@ export function addOrSubtractRandomPercentage(num: number) {
 
     // Round to whole number and return.
     return Math.floor(total);
+}
+
+export function filterArrayByProperty(
+    array: any[],
+    keys: string[],
+    value: any
+) {
+    return array.filter((o) =>
+        keys.some((k) =>
+            String(o[k]).toLowerCase().includes(value.toLowerCase())
+        )
+    );
 }
