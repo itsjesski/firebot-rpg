@@ -1,4 +1,5 @@
 import { weaponList } from '../../data/weapons';
+import { logger } from '../../firebot/firebot';
 import {
     Enchantments,
     Rarity,
@@ -13,8 +14,12 @@ import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
 import { getWeightedRarity } from './helpers';
 
 export function getWeaponFilteredByRarity(rarity: Rarity[]): Weapon {
+    logger('debug', `Getting weapon filtered by rarity array.`);
+
     // First, pick which rarity our item will be.
     const selectedRarity = getWeightedRarity(rarity);
+
+    logger('debug', `Our selected rarity is ${selectedRarity}`);
 
     // Then, narrow down our weapon list to only items with that rarity.
     const availableWeapons = filterArrayByProperty(
@@ -60,8 +65,11 @@ export async function generateWeaponForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredWeapon> {
+    logger('debug', `Generating a ${rarity} weapon for ${username}.`);
     const userEnchantmentValues = await getUserWeaponEnchantmentCount(username);
     const userRefinementValues = await getUserWeaponRefinementCount(username);
+
+    logger('debug', `Got user enchantment and refinement base counts.`);
 
     const baseEnchantmentValue = Math.max(
         userEnchantmentValues.main_hand,
@@ -81,6 +89,7 @@ export async function generateWeaponForUser(
     // Combine them into a "stored weapon" and return.
     return {
         id: weapon.id,
+        itemType: 'weapon',
         nickname: null,
         refinements: refinementValue,
         enchantments: enchantmentStats,

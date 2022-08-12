@@ -11,6 +11,11 @@ export type Enchantments = {
     darkness: number;
 };
 
+export type EnchantmentName = {
+    name: string;
+    enchantments: string[];
+};
+
 export type Weapon = {
     id: number;
     name: string;
@@ -23,6 +28,7 @@ export type Weapon = {
 
 export type StoredWeapon = {
     id: number;
+    itemType: 'weapon';
     nickname: string | null;
     refinements: number;
     enchantments: Enchantments;
@@ -39,6 +45,7 @@ export type Armor = {
 
 export type StoredArmor = {
     id: number;
+    itemType: 'armor';
     nickname: string | null;
     rarity: Rarity;
     refinements: number;

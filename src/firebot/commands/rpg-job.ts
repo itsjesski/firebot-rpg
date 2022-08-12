@@ -1,12 +1,14 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 import { jobList } from '../../data/jobs';
+import { getFullItemName, getItemByID } from '../../systems/equipment/helpers';
 import { generateWeaponForUser } from '../../systems/equipment/weapons';
-import { addOrSubtractRandomPercentage } from '../../systems/utils';
+import { addOrSubtractRandomPercentage, capitalize } from '../../systems/utils';
 import { StoredArmor, StoredWeapon } from '../../types/equipment';
 import { Job } from '../../types/jobs';
 import {
     getCurrencyName,
     giveCurrencyToUser,
+    logger,
     sendChatMessage,
 } from '../firebot';
 
@@ -30,14 +32,24 @@ async function giveJobCurrencyReward(
 function rpgJobMessageBuilder(
     username: string,
     messageTemplate: string,
-    moneyReward: number
+    moneyReward: number,
+    itemReward: StoredWeapon | StoredArmor | null
 ) {
     const currencyName = getCurrencyName();
     let jobMessage = `@${username}: ${messageTemplate}`;
 
     // If they got currency, add that to the reward message.
     if (moneyReward > 0) {
-        jobMessage = `${jobMessage} They received ${moneyReward} ${currencyName.toLowerCase()}.`;
+        jobMessage = `${jobMessage} Received: ${moneyReward} ${currencyName.toLowerCase()}`;
+    }
+
+    // If they got a reward item, add that to the reward message.
+    if (itemReward != null) {
+        const rewardItem = getItemByID(itemReward.id, itemReward.itemType);
+        const itemName = getFullItemName(itemReward);
+        jobMessage = `${jobMessage} and a ${capitalize(
+            rewardItem.rarity
+        )} ${itemName}`;
     }
 
     return jobMessage;
@@ -49,6 +61,8 @@ async function rpgLootGenerator(
 ): Promise<StoredWeapon | StoredArmor> {
     const lootType = job.loot.item.itemType;
     let loot;
+
+    logger('debug', `Generating loot for ${username}`);
 
     switch (lootType) {
         case 'weapon':
@@ -65,6 +79,7 @@ async function rpgLootGenerator(
 export async function rpgJob(userCommand: UserCommand) {
     const username = userCommand.commandSender;
     const selectJob: Job = jobList[Math.floor(Math.random() * jobList.length)];
+    let itemGiven = null;
 
     if (selectJob.encounter) {
         // TODO: Add an encounter system.
@@ -75,16 +90,15 @@ export async function rpgJob(userCommand: UserCommand) {
 
     // Generate our loot item if there is one.
     if (selectJob.loot?.item?.itemType != null) {
-        // TODO: Pass item to message output, and apply it to the users held slot.
-        // eslint-disable-next-line no-unused-vars
-        const item = rpgLootGenerator(username, selectJob);
+        itemGiven = await rpgLootGenerator(username, selectJob);
     }
 
     // Create our response message.
     const jobMessage = rpgJobMessageBuilder(
         username,
         selectJob.template,
-        currencyGiven
+        currencyGiven,
+        itemGiven
     );
 
     // Send our message template for this job to chat.
