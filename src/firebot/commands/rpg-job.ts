@@ -2,6 +2,7 @@ import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/mo
 import { jobList } from '../../data/jobs';
 import { getFullItemName, getItemByID } from '../../systems/equipment/helpers';
 import { generateWeaponForUser } from '../../systems/equipment/weapons';
+import { equipItemOnUser } from '../../systems/user/user';
 import { addOrSubtractRandomPercentage, capitalize } from '../../systems/utils';
 import { StoredArmor, StoredWeapon } from '../../types/equipment';
 import { Job } from '../../types/jobs';
@@ -89,8 +90,10 @@ export async function rpgJob(userCommand: UserCommand) {
     const currencyGiven = await giveJobCurrencyReward(selectJob, username);
 
     // Generate our loot item if there is one.
+    // Hand our loot to the player right away.
     if (selectJob.loot?.item?.itemType != null) {
         itemGiven = await rpgLootGenerator(username, selectJob);
+        equipItemOnUser(username, itemGiven, 'backpack');
     }
 
     // Create our response message.

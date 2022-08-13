@@ -1,3 +1,10 @@
+export type EquippableSlots =
+    | 'backpack'
+    | 'armor'
+    | 'main_hand'
+    | 'off_hand'
+    | 'potion';
+
 export type Character = {
     name: string;
     totalHP: number;

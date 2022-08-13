@@ -5,8 +5,8 @@ import {
     logger,
     updateCharacterMeta,
 } from '../../firebot/firebot';
-import { StoredWeapon } from '../../types/equipment';
-import { Character } from '../../types/user';
+import { StoredArmor, StoredWeapon } from '../../types/equipment';
+import { Character, EquippableSlots } from '../../types/user';
 import { sumOfObjectProperties } from '../utils';
 
 /**
@@ -130,4 +130,12 @@ export async function getUserWeaponRefinementCount(
     );
 
     return values;
+}
+
+export async function equipItemOnUser(
+    username: string,
+    item: StoredWeapon | StoredArmor,
+    slot: EquippableSlots
+) {
+    updateCharacterMeta(username, item, slot);
 }
