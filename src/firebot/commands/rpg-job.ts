@@ -104,6 +104,8 @@ export async function rpgJob(userCommand: UserCommand) {
         itemGiven
     );
 
+    // TODO: Add result to the world tendency pool.
+
     // Send our message template for this job to chat.
     sendChatMessage(jobMessage);
 }

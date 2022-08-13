@@ -1,7 +1,7 @@
 import { SystemCommandTriggerEvent } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
 import { verifyCharacter } from '../../systems/user/user';
-import { logger, registerSystemCommand, sendChatMessage } from '../firebot';
+import { logger, registerSystemCommand } from '../firebot';
 import { rpgJob } from './rpg-job';
 import { rpgStatsCommand } from './rpg-stats';
 import { worldCommand } from './rpg-world';
@@ -72,15 +72,6 @@ function getSubCommands() {
             arg: 'shop',
         },
         {
-            id: 'fbrpg:rpg-shop-sell',
-            usage: 'shop-sell',
-            name: '!rpg shop-sell',
-            description: 'Sells the currently held item to the shop for money.',
-            active: true,
-            trigger: 'shop-sell',
-            arg: 'shop-sell',
-        },
-        {
             id: 'fbrpg:rpg-shop-buy',
             usage: 'shop-buy [number]',
             name: '!rpg shop-buy',
@@ -144,47 +135,38 @@ export function registerCommands() {
                     switch (commandUsed) {
                         case 'world': {
                             worldCommand();
-                            return;
+                            break;
                         }
                         case 'stats': {
                             rpgStatsCommand(userCommand);
-                            return;
+                            break;
                         }
                         case 'inv': {
                             // TODO: Implement
-                            return;
+                            break;
                         }
                         case 'held': {
                             // TODO: Implement
-                            return;
+                            break;
                         }
                         case 'equip': {
                             // TODO: Implement
-                            return;
+                            break;
                         }
                         case 'job': {
                             rpgJob(userCommand);
-                            return;
+                            break;
                         }
                         case 'shop': {
                             // TODO: Implement
-                            return;
-                        }
-                        case 'shop-sell': {
-                            // TODO: Implement
-                            return;
+                            break;
                         }
                         case 'shop-buy': {
                             // TODO: Implement
-                            return;
+                            break;
                         }
+                        // eslint-disable-next-line no-empty
                         default: {
-                            // Invalid sub command.
-                            sendChatMessage(
-                                `Invalid rpg command. Try one of these: ${subCommandUsages.join(
-                                    ', '
-                                )}.`
-                            );
                         }
                     }
                 })

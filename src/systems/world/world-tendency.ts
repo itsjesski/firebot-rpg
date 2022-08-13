@@ -23,17 +23,19 @@ export const worldTendencyPools: WorldTendency = {
  * @param value
  * @returns
  */
-export function updateWorldTendency(stat: string, value: number) {
-    // @ts-ignore
-    const currentAmount = worldTendencyPools[stat];
+export function updateWorldTendency(
+    stat: keyof WorldTendency,
+    type: 'positive' | 'negative',
+    value: number
+) {
+    const currentAmount = worldTendencyPools[stat][type];
 
     if (currentAmount == null) {
         logger('error', `RPG: Couldn't find stat ${stat} in world stat pool.`);
         return;
     }
 
-    // @ts-ignore
-    worldTendencyPools[stat] = currentAmount + value;
+    worldTendencyPools[stat][type] = currentAmount + value;
 }
 
 /**
@@ -42,7 +44,8 @@ export function updateWorldTendency(stat: string, value: number) {
 export function clearWorldTendency() {
     logger('debug', "Clearing this cycle's world stat pool.");
 
-    for (const stat in worldTendencyPools) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const stat of Object.keys(worldTendencyPools)) {
         if (stat != null) {
             worldTendencyPools[stat as keyof WorldTendency].positive = 0;
             worldTendencyPools[stat as keyof WorldTendency].negative = 0;

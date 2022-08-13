@@ -54,6 +54,26 @@ export function getWeightedRarity(rarity: Rarity[]) {
     return rarity[i];
 }
 
+// eslint-disable-next-line no-unused-vars
+function isStoredWeapon(
+    item: StoredWeapon | StoredArmor
+): item is StoredWeapon {
+    return item.itemType === 'weapon';
+}
+
+// eslint-disable-next-line no-unused-vars
+function isStoredArmor(item: StoredWeapon | StoredArmor): item is StoredArmor {
+    return item.itemType === 'armor';
+}
+
+function isWeapon(item: Weapon | Armor): item is Weapon {
+    return (item as Weapon).damage != null;
+}
+
+function isArmor(item: Weapon | Armor): item is Armor {
+    return (item as Armor).armor_class != null;
+}
+
 /**
  * Takes an ID and Item Type, and will return that item from it's list.
  * @param id
@@ -61,8 +81,13 @@ export function getWeightedRarity(rarity: Rarity[]) {
  * @returns
  */
 export function getItemByID(id: number, type: string): Weapon | Armor | null {
+    if (id == null || type == null) {
+        return null;
+    }
+
     logger('debug', `Getting ${id} in ${type} list.`);
     let item = null;
+
     switch (type) {
         case 'weapon':
             [item] = filterArrayByProperty(weaponList, ['id'], id) as Weapon[];
@@ -127,9 +152,16 @@ export function getEnchantmentName(
  * This takes a stored item, and assembles its full name using it's reinforcements and enchantments.
  * @param item
  */
-export function getFullItemName(item: StoredWeapon | StoredArmor): string {
+export function getFullItemName(
+    item: StoredWeapon | StoredArmor | null
+): string {
     logger('debug', 'Compiling full item name.');
     const dbItem = getItemByID(item.id, item.itemType);
+
+    if (dbItem == null) {
+        return 'Nothing';
+    }
+
     let itemName = dbItem.name;
     const { enchantments } = item;
     const enchantmentName = getEnchantmentName(enchantments, item.itemType);
@@ -143,4 +175,31 @@ export function getFullItemName(item: StoredWeapon | StoredArmor): string {
     }
 
     return itemName;
+}
+
+export function getFullItemTextWithStats(
+    item: StoredWeapon | StoredArmor | null
+) {
+    logger('debug', 'Compiling full item name with stats.');
+    const dbItem = getItemByID(item.id, item.itemType);
+    let message;
+
+    if (dbItem == null) {
+        return 'Nothing';
+    }
+
+    const fullName = getFullItemName(item);
+    if (fullName == null) {
+        return 'Nothing';
+    }
+
+    if (isWeapon(dbItem)) {
+        message = `${fullName} | ${dbItem.damage} DMG | ${
+            dbItem.damage_type
+        } | ${dbItem.properties.join(', ')} | ${dbItem.rarity}`;
+    } else if (isArmor(dbItem)) {
+        message = 'soon';
+    }
+
+    return message;
 }
