@@ -9,6 +9,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        itemType: 'weapon',
     },
     {
         id: 2,
@@ -18,6 +19,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        itemType: 'weapon',
     },
     {
         id: 3,
@@ -27,6 +29,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        itemType: 'weapon',
     },
     {
         id: 4,
@@ -36,5 +39,6 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        itemType: 'weapon',
     },
 ];

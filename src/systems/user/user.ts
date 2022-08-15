@@ -45,8 +45,8 @@ export async function verifyCharacter(userCommand: UserCommand) {
             int: 10,
             backpack: {},
             armor: {},
-            main_hand: {},
-            off_hand: {},
+            mainHand: {},
+            offHand: {},
             potion: {},
             class: {
                 name: 'Commoner',
@@ -73,8 +73,8 @@ export async function getUserWeaponEnchantmentCount(
 ): Promise<{ main_hand: number; off_hand: number }> {
     logger('debug', `Getting weapon enchantment count for ${username}.`);
     const characterStats = await getCharacterData(username);
-    const mainHand = characterStats.main_hand as StoredWeapon;
-    const offHand = characterStats.off_hand as StoredWeapon;
+    const mainHand = characterStats.mainHand as StoredWeapon;
+    const offHand = characterStats.offHand as StoredWeapon;
     const values = {
         main_hand: 0,
         off_hand: 0,
@@ -102,31 +102,31 @@ export async function getUserWeaponEnchantmentCount(
 
 export async function getUserWeaponRefinementCount(
     username: string
-): Promise<{ main_hand: number; off_hand: number }> {
+): Promise<{ mainHand: number; offHand: number }> {
     logger('debug', `Getting weapon refinement count for ${username}.`);
     const characterStats = await getCharacterData(username);
-    const mainHand = characterStats.main_hand as StoredWeapon;
-    const offHand = characterStats.off_hand as StoredWeapon;
+    const mainHand = characterStats.mainHand as StoredWeapon;
+    const offHand = characterStats.offHand as StoredWeapon;
     const values = {
-        main_hand: 0,
-        off_hand: 0,
+        mainHand: 0,
+        offHand: 0,
     };
 
     if (mainHand?.refinements != null) {
-        values.main_hand = mainHand.refinements;
+        values.mainHand = mainHand.refinements;
     }
 
     if (offHand?.refinements != null) {
-        values.off_hand = offHand.refinements;
+        values.offHand = offHand.refinements;
     }
 
     logger(
         'debug',
-        `Refinement count for main hand of ${username} is ${values.main_hand}.`
+        `Refinement count for main hand of ${username} is ${values.mainHand}.`
     );
     logger(
         'debug',
-        `Refinement count for off hand of ${username} is ${values.off_hand}.`
+        `Refinement count for off hand of ${username} is ${values.offHand}.`
     );
 
     return values;

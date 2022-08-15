@@ -1,4 +1,7 @@
-import { SystemCommandTriggerEvent } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
+import {
+    SubCommand,
+    SystemCommandTriggerEvent,
+} from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
 import { verifyCharacter } from '../../systems/user/user';
 import { logger, registerSystemCommand } from '../firebot';
@@ -6,7 +9,7 @@ import { rpgJob } from './rpg-job';
 import { rpgStatsCommand } from './rpg-stats';
 import { worldCommand } from './rpg-world';
 
-function getSubCommands() {
+function getSubCommands(): SubCommand[] {
     return [
         {
             id: 'fbrpg:rpg-world',
@@ -16,6 +19,10 @@ function getSubCommands() {
             active: true,
             trigger: 'world',
             arg: 'world',
+            cooldown: {
+                global: 60,
+                user: 60,
+            },
         },
         {
             id: 'fbrpg:rpg-stats',
@@ -25,24 +32,10 @@ function getSubCommands() {
             active: true,
             trigger: 'stats',
             arg: 'stats',
-        },
-        {
-            id: 'fbrpg:rpg-inv',
-            usage: 'inv',
-            name: '!rpg inv',
-            description: 'Shows the equipment of your character.',
-            active: true,
-            trigger: 'inv',
-            arg: 'inv',
-        },
-        {
-            id: 'fbrpg:rpg-held',
-            usage: 'held',
-            name: '!rpg held',
-            description: 'Shows info on the currently held item.',
-            active: true,
-            trigger: 'held',
-            arg: 'held',
+            cooldown: {
+                global: 0,
+                user: 30,
+            },
         },
         {
             id: 'fbrpg:rpg-equip',
@@ -52,6 +45,10 @@ function getSubCommands() {
             active: true,
             trigger: 'equip',
             arg: 'equip',
+            cooldown: {
+                global: 0,
+                user: 30,
+            },
         },
         {
             id: 'fbrpg:rpg-job',
@@ -61,6 +58,10 @@ function getSubCommands() {
             active: true,
             trigger: 'job',
             arg: 'job',
+            cooldown: {
+                global: 0,
+                user: 60,
+            },
         },
         {
             id: 'fbrpg:rpg-shop',
@@ -70,6 +71,10 @@ function getSubCommands() {
             active: true,
             trigger: 'shop',
             arg: 'shop',
+            cooldown: {
+                global: 0,
+                user: 30,
+            },
         },
         {
             id: 'fbrpg:rpg-shop-buy',
@@ -79,7 +84,10 @@ function getSubCommands() {
             active: true,
             trigger: 'shop-buy',
             arg: 'shop-buy',
-            minArg: 2,
+            cooldown: {
+                global: 0,
+                user: 30,
+            },
         },
     ];
 }
@@ -139,14 +147,6 @@ export function registerCommands() {
                         }
                         case 'stats': {
                             rpgStatsCommand(userCommand);
-                            break;
-                        }
-                        case 'inv': {
-                            // TODO: Implement
-                            break;
-                        }
-                        case 'held': {
-                            // TODO: Implement
                             break;
                         }
                         case 'equip': {

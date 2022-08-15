@@ -1,8 +1,8 @@
 export type EquippableSlots =
     | 'backpack'
     | 'armor'
-    | 'main_hand'
-    | 'off_hand'
+    | 'mainHand'
+    | 'offHand'
     | 'potion';
 
 export type Character = {
@@ -14,8 +14,8 @@ export type Character = {
     int: number;
     backpack: any;
     armor: any;
-    main_hand: any;
-    off_hand: any;
+    mainHand: any;
+    offHand: any;
     potion: any;
     class: any;
     title: any;

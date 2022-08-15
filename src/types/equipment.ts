@@ -24,6 +24,7 @@ export type Weapon = {
     damage_type: string;
     properties: string[];
     rarity: Rarity;
+    itemType: 'weapon';
 };
 
 export type StoredWeapon = {
@@ -41,6 +42,7 @@ export type Armor = {
     armor_class: number;
     properties: string[];
     rarity: Rarity;
+    itemType: 'armor';
 };
 
 export type StoredArmor = {

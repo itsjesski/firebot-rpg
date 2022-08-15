@@ -76,8 +76,8 @@ export async function generateWeaponForUser(
         userEnchantmentValues.off_hand
     );
     const baseRefinementValue = Math.max(
-        userRefinementValues.main_hand,
-        userRefinementValues.off_hand
+        userRefinementValues.mainHand,
+        userRefinementValues.offHand
     );
 
     // Get our weapon, our new refinement value, and our new enchantment stats.
