@@ -2,7 +2,7 @@ import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/mo
 import { jobList } from '../../data/jobs';
 import { getFullItemName, getItemByID } from '../../systems/equipment/helpers';
 import { generateWeaponForUser } from '../../systems/equipment/weapons';
-import { equipItemOnUser } from '../../systems/user/user';
+import { equipItemOnUser, getCharacterName } from '../../systems/user/user';
 import { addOrSubtractRandomPercentage, capitalize } from '../../systems/utils';
 import { StoredArmor, StoredWeapon } from '../../types/equipment';
 import { Job } from '../../types/jobs';
@@ -30,18 +30,19 @@ async function giveJobCurrencyReward(
     return total;
 }
 
-function rpgJobMessageBuilder(
+async function rpgJobMessageBuilder(
     username: string,
     messageTemplate: string,
     moneyReward: number,
     itemReward: StoredWeapon | StoredArmor | null
 ) {
     const currencyName = getCurrencyName();
+    const characterName = await getCharacterName(username);
     let jobMessage = `@${username}: ${messageTemplate}`;
 
     // If they got currency, add that to the reward message.
     if (moneyReward > 0) {
-        jobMessage = `${jobMessage} Received: ${moneyReward} ${currencyName.toLowerCase()}`;
+        jobMessage = `${jobMessage} ${characterName} received: ${moneyReward} ${currencyName.toLowerCase()}`;
     }
 
     // If they got a reward item, add that to the reward message.
@@ -77,7 +78,7 @@ async function rpgLootGenerator(
     return loot;
 }
 
-export async function rpgJob(userCommand: UserCommand) {
+export async function rpgJobCommand(userCommand: UserCommand) {
     const username = userCommand.commandSender;
     const selectJob: Job = jobList[Math.floor(Math.random() * jobList.length)];
     let itemGiven = null;
@@ -97,7 +98,7 @@ export async function rpgJob(userCommand: UserCommand) {
     }
 
     // Create our response message.
-    const jobMessage = rpgJobMessageBuilder(
+    const jobMessage = await rpgJobMessageBuilder(
         username,
         selectJob.template,
         currencyGiven,

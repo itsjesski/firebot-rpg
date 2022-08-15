@@ -6,7 +6,8 @@ import {
 import { verifyCharacter } from '../../systems/user/user';
 import { logger, registerSystemCommand } from '../firebot';
 import { rpgEquipCommand } from './rpg-equip';
-import { rpgJob } from './rpg-job';
+import { rpgJobCommand } from './rpg-job';
+import { rpgNameCommand } from './rpg-name';
 import { rpgStatsCommand } from './rpg-stats';
 import { worldCommand } from './rpg-world';
 
@@ -36,6 +37,19 @@ function getSubCommands(): SubCommand[] {
             cooldown: {
                 global: 0,
                 user: 30,
+            },
+        },
+        {
+            id: 'fbrpg:rpg-name',
+            usage: 'name',
+            name: '!rpg name',
+            description: 'Lets you change your character name.',
+            active: true,
+            trigger: 'name',
+            arg: 'name',
+            cooldown: {
+                global: 0,
+                user: 120,
             },
         },
         {
@@ -155,7 +169,11 @@ export function registerCommands() {
                             break;
                         }
                         case 'job': {
-                            rpgJob(userCommand);
+                            rpgJobCommand(userCommand);
+                            break;
+                        }
+                        case 'name': {
+                            rpgNameCommand(userCommand);
                             break;
                         }
                         case 'shop': {

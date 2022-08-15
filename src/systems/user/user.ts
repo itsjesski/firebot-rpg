@@ -21,6 +21,20 @@ export async function getCharacterData(username: string): Promise<Character> {
 }
 
 /**
+ * Returns custom name, else returns username.
+ * @param username
+ * @returns
+ */
+export async function getCharacterName(username: string): Promise<string> {
+    const character = await getCharacterData(username);
+    if (character.name != null) {
+        return character.name;
+    }
+
+    return username;
+}
+
+/**
  * Verifies the character is properly built. If it's not, then it sets missing settings to default.
  * Also serves to build an initial character.
  * @param firebot
