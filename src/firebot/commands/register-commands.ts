@@ -151,47 +151,48 @@ export function registerCommands() {
             }
 
             // Verify the user has a character build before running any other command.
-            verifyCharacter(userCommand)
-                .then(() => {
-                    // Now, parse the subcommand.
-                    const commandUsed = args[0];
-                    switch (commandUsed) {
-                        case 'world': {
-                            worldCommand();
-                            break;
-                        }
-                        case 'stats': {
-                            rpgStatsCommand(userCommand);
-                            break;
-                        }
-                        case 'equip': {
-                            rpgEquipCommand(userCommand);
-                            break;
-                        }
-                        case 'job': {
-                            rpgJobCommand(userCommand);
-                            break;
-                        }
-                        case 'name': {
-                            rpgNameCommand(userCommand);
-                            break;
-                        }
-                        case 'shop': {
-                            // TODO: Implement
-                            break;
-                        }
-                        case 'shop-buy': {
-                            // TODO: Implement
-                            break;
-                        }
-                        // eslint-disable-next-line no-empty
-                        default: {
-                        }
-                    }
-                })
-                .catch((err) => {
-                    logger('error', err);
-                });
+            verifyCharacter(userCommand);
+
+            // Now, parse the subcommand.
+            const commandUsed = args[0];
+            logger(
+                'debug',
+                `${userCommand.commandSender} tried to use the ${commandUsed} command.`
+            );
+
+            switch (commandUsed) {
+                case 'world': {
+                    worldCommand();
+                    break;
+                }
+                case 'stats': {
+                    rpgStatsCommand(userCommand);
+                    break;
+                }
+                case 'equip': {
+                    rpgEquipCommand(userCommand);
+                    break;
+                }
+                case 'job': {
+                    rpgJobCommand(userCommand);
+                    break;
+                }
+                case 'name': {
+                    rpgNameCommand(userCommand);
+                    break;
+                }
+                case 'shop': {
+                    // TODO: Implement
+                    break;
+                }
+                case 'shop-buy': {
+                    // TODO: Implement
+                    break;
+                }
+                // eslint-disable-next-line no-empty
+                default: {
+                }
+            }
         },
     });
 }
