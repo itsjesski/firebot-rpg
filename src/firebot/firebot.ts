@@ -99,10 +99,10 @@ export async function getCharacterMeta(username: string): Promise<Character> {
     return characterMeta;
 }
 
-export async function updateCharacterMeta(
+export async function setCharacterMeta(
     userName: string,
     value: any,
-    property?: string
+    property?: keyof Character
 ): Promise<void> {
     const { userDb } = firebot.modules;
     await userDb.updateUserMetadata(

@@ -3,7 +3,7 @@ import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/mo
 import {
     getCharacterMeta,
     logger,
-    updateCharacterMeta,
+    setCharacterMeta,
 } from '../../firebot/firebot';
 import { StoredArmor, StoredWeapon } from '../../types/equipment';
 import { Character, EquippableSlots } from '../../types/user';
@@ -43,11 +43,37 @@ export async function verifyCharacter(userCommand: UserCommand) {
             str: 10,
             dex: 10,
             int: 10,
-            backpack: {},
-            armor: {},
-            mainHand: {},
-            offHand: {},
-            potion: {},
+            backpack: null,
+            armor: null,
+            mainHand: {
+                id: 1,
+                itemType: 'weapon',
+                nickname: null,
+                refinements: 0,
+                enchantments: {
+                    earth: 0,
+                    wind: 0,
+                    fire: 0,
+                    water: 0,
+                    light: 0,
+                    darkness: 0,
+                },
+            },
+            offHand: {
+                id: 1,
+                itemType: 'weapon',
+                nickname: null,
+                refinements: 0,
+                enchantments: {
+                    earth: 0,
+                    wind: 0,
+                    fire: 0,
+                    water: 0,
+                    light: 0,
+                    darkness: 0,
+                },
+            },
+            potion: null,
             class: {
                 name: 'Commoner',
                 str: 0,
@@ -64,7 +90,7 @@ export async function verifyCharacter(userCommand: UserCommand) {
             },
         };
 
-        updateCharacterMeta(userName, newCharacter);
+        setCharacterMeta(userName, newCharacter);
     }
 }
 
@@ -137,5 +163,5 @@ export async function equipItemOnUser(
     item: StoredWeapon | StoredArmor,
     slot: EquippableSlots
 ) {
-    updateCharacterMeta(username, item, slot);
+    setCharacterMeta(username, item, slot);
 }

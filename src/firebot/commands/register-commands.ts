@@ -5,6 +5,7 @@ import {
 
 import { verifyCharacter } from '../../systems/user/user';
 import { logger, registerSystemCommand } from '../firebot';
+import { rpgEquipCommand } from './rpg-equip';
 import { rpgJob } from './rpg-job';
 import { rpgStatsCommand } from './rpg-stats';
 import { worldCommand } from './rpg-world';
@@ -150,7 +151,7 @@ export function registerCommands() {
                             break;
                         }
                         case 'equip': {
-                            // TODO: Implement
+                            rpgEquipCommand(userCommand);
                             break;
                         }
                         case 'job': {
