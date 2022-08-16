@@ -19,4 +19,22 @@ export const jobList: Job[] = [
             research: 0,
         },
     },
+    {
+        id: 2,
+        template:
+            'A local blacksmith offers to create a piece of armor for you as promo for his shop. He throws it onto the back of your horse.',
+        encounter: false,
+        loot: {
+            item: {
+                itemType: 'armor',
+                rarity: ['basic', 'rare', 'epic', 'legendary'],
+            },
+            money: 0,
+        },
+        world_tendency: {
+            happiness: 0,
+            resources: 1,
+            research: 0,
+        },
+    },
 ];

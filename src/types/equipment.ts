@@ -49,7 +49,6 @@ export type StoredArmor = {
     id: number;
     itemType: 'armor';
     nickname: string | null;
-    rarity: Rarity;
     refinements: number;
     enchantments: Enchantments;
 };

@@ -13,11 +13,22 @@ async function isBackpackEmpty(username: string) {
 
 async function equipMainHand(username: string) {
     const { backpack } = await getCharacterData(username);
-    const backpackDetails = getItemByID(backpack.id, backpack.itemType);
     const characterName = await getCharacterName(username);
+    const backpackIsEmpty = await isBackpackEmpty(username);
 
+    // Check if backpack is empty first.
+    if (backpackIsEmpty) {
+        sendChatMessage(
+            `@${username},  doesn't have anything in their backpack to equip.`
+        );
+        return;
+    }
+
+    // Get details of the item in the backpack.
+    const backpackDetails = getItemByID(backpack.id, backpack.itemType);
     logger('debug', `${username} is equipping a main hand item.`);
 
+    // If it's not a weapon, throw an error.
     if (backpack.itemType !== 'weapon') {
         sendChatMessage(
             `@${username}, ${characterName} can't equip that item in their main hand.`
@@ -31,9 +42,9 @@ async function equipMainHand(username: string) {
             'debug',
             `${username} is equipping a two handed item, so we are un-equipping the off hand.`
         );
-        setCharacterMeta(username, backpack, 'mainHand');
-        setCharacterMeta(username, null, 'offHand');
-        setCharacterMeta(username, null, 'backpack');
+        await setCharacterMeta(username, backpack, 'mainHand');
+        await setCharacterMeta(username, null, 'offHand');
+        await setCharacterMeta(username, null, 'backpack');
         sendChatMessage(
             `@${username}, ${characterName} equipped the ${backpackDetails.name} in their main hand. It was two handed and takes both the main and off hand slots.`
         );
@@ -41,8 +52,8 @@ async function equipMainHand(username: string) {
     }
 
     // We have a regular one handed item, so equip it.
-    setCharacterMeta(username, backpack, 'mainHand');
-    setCharacterMeta(username, null, 'backpack');
+    await setCharacterMeta(username, backpack, 'mainHand');
+    await setCharacterMeta(username, null, 'backpack');
     sendChatMessage(
         `@${username}, ${characterName} equipped the ${backpackDetails.name} in their main hand.`
     );
@@ -50,17 +61,36 @@ async function equipMainHand(username: string) {
 
 async function equipOffHand(username: string) {
     const { backpack, mainHand } = await getCharacterData(username);
-    const backpackDetails = getItemByID(backpack.id, backpack.itemType);
-    const mainHandItemDetails = getItemByID(mainHand.id, mainHand.itemType);
     const characterName = await getCharacterName(username);
+    const backpackIsEmpty = await isBackpackEmpty(username);
 
-    logger('debug', `${username} is equipping an off hand item.`);
+    // Check if backpack is empty.
+    if (backpackIsEmpty) {
+        sendChatMessage(
+            `@${username},  doesn't have anything in their backpack to equip.`
+        );
+        return;
+    }
+    const backpackDetails = getItemByID(backpack.id, backpack.itemType);
 
+    // Check if main hand is empty.
+    let mainHandItemDetails = null;
+    if (mainHand !== null) {
+        mainHandItemDetails = getItemByID(mainHand.id, mainHand.itemType);
+    } else {
+        sendChatMessage(
+            `@${username}, ${characterName} doesn't have anything in their main hand yet! Try using !rpg equip main.`
+        );
+        return;
+    }
+
+    logger('debug', `${username} is trying to equip an off hand item.`);
+
+    // Don't let them equip in offhand if it's not a weapon or if there is a two handed item in the main hand.
     if (
         backpack.itemType !== 'weapon' ||
         backpackDetails.properties.includes('two-handed') ||
-        mainHandItemDetails.properties.includes('two-handed') ||
-        mainHandItemDetails == null
+        mainHandItemDetails.properties.includes('two-handed')
     ) {
         sendChatMessage(
             `@${username}, ${characterName} can't equip that item in their off hand.`
@@ -68,8 +98,9 @@ async function equipOffHand(username: string) {
         return;
     }
 
-    setCharacterMeta(username, backpack, 'offHand');
-    setCharacterMeta(username, null, 'backpack');
+    // Equip to off hand.
+    await setCharacterMeta(username, backpack, 'offHand');
+    await setCharacterMeta(username, null, 'backpack');
     sendChatMessage(
         `@${username}, ${characterName} equipped the ${backpackDetails.name} in their off hand.`
     );
@@ -77,9 +108,17 @@ async function equipOffHand(username: string) {
 
 async function equipArmor(username: string) {
     const { backpack } = await getCharacterData(username);
-    const backpackDetails = getItemByID(backpack.id, backpack.itemType);
     const characterName = await getCharacterName(username);
+    const backpackIsEmpty = await isBackpackEmpty(username);
 
+    if (backpackIsEmpty) {
+        sendChatMessage(
+            `@${username},  doesn't have anything in their backpack to equip.`
+        );
+        return;
+    }
+
+    const backpackDetails = getItemByID(backpack.id, backpack.itemType);
     logger('debug', `${username} is equipping an armor item.`);
 
     if (backpackDetails.itemType !== 'armor') {
@@ -89,8 +128,8 @@ async function equipArmor(username: string) {
         return;
     }
 
-    setCharacterMeta(username, backpack, 'armor');
-    setCharacterMeta(username, null, 'backpack');
+    await setCharacterMeta(username, backpack, 'armor');
+    await setCharacterMeta(username, null, 'backpack');
     sendChatMessage(
         `@${username}, ${characterName} equipped the ${backpackDetails.name} as their armor.`
     );
@@ -100,12 +139,12 @@ export async function rpgEquipCommand(userCommand: UserCommand) {
     const username = userCommand.commandSender;
     const { args } = userCommand;
     const commandUsed = args[1] as string;
-    const backpackEmpty = await isBackpackEmpty(username);
+    const backpackIsEmpty = await isBackpackEmpty(username);
     const characterName = await getCharacterName(username);
 
     logger('debug', `${username} is trying to equip an item.`);
 
-    if (backpackEmpty) {
+    if (backpackIsEmpty) {
         logger(
             'debug',
             `${username}'s backpack was empty. Could not equip an item.`
@@ -120,15 +159,17 @@ export async function rpgEquipCommand(userCommand: UserCommand) {
         case 'main':
         case 'main-hand':
         case 'main_hand':
-            equipMainHand(username);
+        case 'mainhand':
+            await equipMainHand(username);
             break;
         case 'off':
         case 'off-hand':
         case 'off_hand':
-            equipOffHand(username);
+        case 'offhand':
+            await equipOffHand(username);
             break;
         case 'armor':
-            equipArmor(username);
+            await equipArmor(username);
             break;
         default:
             sendChatMessage(

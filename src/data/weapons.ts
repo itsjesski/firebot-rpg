@@ -51,4 +51,14 @@ export const weaponList: Weapon[] = [
         properties: ['light', 'finesse', 'thrown'],
         itemType: 'weapon',
     },
+    {
+        id: 6,
+        rarity: 'basic',
+        name: 'Broom',
+        cost: 1,
+        damage: '1d3',
+        damage_type: 'bludgeoning',
+        properties: ['two-handed'],
+        itemType: 'weapon',
+    },
 ];

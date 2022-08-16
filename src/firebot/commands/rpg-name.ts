@@ -9,7 +9,7 @@ export async function rpgNameCommand(userCommand: UserCommand) {
     const originalName = await getCharacterName(username);
     const newName = args.splice(1, 5).join(' ');
 
-    if (newName.length > 30) {
+    if (newName.length > 30 || newName.length === 0) {
         sendChatMessage(
             `@${username} That name is too long. There is a character limit of 30 characters.`
         );

@@ -1,17 +1,13 @@
 import { weaponList } from '../../data/weapons';
 import { logger } from '../../firebot/firebot';
+import { Rarity, StoredWeapon, Weapon } from '../../types/equipment';
+import { getCharacterData } from '../user/user';
 import {
-    Enchantments,
-    Rarity,
-    StoredWeapon,
-    Weapon,
-} from '../../types/equipment';
-import {
-    getUserWeaponEnchantmentCount,
-    getUserWeaponRefinementCount,
-} from '../user/user';
-import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
-import { getWeightedRarity } from './helpers';
+    addOrSubtractRandomPercentage,
+    filterArrayByProperty,
+    sumOfObjectProperties,
+} from '../utils';
+import { generateEnchantmentListForUser, getWeightedRarity } from './helpers';
 
 export function getWeaponFilteredByRarity(rarity: Rarity[]): Weapon {
     logger('debug', `Getting weapon filtered by rarity array.`);
@@ -34,31 +30,68 @@ export function getWeaponFilteredByRarity(rarity: Rarity[]): Weapon {
     ];
 }
 
-export function generateEnchantmentListForUser(
-    baseEnchantmentValue: number
-): Enchantments {
-    let availablePoints = addOrSubtractRandomPercentage(baseEnchantmentValue);
-    const enchantments = {
-        earth: 0,
-        wind: 0,
-        fire: 0,
-        water: 0,
-        light: 0,
-        darkness: 0,
+export async function getUserWeaponEnchantmentCount(
+    username: string
+): Promise<{ main_hand: number; off_hand: number }> {
+    logger('debug', `Getting weapon enchantment count for ${username}.`);
+    const characterStats = await getCharacterData(username);
+    const mainHand = characterStats.mainHand as StoredWeapon;
+    const offHand = characterStats.offHand as StoredWeapon;
+    const values = {
+        main_hand: 0,
+        off_hand: 0,
     };
-    const enchantmentKeys = Object.keys(enchantments);
 
-    // TODO: This could probably be improved.
-    // Randomly assign our pool of points until we're out of them.
-    while (availablePoints > 0) {
-        const selectedEnchantment =
-            enchantmentKeys[Math.floor(Math.random() * enchantmentKeys.length)];
-        // @ts-ignore
-        enchantments[selectedEnchantment] += 1;
-        availablePoints -= 1;
+    if (mainHand?.enchantments != null) {
+        values.main_hand = sumOfObjectProperties(mainHand.enchantments);
     }
 
-    return enchantments;
+    if (offHand?.enchantments != null) {
+        values.off_hand = sumOfObjectProperties(offHand.enchantments);
+    }
+
+    logger(
+        'debug',
+        `Enchantment count for main hand of ${username} is ${values.main_hand}.`
+    );
+    logger(
+        'debug',
+        `Enchantment count for off hand of ${username} is ${values.off_hand}.`
+    );
+
+    return values;
+}
+
+export async function getUserWeaponRefinementCount(
+    username: string
+): Promise<{ mainHand: number; offHand: number }> {
+    logger('debug', `Getting weapon refinement count for ${username}.`);
+    const characterStats = await getCharacterData(username);
+    const mainHand = characterStats.mainHand as StoredWeapon;
+    const offHand = characterStats.offHand as StoredWeapon;
+    const values = {
+        mainHand: 0,
+        offHand: 0,
+    };
+
+    if (mainHand?.refinements != null) {
+        values.mainHand = mainHand.refinements;
+    }
+
+    if (offHand?.refinements != null) {
+        values.offHand = offHand.refinements;
+    }
+
+    logger(
+        'debug',
+        `Refinement count for main hand of ${username} is ${values.mainHand}.`
+    );
+    logger(
+        'debug',
+        `Refinement count for off hand of ${username} is ${values.offHand}.`
+    );
+
+    return values;
 }
 
 export async function generateWeaponForUser(
@@ -69,7 +102,7 @@ export async function generateWeaponForUser(
     const userEnchantmentValues = await getUserWeaponEnchantmentCount(username);
     const userRefinementValues = await getUserWeaponRefinementCount(username);
 
-    logger('debug', `Got user enchantment and refinement base counts.`);
+    logger('debug', `Got user weapon enchantment and refinement base counts.`);
 
     const baseEnchantmentValue = Math.max(
         userEnchantmentValues.main_hand,

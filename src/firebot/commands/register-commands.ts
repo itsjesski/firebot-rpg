@@ -139,9 +139,7 @@ export function registerCommands() {
             },
             subCommands: getSubCommands(),
         },
-        onTriggerEvent(
-            event: SystemCommandTriggerEvent
-        ): void | PromiseLike<void> {
+        async onTriggerEvent(event: SystemCommandTriggerEvent) {
             const { userCommand } = event;
             const { args } = userCommand;
 
@@ -151,7 +149,7 @@ export function registerCommands() {
             }
 
             // Verify the user has a character build before running any other command.
-            verifyCharacter(userCommand);
+            await verifyCharacter(userCommand);
 
             // Now, parse the subcommand.
             const commandUsed = args[0];

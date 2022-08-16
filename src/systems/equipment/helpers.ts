@@ -10,7 +10,12 @@ import {
     StoredWeapon,
     Weapon,
 } from '../../types/equipment';
-import { filterArrayByProperty, getTopValuesFromObject } from '../utils';
+import {
+    filterArrayByProperty,
+    getTopValuesFromObject,
+    capitalize,
+    addOrSubtractRandomPercentage,
+} from '../utils';
 
 /**
  * This will choose a rarity from one of the given raritys, weighting them so that lower rarities show more often.
@@ -162,7 +167,7 @@ export function getFullItemName(
         return 'Nothing';
     }
 
-    let itemName = dbItem.name;
+    let itemName = `${capitalize(dbItem.rarity)} ${dbItem.name}`;
     const { enchantments } = item;
     const enchantmentName = getEnchantmentName(enchantments, item.itemType);
 
@@ -181,10 +186,17 @@ export function getFullItemTextWithStats(
     item: StoredWeapon | StoredArmor | null
 ) {
     logger('debug', 'Compiling full item name with stats.');
+
+    if (item == null) {
+        logger('debug', 'Null item passed to getFullItemTextWithStats');
+        return 'Nothing';
+    }
+
     const dbItem = getItemByID(item.id, item.itemType);
     let message;
 
     if (dbItem == null) {
+        logger('debug', 'Could not find weapon in database.');
         return 'Nothing';
     }
 
@@ -196,10 +208,37 @@ export function getFullItemTextWithStats(
     if (isWeapon(dbItem)) {
         message = `${fullName} | ${dbItem.damage} DMG | ${
             dbItem.damage_type
-        } | ${dbItem.properties.join(', ')} | ${dbItem.rarity}`;
+        } | ${dbItem.properties.join(', ')} | ${capitalize(dbItem.rarity)}`;
     } else if (isArmor(dbItem)) {
         message = 'soon';
     }
 
     return message;
+}
+
+export function generateEnchantmentListForUser(
+    baseEnchantmentValue: number
+): Enchantments {
+    let availablePoints = addOrSubtractRandomPercentage(baseEnchantmentValue);
+    const enchantments = {
+        earth: 0,
+        wind: 0,
+        fire: 0,
+        water: 0,
+        light: 0,
+        darkness: 0,
+    };
+    const enchantmentKeys = Object.keys(enchantments);
+
+    // TODO: This could probably be improved.
+    // Randomly assign our pool of points until we're out of them.
+    while (availablePoints > 0) {
+        const selectedEnchantment =
+            enchantmentKeys[Math.floor(Math.random() * enchantmentKeys.length)];
+        // @ts-ignore
+        enchantments[selectedEnchantment] += 1;
+        availablePoints -= 1;
+    }
+
+    return enchantments;
 }

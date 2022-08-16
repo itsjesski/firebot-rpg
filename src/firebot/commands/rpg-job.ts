@@ -1,9 +1,10 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 import { jobList } from '../../data/jobs';
-import { getFullItemName, getItemByID } from '../../systems/equipment/helpers';
+import { generateArmorForUser } from '../../systems/equipment/armor';
+import { getFullItemName } from '../../systems/equipment/helpers';
 import { generateWeaponForUser } from '../../systems/equipment/weapons';
 import { equipItemOnUser, getCharacterName } from '../../systems/user/user';
-import { addOrSubtractRandomPercentage, capitalize } from '../../systems/utils';
+import { addOrSubtractRandomPercentage } from '../../systems/utils';
 import { StoredArmor, StoredWeapon } from '../../types/equipment';
 import { Job } from '../../types/jobs';
 import {
@@ -47,11 +48,8 @@ async function rpgJobMessageBuilder(
 
     // If they got a reward item, add that to the reward message.
     if (itemReward != null) {
-        const rewardItem = getItemByID(itemReward.id, itemReward.itemType);
         const itemName = getFullItemName(itemReward);
-        jobMessage = `${jobMessage} and a ${capitalize(
-            rewardItem.rarity
-        )} ${itemName}`;
+        jobMessage = `${jobMessage} and a ${itemName}`;
     }
 
     return jobMessage;
@@ -71,6 +69,7 @@ async function rpgLootGenerator(
             loot = await generateWeaponForUser(username, job.loot.item.rarity);
             break;
         case 'armor':
+            loot = await generateArmorForUser(username, job.loot.item.rarity);
             break;
         default:
     }
@@ -94,7 +93,7 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     // Hand our loot to the player right away.
     if (selectJob.loot?.item?.itemType != null) {
         itemGiven = await rpgLootGenerator(username, selectJob);
-        equipItemOnUser(username, itemGiven, 'backpack');
+        await equipItemOnUser(username, itemGiven, 'backpack');
     }
 
     // Create our response message.
