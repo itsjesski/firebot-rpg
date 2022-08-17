@@ -60,9 +60,6 @@ export function getTopValuesFromObject(
         // @ts-ignore
         .reduce((a, k) => ({ ...a, [k]: object[k] }), {});
 
-    // eslint-disable-next-line no-console
-    console.log(newObject);
-
     if (Object.keys(newObject) == null || newObject == null) {
         return null;
     }

@@ -1,10 +1,10 @@
 import {
     getNumberOfOnlineUsers,
     getStreamOnlineStatus,
+    logger,
 } from '../firebot/firebot';
+import { getWorldCycleTime } from './settings';
 import { worldCycle } from './world/world-cycle';
-
-const gameCycleInterval = 60;
 
 /**
  * Tells us if the world cycle should run or not.
@@ -22,12 +22,18 @@ export async function shouldGameCycle() {
 }
 
 export function startGameCycle() {
-    setInterval(() => {
+    logger('debug', `Starting game cycle.`);
+    const gameCycle = getWorldCycleTime();
+    setInterval(async () => {
         if (!shouldGameCycle()) {
+            logger(
+                'debug',
+                `Game cycle paused as stream has zero online users or the stream is offline.`
+            );
             return;
         }
 
         // Update our world first, as this could affect buffs from world stats.
-        worldCycle();
-    }, gameCycleInterval * 1000);
+        await worldCycle();
+    }, gameCycle * 1000);
 }

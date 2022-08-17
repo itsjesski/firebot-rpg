@@ -36,3 +36,8 @@ export function getWorldCitizens(): string {
     const gameSettings = getWorldSettings();
     return gameSettings.citizens;
 }
+
+export function getWorldCycleTime(): number {
+    const gameSettings = getWorldSettings();
+    return gameSettings.cycleTime;
+}

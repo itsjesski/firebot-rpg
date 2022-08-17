@@ -1,3 +1,5 @@
+export type WorldTendencyTypes = 'happiness' | 'resources' | 'research';
+
 export type WorldStats = {
     happiness: number;
     resources: number;

@@ -6,5 +6,6 @@ export type GameSettings = {
         name: string;
         type: string;
         citizens: string;
+        cycleTime: number;
     };
 };

@@ -1,5 +1,5 @@
 import { logger } from '../../firebot/firebot';
-import { WorldTendency } from '../../types/world';
+import { WorldTendency, WorldTendencyTypes } from '../../types/world';
 
 export const worldTendencyPools: WorldTendency = {
     happiness: {
@@ -23,19 +23,24 @@ export const worldTendencyPools: WorldTendency = {
  * @param value
  * @returns
  */
-export function updateWorldTendency(
-    stat: keyof WorldTendency,
-    type: 'positive' | 'negative',
-    value: number
-) {
-    const currentAmount = worldTendencyPools[stat][type];
-
-    if (currentAmount == null) {
-        logger('error', `RPG: Couldn't find stat ${stat} in world stat pool.`);
+export function updateWorldTendency(stat: WorldTendencyTypes, value: number) {
+    if (value === 0 || value == null) {
         return;
     }
 
-    worldTendencyPools[stat][type] = currentAmount + value;
+    logger('debug', `Adjusting world ${stat} pool value by ${value}.`);
+
+    let currentAmount = worldTendencyPools[stat].positive;
+
+    // If value is less than zero, let's add it to the negative pool.
+    if (value < 0) {
+        currentAmount = worldTendencyPools[stat].negative;
+        worldTendencyPools[stat].negative = currentAmount - value;
+        return;
+    }
+
+    // Otherwise, it goes to the positive pool.
+    worldTendencyPools[stat].positive = currentAmount + value;
 }
 
 /**

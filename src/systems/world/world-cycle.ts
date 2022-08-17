@@ -10,41 +10,42 @@ import { clearWorldTendency, worldTendencyPools } from './world-tendency';
 async function worldCycleUpdateStats() {
     logger('debug', `Updating world stats for this cycle.`);
 
-    const promises = [];
+    const promises: any[] = [];
     const numOnlineUsers = await getNumberOfOnlineUsers();
 
-    for (const stat in worldTendencyPools) {
-        if (Object.prototype.hasOwnProperty.call(worldTendencyPools, stat)) {
-            // Compare our stat pools to the number of active users.
+    Object.keys(worldTendencyPools).forEach((stat) => {
+        const positivePercentage = getPercentage(
+            worldTendencyPools[stat as keyof WorldTendency].positive,
+            numOnlineUsers
+        );
 
-            const positivePercentage = getPercentage(
-                worldTendencyPools[stat as keyof WorldTendency].positive,
-                numOnlineUsers
-            );
+        const negativePercentage = getPercentage(
+            worldTendencyPools[stat as keyof WorldTendency].negative,
+            numOnlineUsers
+        );
 
-            const negativePercentage = getPercentage(
-                worldTendencyPools[stat as keyof WorldTendency].negative,
-                numOnlineUsers
-            );
+        // Compare our percentages to each other.
+        const netTendency = positivePercentage - negativePercentage;
+        const isPositive = netTendency > 0;
 
-            // Compare our percentages to each other.
-            const netTendency = positivePercentage - negativePercentage;
-            const isPositive = netTendency > 0;
+        // Changes are needed, lets shrink our number and clamp it between 1 and 2.
+        // Adjust this value to have more wild fluctuations between cycles.
+        let adjustedValue = Math.round(Math.abs(netTendency) / 10);
+        adjustedValue = Math.min(Math.max(adjustedValue, 1), 2);
 
-            // Changes are needed, lets shrink our number and clamp it between 1 and 2.
-            // Adjust this value to have more wild fluctuations between cycles.
-            let adjustedValue = Math.round(Math.abs(netTendency) / 10);
-            adjustedValue = Math.min(Math.max(adjustedValue, 1), 2);
-
-            // If value change will be negative, make our adjusted value negative.
-            if (!isPositive) {
-                adjustedValue = -Math.abs(adjustedValue);
-            }
-
-            // Now, update our stat.
-            promises.push(setWorldStat(stat, adjustedValue));
+        // If value change will be negative, make our adjusted value negative.
+        if (!isPositive) {
+            adjustedValue = -Math.abs(adjustedValue);
         }
-    }
+
+        logger(
+            'debug',
+            `World ${stat} shifted globally by ${adjustedValue} for this cycle.`
+        );
+
+        // Now, update our stat.
+        promises.push(setWorldStat(stat, adjustedValue));
+    });
 
     return Promise.all(promises);
 }
@@ -53,6 +54,10 @@ async function worldCycleUpdateStats() {
  * This function is run each game cycle and updates world settings.
  */
 export async function worldCycle() {
+    logger(
+        'debug',
+        'World cycle complete! Adjusting world stats and restarting the cycle.'
+    );
     await worldCycleUpdateStats();
     clearWorldTendency();
 }

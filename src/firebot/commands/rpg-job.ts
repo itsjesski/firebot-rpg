@@ -12,8 +12,10 @@ import { generateTitleForUser } from '../../systems/equipment/title';
 import { generateWeaponForUser } from '../../systems/equipment/weapons';
 import { equipItemOnUser, getCharacterName } from '../../systems/user/user';
 import { addOrSubtractRandomPercentage } from '../../systems/utils';
+import { updateWorldTendency } from '../../systems/world/world-tendency';
 import { StorableItems } from '../../types/equipment';
 import { Job } from '../../types/jobs';
+import { WorldTendencyTypes } from '../../types/world';
 import {
     getCurrencyName,
     giveCurrencyToUser,
@@ -125,6 +127,15 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         await equipItemOnUser(username, itemGiven, 'backpack');
     }
 
+    // Add result to the world tendency pool.
+    Object.keys(selectJob.world_tendency).forEach((stat) => {
+        const key = stat as WorldTendencyTypes;
+        const statValue = selectJob.world_tendency[key];
+        if (statValue !== 0) {
+            updateWorldTendency(key, statValue);
+        }
+    });
+
     // Create our response message.
     const jobMessage = await rpgJobMessageBuilder(
         username,
@@ -132,8 +143,6 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         currencyGiven,
         itemGiven
     );
-
-    // TODO: Add result to the world tendency pool.
 
     // Send our message template for this job to chat.
     sendChatMessage(jobMessage);

@@ -1,4 +1,5 @@
 import { SettingCategoryDefinition } from '@crowbartools/firebot-custom-scripts-types/types/modules/game-manager';
+import { startGameCycle } from '../../systems/cycle';
 
 import { verifyWorld } from '../../systems/world/world-stats';
 import { registerCommands } from '../commands/register-commands';
@@ -29,13 +30,26 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
         description: 'Your world settings.',
         sortRank: 2,
         settings: {
+            cycleTime: {
+                type: 'string',
+                title: 'Cycle Time',
+                description:
+                    'How many seconds should each world cycle be? Changing this requires you restart Firebot.',
+                tip: 'This is the timer used for each "round" of the game.',
+                default: 60,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
             name: {
                 type: 'string',
                 title: 'Name',
                 description: 'What would you like your game area to be called?',
                 tip: 'This will be used to reference your game world throughout the game.',
                 default: 'Firetopia',
-                sortRank: 1,
+                sortRank: 2,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -47,7 +61,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                 description: 'What is your game area type?',
                 tip: 'This just adds flavor. You could have a city, town, village, etc...',
                 default: 'Kingdom',
-                sortRank: 2,
+                sortRank: 3,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -59,7 +73,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                 description: 'What type of people inhabit your kingdom?',
                 tip: 'This just adds flavor. You could have a kingdom of elves, orcs, humans, people, etc...',
                 default: 'People',
-                sortRank: 3,
+                sortRank: 4,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -79,9 +93,10 @@ export function registerRPG(): void {
         description: 'An RPG entirely driven by Firebot and your chat.',
         icon: 'fa-swords',
         settingCategories: gameSettings,
-        onLoad: () => {
+        onLoad: async () => {
             registerCommands();
-            verifyWorld();
+            await verifyWorld();
+            await startGameCycle();
         },
         onUnload: () => {},
         onSettingsUpdate: () => {
