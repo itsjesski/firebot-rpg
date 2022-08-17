@@ -30,3 +30,34 @@ export const weaponEnchantmentNames: EnchantmentName[] = [
         enchantments: ['water', 'light'],
     },
 ];
+
+export const armorEnchantmentNames: EnchantmentName[] = [
+    {
+        name: 'Earth',
+        enchantments: ['earth', 'fire'],
+    },
+    {
+        name: 'Wind',
+        enchantments: ['wind', 'water'],
+    },
+    {
+        name: 'Dust',
+        enchantments: ['earth', 'wind'],
+    },
+    {
+        name: 'Chaos',
+        enchantments: ['light', 'darkness'],
+    },
+    {
+        name: 'Light',
+        enchantments: ['fire', 'light'],
+    },
+    {
+        name: 'Evil',
+        enchantments: ['fire', 'darkness'],
+    },
+    {
+        name: 'Clarity',
+        enchantments: ['water', 'light'],
+    },
+];

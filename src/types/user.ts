@@ -1,11 +1,20 @@
-import { StoredArmor, StoredWeapon } from './equipment';
+import {
+    StorableItems,
+    StoredArmor,
+    StoredCharacterClass,
+    StoredShield,
+    StoredTitle,
+    StoredWeapon,
+} from './equipment';
 
 export type EquippableSlots =
     | 'backpack'
     | 'armor'
     | 'mainHand'
     | 'offHand'
-    | 'potion';
+    | 'potion'
+    | 'characterClass'
+    | 'title';
 
 export type Character = {
     name: string;
@@ -14,11 +23,11 @@ export type Character = {
     str: number;
     dex: number;
     int: number;
-    backpack: StoredArmor | StoredWeapon | null;
+    backpack: StorableItems | null;
     armor: StoredArmor | null;
     mainHand: StoredWeapon;
-    offHand: StoredWeapon | null;
+    offHand: StoredWeapon | StoredShield | null;
     potion: any;
-    class: any;
-    title: any;
+    characterClass: StoredCharacterClass;
+    title: StoredTitle;
 };

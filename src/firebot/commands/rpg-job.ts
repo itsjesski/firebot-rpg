@@ -1,11 +1,18 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 import { jobList } from '../../data/jobs';
 import { generateArmorForUser } from '../../systems/equipment/armor';
-import { getFullItemName } from '../../systems/equipment/helpers';
+import { generateClassForUser } from '../../systems/equipment/character-class';
+import {
+    getItemTypeDisplayName,
+    getFullItemName,
+    getItemByID,
+} from '../../systems/equipment/helpers';
+import { generateShieldForUser } from '../../systems/equipment/shields';
+import { generateTitleForUser } from '../../systems/equipment/title';
 import { generateWeaponForUser } from '../../systems/equipment/weapons';
 import { equipItemOnUser, getCharacterName } from '../../systems/user/user';
 import { addOrSubtractRandomPercentage } from '../../systems/utils';
-import { StoredArmor, StoredWeapon } from '../../types/equipment';
+import { StorableItems } from '../../types/equipment';
 import { Job } from '../../types/jobs';
 import {
     getCurrencyName,
@@ -35,30 +42,43 @@ async function rpgJobMessageBuilder(
     username: string,
     messageTemplate: string,
     moneyReward: number,
-    itemReward: StoredWeapon | StoredArmor | null
+    itemReward: StorableItems | null
 ) {
     const currencyName = getCurrencyName();
     const characterName = await getCharacterName(username);
     let jobMessage = `@${username}: ${messageTemplate}`;
+    const rewards: string[] = [];
+
+    // They didn't get anything.
+    if (moneyReward === 0 && itemReward == null) {
+        jobMessage = `${jobMessage}`;
+        return jobMessage;
+    }
+
+    // They got stuff! Let's get a list of our rewards.
+    jobMessage = `${jobMessage} ${characterName} received: `;
 
     // If they got currency, add that to the reward message.
     if (moneyReward > 0) {
-        jobMessage = `${jobMessage} ${characterName} received: ${moneyReward} ${currencyName.toLowerCase()}`;
+        rewards.push(`${moneyReward} ${currencyName.toLowerCase()}`);
     }
 
     // If they got a reward item, add that to the reward message.
     if (itemReward != null) {
         const itemName = getFullItemName(itemReward);
-        jobMessage = `${jobMessage} and a ${itemName}`;
+        const dbItem = await getItemByID(itemReward.id, itemReward.itemType);
+        rewards.push(
+            `${itemName} (${dbItem.rarity} ${getItemTypeDisplayName(dbItem)})`
+        );
     }
 
-    return jobMessage;
+    return `${jobMessage} ${rewards.join(', ')}.`;
 }
 
 async function rpgLootGenerator(
     username: string,
     job: Job
-): Promise<StoredWeapon | StoredArmor> {
+): Promise<StorableItems> {
     const lootType = job.loot.item.itemType;
     let loot;
 
@@ -70,6 +90,15 @@ async function rpgLootGenerator(
             break;
         case 'armor':
             loot = await generateArmorForUser(username, job.loot.item.rarity);
+            break;
+        case 'title':
+            loot = await generateTitleForUser(username, job.loot.item.rarity);
+            break;
+        case 'characterClass':
+            loot = await generateClassForUser(username, job.loot.item.rarity);
+            break;
+        case 'shield':
+            loot = await generateShieldForUser(username, job.loot.item.rarity);
             break;
         default:
     }

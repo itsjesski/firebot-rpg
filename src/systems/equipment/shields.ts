@@ -1,6 +1,6 @@
-import { weaponList } from '../../data/weapons';
+import { shieldList } from '../../data/shields';
 import { logger } from '../../firebot/firebot';
-import { Rarity, StoredWeapon, Weapon } from '../../types/equipment';
+import { Rarity, Shield, StoredShield } from '../../types/equipment';
 import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
 import {
     generateEnchantmentListForUser,
@@ -9,32 +9,32 @@ import {
     getWeightedRarity,
 } from './helpers';
 
-export function getWeaponFilteredByRarity(rarity: Rarity[]): Weapon {
-    logger('debug', `Getting weapon filtered by rarity array.`);
+export function getShieldFilteredByRarity(rarity: Rarity[]): Shield {
+    logger('debug', `Getting shield filtered by rarity array.`);
 
     // First, pick which rarity our item will be.
     const selectedRarity = getWeightedRarity(rarity);
 
     logger('debug', `Our selected rarity is ${selectedRarity}`);
 
-    // Then, narrow down our weapon list to only items with that rarity.
-    const availableWeapons = filterArrayByProperty(
-        weaponList,
+    // Then, narrow down our shield list to only items with that rarity.
+    const availableShields = filterArrayByProperty(
+        shieldList,
         ['rarity'],
         selectedRarity
     );
 
     // Then, pick a random item from our selected weapons.
-    return availableWeapons[
-        Math.floor(Math.random() * availableWeapons.length)
+    return availableShields[
+        Math.floor(Math.random() * availableShields.length)
     ];
 }
 
-export async function generateWeaponForUser(
+export async function generateShieldForUser(
     username: string,
     rarity: Rarity[]
-): Promise<StoredWeapon> {
-    logger('debug', `Generating a ${rarity} weapon for ${username}.`);
+): Promise<StoredShield> {
+    logger('debug', `Generating a ${rarity} shield for ${username}.`);
     const userEnchantmentValues = await getUserEnchantmentCount(username);
     const userRefinementValues = await getUserRefinementCount(username);
 
@@ -50,15 +50,15 @@ export async function generateWeaponForUser(
     );
 
     // Get our weapon, our new refinement value, and our new enchantment stats.
-    const weapon = getWeaponFilteredByRarity(rarity);
+    const shield = getShieldFilteredByRarity(rarity);
     const refinementValue = addOrSubtractRandomPercentage(baseRefinementValue);
     const enchantmentStats =
         generateEnchantmentListForUser(baseEnchantmentValue);
 
-    // Combine them into a "stored weapon" and return.
+    // Combine them into a "stored shield" and return.
     return {
-        id: weapon.id,
-        itemType: 'weapon',
+        id: shield.id,
+        itemType: 'shield',
         nickname: null,
         refinements: refinementValue,
         enchantments: enchantmentStats,

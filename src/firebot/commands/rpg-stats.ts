@@ -1,5 +1,8 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
-import { getFullItemTextWithStats } from '../../systems/equipment/helpers';
+import {
+    getFullItemTextWithStats,
+    getItemByID,
+} from '../../systems/equipment/helpers';
 
 import { getCharacterData, getCharacterName } from '../../systems/user/user';
 import { logger, sendChatMessage } from '../firebot';
@@ -13,8 +16,11 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
     const commandUsed = args[1] as string;
     let message = null;
     let item;
+    let storedCharacterClass;
+    let storedTitle;
     const characterName = await getCharacterName(username);
-    const { backpack, mainHand, offHand } = await getCharacterData(username);
+    const { backpack, mainHand, offHand, armor, title, characterClass } =
+        await getCharacterData(username);
 
     switch (commandUsed) {
         case 'backpack':
@@ -33,8 +39,26 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
             item = getFullItemTextWithStats(offHand);
             message = `@${username} ${characterName}'s off hand holds: ${item}`;
             break;
+        case 'armor':
+            item = getFullItemTextWithStats(armor);
+            message = `@${username} ${characterName}'s equipped armor: ${item}`;
+            break;
+        case 'title':
+            item = getFullItemTextWithStats(title);
+            message = `@${username} ${characterName}'s title is: ${item}`;
+            break;
+        case 'class':
+        case 'characterClass':
+            item = getFullItemTextWithStats(characterClass);
+            message = `@${username} ${characterName}'s class is: ${item}`;
+            break;
         default:
-            message = `@${username} ${character.title.name} ${characterName} the ${character.class.name} has: ${character.str} STR, ${character.dex} DEX, ${character.int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
+            storedCharacterClass = getItemByID(
+                character.characterClass.id,
+                'characterClass'
+            );
+            storedTitle = getItemByID(character.title.id, 'title');
+            message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${character.str} STR, ${character.dex} DEX, ${character.int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
     }
 
     if (message != null) {

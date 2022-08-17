@@ -5,7 +5,13 @@ import {
     logger,
     setCharacterMeta,
 } from '../../firebot/firebot';
-import { StoredArmor, StoredWeapon } from '../../types/equipment';
+import {
+    StoredArmor,
+    StoredCharacterClass,
+    StoredShield,
+    StoredTitle,
+    StoredWeapon,
+} from '../../types/equipment';
 import { Character, EquippableSlots } from '../../types/user';
 
 /**
@@ -87,19 +93,13 @@ export async function verifyCharacter(userCommand: UserCommand) {
                 },
             },
             potion: null,
-            class: {
-                name: 'Commoner',
-                str: 0,
-                dex: 0,
-                int: 0,
-                hp: 0,
+            characterClass: {
+                id: 1,
+                itemType: 'characterClass',
             },
             title: {
-                name: 'Worker',
-                str: 0,
-                dex: 0,
-                int: 0,
-                hp: 0,
+                id: 1,
+                itemType: 'title',
             },
         };
 
@@ -115,7 +115,12 @@ export async function verifyCharacter(userCommand: UserCommand) {
 
 export async function equipItemOnUser(
     username: string,
-    item: StoredWeapon | StoredArmor,
+    item:
+        | StoredWeapon
+        | StoredArmor
+        | StoredCharacterClass
+        | StoredShield
+        | StoredTitle,
     slot: EquippableSlots
 ) {
     setCharacterMeta(username, item, slot);

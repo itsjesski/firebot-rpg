@@ -1,6 +1,11 @@
 export type Rarity = 'basic' | 'rare' | 'epic' | 'legendary';
 
-export type ItemTypes = 'weapon' | 'armor';
+export type ItemTypes =
+    | 'weapon'
+    | 'armor'
+    | 'characterClass'
+    | 'title'
+    | 'shield';
 
 export type Enchantments = {
     earth: number;
@@ -39,7 +44,7 @@ export type Armor = {
     id: number;
     name: string;
     cost: number;
-    armor_class: number;
+    armorClass: number;
     properties: string[];
     rarity: Rarity;
     itemType: 'armor';
@@ -52,3 +57,70 @@ export type StoredArmor = {
     refinements: number;
     enchantments: Enchantments;
 };
+
+export type Shield = {
+    id: number;
+    name: string;
+    cost: number;
+    armorClass: number;
+    rarity: Rarity;
+    properties: string[];
+    itemType: 'shield';
+};
+
+export type StoredShield = {
+    id: number;
+    itemType: 'shield';
+    nickname: string | null;
+    refinements: number;
+    enchantments: Enchantments;
+};
+
+export type Title = {
+    id: number;
+    name: string;
+    bonuses: {
+        str: number;
+        dex: number;
+        int: number;
+    };
+    rarity: Rarity;
+    itemType: 'title';
+};
+
+export type StoredTitle = {
+    id: number;
+    itemType: 'title';
+};
+
+export type CharacterClass = {
+    id: number;
+    name: string;
+    bonuses: {
+        str: number;
+        dex: number;
+        int: number;
+    };
+    properties: string[];
+    rarity: Rarity;
+    itemType: 'characterClass';
+};
+
+export type StoredCharacterClass = {
+    id: number;
+    itemType: 'characterClass';
+};
+
+export type EquippableItemsDetails =
+    | Weapon
+    | Armor
+    | Title
+    | CharacterClass
+    | Shield;
+
+export type StorableItems =
+    | StoredArmor
+    | StoredCharacterClass
+    | StoredShield
+    | StoredTitle
+    | StoredWeapon;

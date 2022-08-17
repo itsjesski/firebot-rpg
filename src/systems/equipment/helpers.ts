@@ -1,21 +1,47 @@
 import { armorList } from '../../data/armor';
-import { weaponEnchantmentNames } from '../../data/enchantments';
+import { classList } from '../../data/classes';
+import {
+    armorEnchantmentNames,
+    weaponEnchantmentNames,
+} from '../../data/enchantments';
+import { shieldList } from '../../data/shields';
+import { titleList } from '../../data/titles';
 import { weaponList } from '../../data/weapons';
 import { logger } from '../../firebot/firebot';
 import {
     Armor,
     Enchantments,
+    EquippableItemsDetails,
     Rarity,
-    StoredArmor,
+    StorableItems,
     StoredWeapon,
     Weapon,
+    ItemTypes,
+    CharacterClass,
+    Shield,
+    Title,
 } from '../../types/equipment';
+import { getCharacterData } from '../user/user';
 import {
     filterArrayByProperty,
     getTopValuesFromObject,
-    capitalize,
     addOrSubtractRandomPercentage,
+    sumOfObjectProperties,
 } from '../utils';
+
+/**
+ * Let's us translate our db item types to better display names.
+ * @param item
+ * @returns
+ */
+export function getItemTypeDisplayName(item: EquippableItemsDetails) {
+    switch (item.itemType) {
+        case 'characterClass':
+            return 'class';
+        default:
+            return item.itemType;
+    }
+}
 
 /**
  * This will choose a rarity from one of the given raritys, weighting them so that lower rarities show more often.
@@ -59,33 +85,16 @@ export function getWeightedRarity(rarity: Rarity[]) {
     return rarity[i];
 }
 
-// eslint-disable-next-line no-unused-vars
-function isStoredWeapon(
-    item: StoredWeapon | StoredArmor
-): item is StoredWeapon {
-    return item.itemType === 'weapon';
-}
-
-// eslint-disable-next-line no-unused-vars
-function isStoredArmor(item: StoredWeapon | StoredArmor): item is StoredArmor {
-    return item.itemType === 'armor';
-}
-
-function isWeapon(item: Weapon | Armor): item is Weapon {
-    return (item as Weapon).damage != null;
-}
-
-function isArmor(item: Weapon | Armor): item is Armor {
-    return (item as Armor).armor_class != null;
-}
-
 /**
  * Takes an ID and Item Type, and will return that item from it's list.
  * @param id
  * @param type
  * @returns
  */
-export function getItemByID(id: number, type: string): Weapon | Armor | null {
+export function getItemByID(
+    id: number,
+    type: ItemTypes
+): EquippableItemsDetails | null {
     if (id == null || type == null) {
         return null;
     }
@@ -99,6 +108,19 @@ export function getItemByID(id: number, type: string): Weapon | Armor | null {
             break;
         case 'armor':
             [item] = filterArrayByProperty(armorList, ['id'], id) as Armor[];
+            break;
+        case 'characterClass':
+            [item] = filterArrayByProperty(
+                classList,
+                ['id'],
+                id
+            ) as CharacterClass[];
+            break;
+        case 'shield':
+            [item] = filterArrayByProperty(shieldList, ['id'], id) as Shield[];
+            break;
+        case 'title':
+            [item] = filterArrayByProperty(titleList, ['id'], id) as Title[];
             break;
         default:
     }
@@ -136,11 +158,12 @@ export function getEnchantmentName(
             );
             break;
         case 'armor':
-            enchantmentName = [
-                {
-                    name: 'Protection',
-                },
-            ];
+        case 'shield':
+            enchantmentName = filterArrayByProperty(
+                armorEnchantmentNames,
+                ['enchantments'],
+                topValues
+            );
             break;
         default:
             enchantmentName = [
@@ -157,9 +180,7 @@ export function getEnchantmentName(
  * This takes a stored item, and assembles its full name using it's reinforcements and enchantments.
  * @param item
  */
-export function getFullItemName(
-    item: StoredWeapon | StoredArmor | null
-): string {
+export function getFullItemName(item: StorableItems | null): string {
     logger('debug', 'Compiling full item name.');
     const dbItem = getItemByID(item.id, item.itemType);
 
@@ -167,24 +188,33 @@ export function getFullItemName(
         return 'Nothing';
     }
 
-    let itemName = `${capitalize(dbItem.rarity)} ${dbItem.name}`;
-    const { enchantments } = item;
-    const enchantmentName = getEnchantmentName(enchantments, item.itemType);
+    let itemName = `${dbItem.name}`;
+    let enchantments;
+    let enchantmentName;
 
-    if (enchantmentName != null) {
-        itemName = `${itemName} of ${enchantmentName}`;
-    }
+    // Here we want to only run extra checks if the item has enchantments or refinements.
+    switch (item.itemType) {
+        case 'weapon':
+        case 'armor':
+        case 'shield':
+            enchantments = item.enchantments;
+            enchantmentName = getEnchantmentName(enchantments, item.itemType);
 
-    if (item.refinements !== 0) {
-        itemName = `${itemName} +${item.refinements}`;
+            if (enchantmentName != null) {
+                itemName = `${itemName} of ${enchantmentName}`;
+            }
+
+            if (item.refinements !== 0) {
+                itemName = `${itemName} +${item.refinements}`;
+            }
+            break;
+        default:
     }
 
     return itemName;
 }
 
-export function getFullItemTextWithStats(
-    item: StoredWeapon | StoredArmor | null
-) {
+export function getFullItemTextWithStats(item: StorableItems | null) {
     logger('debug', 'Compiling full item name with stats.');
 
     if (item == null) {
@@ -205,12 +235,42 @@ export function getFullItemTextWithStats(
         return 'Nothing';
     }
 
-    if (isWeapon(dbItem)) {
-        message = `${fullName} | ${dbItem.damage} DMG | ${
-            dbItem.damage_type
-        } | ${dbItem.properties.join(', ')} | ${capitalize(dbItem.rarity)}`;
-    } else if (isArmor(dbItem)) {
-        message = 'soon';
+    switch (dbItem.itemType) {
+        case 'weapon':
+            message = `${fullName} | ${dbItem.damage} DMG | ${
+                dbItem.damage_type
+            } | ${dbItem.properties.join(', ')} | ${
+                dbItem.rarity
+            } ${getItemTypeDisplayName(dbItem)}`;
+            break;
+        case 'armor':
+        case 'shield':
+            message = `${fullName} | ${
+                dbItem.armorClass
+            } AC | ${dbItem.properties.join(', ')} | ${
+                dbItem.rarity
+            } ${getItemTypeDisplayName(dbItem)}`;
+            break;
+        case 'title':
+            message = `${fullName} | +${dbItem.bonuses.str}% STR, +${
+                dbItem.bonuses.dex
+            }% DEX, +${dbItem.bonuses.int}% INT | ${
+                dbItem.rarity
+            } ${getItemTypeDisplayName(dbItem)}`;
+            break;
+        case 'characterClass':
+            message = `${fullName} | +${dbItem.bonuses.str}% STR, +${
+                dbItem.bonuses.dex
+            }% DEX, +${dbItem.bonuses.int}% INT | ${dbItem.properties.join(
+                ', '
+            )} | ${dbItem.rarity} ${getItemTypeDisplayName(dbItem)}`;
+            break;
+        default:
+            logger(
+                'error',
+                'Invalid item type passed to getFullItemTextWithStats'
+            );
+            return 'Invalid';
     }
 
     return message;
@@ -241,4 +301,68 @@ export function generateEnchantmentListForUser(
     }
 
     return enchantments;
+}
+
+export async function getUserEnchantmentCount(
+    username: string
+): Promise<{ main_hand: number; off_hand: number }> {
+    logger('debug', `Getting weapon enchantment count for ${username}.`);
+    const characterStats = await getCharacterData(username);
+    const mainHand = characterStats.mainHand as StoredWeapon;
+    const offHand = characterStats.offHand as StoredWeapon;
+    const values = {
+        main_hand: 0,
+        off_hand: 0,
+    };
+
+    if (mainHand?.enchantments != null) {
+        values.main_hand = sumOfObjectProperties(mainHand.enchantments);
+    }
+
+    if (offHand?.enchantments != null) {
+        values.off_hand = sumOfObjectProperties(offHand.enchantments);
+    }
+
+    logger(
+        'debug',
+        `Enchantment count for main hand of ${username} is ${values.main_hand}.`
+    );
+    logger(
+        'debug',
+        `Enchantment count for off hand of ${username} is ${values.off_hand}.`
+    );
+
+    return values;
+}
+
+export async function getUserRefinementCount(
+    username: string
+): Promise<{ mainHand: number; offHand: number }> {
+    logger('debug', `Getting weapon refinement count for ${username}.`);
+    const characterStats = await getCharacterData(username);
+    const mainHand = characterStats.mainHand as StoredWeapon;
+    const offHand = characterStats.offHand as StoredWeapon;
+    const values = {
+        mainHand: 0,
+        offHand: 0,
+    };
+
+    if (mainHand?.refinements != null) {
+        values.mainHand = mainHand.refinements;
+    }
+
+    if (offHand?.refinements != null) {
+        values.offHand = offHand.refinements;
+    }
+
+    logger(
+        'debug',
+        `Refinement count for main hand of ${username} is ${values.mainHand}.`
+    );
+    logger(
+        'debug',
+        `Refinement count for off hand of ${username} is ${values.offHand}.`
+    );
+
+    return values;
 }

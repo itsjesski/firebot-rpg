@@ -1,40 +1,40 @@
-import { Armor } from '../types/equipment';
+import { Shield } from '../types/equipment';
 
-export const armorList: Armor[] = [
+export const shieldList: Shield[] = [
     {
         id: 1,
         rarity: 'basic',
-        name: 'Shirt',
+        name: 'Buckler',
         cost: 1,
         armorClass: 1,
         properties: ['light'],
-        itemType: 'armor',
+        itemType: 'shield',
     },
     {
         id: 2,
         rarity: 'rare',
-        name: 'Sweatshirt',
+        name: 'Wooden Shield',
         cost: 1,
         armorClass: 1,
         properties: ['light'],
-        itemType: 'armor',
+        itemType: 'shield',
     },
     {
         id: 3,
         rarity: 'epic',
-        name: 'Sweater',
+        name: 'Kite Shield',
         cost: 1,
         armorClass: 1,
         properties: ['light'],
-        itemType: 'armor',
+        itemType: 'shield',
     },
     {
-        id: 4,
+        id: 1,
         rarity: 'legendary',
-        name: 'Jacket',
+        name: 'Heater Shield',
         cost: 1,
         armorClass: 1,
         properties: ['light'],
-        itemType: 'armor',
+        itemType: 'shield',
     },
 ];
