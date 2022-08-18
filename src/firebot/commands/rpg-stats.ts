@@ -4,7 +4,11 @@ import {
     getItemByID,
 } from '../../systems/equipment/helpers';
 
-import { getCharacterData, getCharacterName } from '../../systems/user/user';
+import {
+    getAdjustedUserStat,
+    getCharacterData,
+    getCharacterName,
+} from '../../systems/user/user';
 import { logger, sendChatMessage } from '../firebot';
 
 export async function rpgStatsCommand(userCommand: UserCommand) {
@@ -18,6 +22,9 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
     let item;
     let storedCharacterClass;
     let storedTitle;
+    let str;
+    let dex;
+    let int;
     const characterName = await getCharacterName(username);
     const { backpack, mainHand, offHand, armor, title, characterClass } =
         await getCharacterData(username);
@@ -58,7 +65,10 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
                 'characterClass'
             );
             storedTitle = getItemByID(character.title.id, 'title');
-            message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${character.str} STR, ${character.dex} DEX, ${character.int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
+            str = await getAdjustedUserStat(username, 'str');
+            dex = await getAdjustedUserStat(username, 'dex');
+            int = await getAdjustedUserStat(username, 'int');
+            message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
     }
 
     if (message != null) {

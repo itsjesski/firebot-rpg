@@ -6,13 +6,20 @@ import {
     setCharacterMeta,
 } from '../../firebot/firebot';
 import {
+    CharacterClass,
     StoredArmor,
     StoredCharacterClass,
     StoredShield,
     StoredTitle,
     StoredWeapon,
+    Title,
 } from '../../types/equipment';
-import { Character, EquippableSlots } from '../../types/user';
+import {
+    Character,
+    CharacterStatNames,
+    EquippableSlots,
+} from '../../types/user';
+import { getItemByID } from '../equipment/helpers';
 
 /**
  * Returns the raw character meta data.
@@ -113,6 +120,12 @@ export async function verifyCharacter(userCommand: UserCommand) {
     );
 }
 
+/**
+ * Equips an item on a user in a specific slot.
+ * @param username
+ * @param item
+ * @param slot
+ */
 export async function equipItemOnUser(
     username: string,
     item:
@@ -124,4 +137,28 @@ export async function equipItemOnUser(
     slot: EquippableSlots
 ) {
     setCharacterMeta(username, item, slot);
+}
+
+export async function getAdjustedUserStat(
+    username: string,
+    stat: CharacterStatNames
+): Promise<number> {
+    const character = await getCharacterData(username);
+    const baseStat = character[stat as CharacterStatNames];
+
+    const title = getItemByID(character.title.id, 'title') as Title;
+    const characterClass = getItemByID(
+        character.characterClass.id,
+        'characterClass'
+    ) as CharacterClass;
+
+    const titleBonus = title.bonuses[stat as CharacterStatNames];
+    const characterClassBonus =
+        characterClass.bonuses[stat as CharacterStatNames];
+
+    const totalEquipmentBonusPercentage =
+        (titleBonus + characterClassBonus) / 100;
+
+    // Round down.
+    return Math.floor(baseStat * (1 + totalEquipmentBonusPercentage));
 }
