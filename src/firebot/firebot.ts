@@ -21,6 +21,24 @@ export async function setFirebot(
     firebot = firebotRequest;
 }
 
+export function logger(type: string, message: string): void {
+    const fblogger = firebot.modules.logger;
+
+    switch (type) {
+        case 'debug':
+            fblogger.debug(`FBRPG: ${message}`);
+            break;
+        case 'error':
+            fblogger.error(`FBRPG: ${message}`);
+            break;
+        case 'warn':
+            fblogger.warn(`FBRPG: ${message}`);
+            break;
+        default:
+            fblogger.info(`FBRPG: ${message}`);
+    }
+}
+
 export function getStreamerUsername(): string {
     return firebot.firebot.accounts.streamer.username;
 }
@@ -79,6 +97,7 @@ export async function updateWorldMeta(
 ): Promise<void> {
     const { userDb } = firebot.modules;
     const streamer = getStreamerUsername();
+
     if (property != null) {
         await userDb.updateUserMetadata(
             streamer,
@@ -86,7 +105,9 @@ export async function updateWorldMeta(
             value,
             property
         );
+        return;
     }
+
     await userDb.updateUserMetadata(streamer, 'fbrpg-world', value);
 }
 
@@ -111,24 +132,6 @@ export async function setCharacterMeta(
         value,
         property
     );
-}
-
-export function logger(type: string, message: string): void {
-    const fblogger = firebot.modules.logger;
-
-    switch (type) {
-        case 'debug':
-            fblogger.debug(`FBRPG: ${message}`);
-            break;
-        case 'error':
-            fblogger.error(`FBRPG: ${message}`);
-            break;
-        case 'warn':
-            fblogger.warn(`FBRPG: ${message}`);
-            break;
-        default:
-            fblogger.info(`FBRPG: ${message}`);
-    }
 }
 
 export async function giveCurrencyToUser(amount: number, username: string) {

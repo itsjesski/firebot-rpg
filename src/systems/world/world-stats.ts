@@ -1,5 +1,5 @@
 import { logger, updateWorldMeta, getWorldMeta } from '../../firebot/firebot';
-import { WorldStats } from '../../types/world';
+import { WorldStats, WorldTendencyTypes } from '../../types/world';
 
 /**
  * Generic function for updating any world property.
@@ -7,8 +7,16 @@ import { WorldStats } from '../../types/world';
  * @param property
  * @param value
  */
-async function updateWorldProperty(property: string, value: any) {
-    const rpgMeta = getWorldMeta();
+async function updateWorldProperty(property: string, value: number) {
+    const rpgMeta = await getWorldMeta();
+
+    if (Number.isNaN(value)) {
+        logger(
+            'error',
+            `Invalid amount passed to update world property, ${value}.`
+        );
+        return;
+    }
 
     // World doesn't exist.
     if (rpgMeta == null) {
@@ -28,17 +36,15 @@ async function updateWorldProperty(property: string, value: any) {
  * @param firebot
  */
 export async function setWorldStat(
-    stat: string,
+    stat: WorldTendencyTypes,
     value: number,
     setExactly?: boolean
 ) {
-    logger('debug', `Trying to update world ${stat}...`);
-
     const worldStats = await getWorldMeta();
-    let worldValue = 0;
+    let worldValue = 50;
 
-    if (value == null || worldStats == null) {
-        logger('error', `Trying to set ${stat} to invalid value.`);
+    if (Number.isNaN(value)) {
+        logger('error', `Trying to set ${stat} to invalid value, ${value}.`);
         return;
     }
 
@@ -49,14 +55,8 @@ export async function setWorldStat(
         return;
     }
 
-    // The rest of this lets us add or remove from the current value.
-    if (worldStats != null) {
-        // @ts-ignore
-        worldValue = worldStats[stat];
-    }
-
     // Clamp our world stats to 0 and 100.
-    worldValue = Math.min(Math.max(worldValue + value, 0), 100);
+    worldValue = Math.min(Math.max(worldStats[stat] + value, 0), 100);
 
     await updateWorldProperty(stat, worldValue);
 }

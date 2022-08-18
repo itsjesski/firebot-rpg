@@ -3,8 +3,7 @@ import { Job } from '../types/jobs';
 export const jobList: Job[] = [
     {
         id: 1,
-        template:
-            "A friendly monk wanders by and asks for your advice. He's thankful and gives you a weapon from his cart.",
+        template: `A friendly monk wanders by and asks for #name's advice. He's thankful and gives #name a weapon from his cart.`,
         encounter: false,
         loot: {
             item: {
@@ -21,8 +20,7 @@ export const jobList: Job[] = [
     },
     {
         id: 2,
-        template:
-            'A local blacksmith offers to create a piece of armor for you as promo for his shop. He throws it onto the back of your horse.',
+        template: `A local blacksmith offers to create a piece of armor for #name as promo for his shop. He throws it onto the back of #name's horse.`,
         encounter: false,
         loot: {
             item: {
@@ -39,8 +37,7 @@ export const jobList: Job[] = [
     },
     {
         id: 3,
-        template:
-            'You find a magic book on the side of the road. It teaches you ancient secrets.',
+        template: `#name finds a magic book on the side of the road. It teaches them ancient secrets.`,
         encounter: false,
         loot: {
             item: {
@@ -57,8 +54,7 @@ export const jobList: Job[] = [
     },
     {
         id: 4,
-        template:
-            'You stumble on a abandoned battlefield. Whoever fought here fled in a hurry.',
+        template: `#name stumbles on a abandoned battlefield. Whoever fought here fled in a hurry.`,
         encounter: false,
         loot: {
             item: {
@@ -75,8 +71,7 @@ export const jobList: Job[] = [
     },
     {
         id: 5,
-        template:
-            'A local lord has been keeping track of your exploits and grants you a title and small stipend.',
+        template: `A local lord has been keeping track of #name's exploits and grants them a title and small stipend.`,
         encounter: false,
         loot: {
             item: {

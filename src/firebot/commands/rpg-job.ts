@@ -1,28 +1,34 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 import { jobList } from '../../data/jobs';
-import { generateArmorForUser } from '../../systems/equipment/armor';
-import { generateClassForUser } from '../../systems/equipment/character-class';
 import {
     getItemTypeDisplayName,
     getFullItemName,
     getItemByID,
 } from '../../systems/equipment/helpers';
-import { generateShieldForUser } from '../../systems/equipment/shields';
-import { generateTitleForUser } from '../../systems/equipment/title';
-import { generateWeaponForUser } from '../../systems/equipment/weapons';
+import { rpgLootGenerator } from '../../systems/equipment/loot-generation';
+import {
+    getWorldCitizens,
+    getWorldName,
+    getWorldType,
+} from '../../systems/settings';
 import { equipItemOnUser, getCharacterName } from '../../systems/user/user';
 import { addOrSubtractRandomPercentage } from '../../systems/utils';
 import { updateWorldTendency } from '../../systems/world/world-tendency';
 import { StorableItems } from '../../types/equipment';
-import { Job } from '../../types/jobs';
+import { Job, JobTemplateReplacements } from '../../types/jobs';
 import { WorldTendencyTypes } from '../../types/world';
 import {
     getCurrencyName,
     giveCurrencyToUser,
-    logger,
     sendChatMessage,
 } from '../firebot';
 
+/**
+ * Gives currency reward to the user from a job.
+ * @param job
+ * @param username
+ * @returns
+ */
 async function giveJobCurrencyReward(
     job: Job,
     username: string
@@ -40,25 +46,26 @@ async function giveJobCurrencyReward(
     return total;
 }
 
-async function rpgJobMessageBuilder(
+/**
+ * Builds out the loot part of a job message.
+ * @param username
+ * @param moneyReward
+ * @param itemReward
+ * @returns
+ */
+async function rpgJobMessageLootTemplate(
     username: string,
-    messageTemplate: string,
     moneyReward: number,
     itemReward: StorableItems | null
-) {
+): Promise<string> {
     const currencyName = getCurrencyName();
     const characterName = await getCharacterName(username);
-    let jobMessage = `@${username}: ${messageTemplate}`;
     const rewards: string[] = [];
 
     // They didn't get anything.
     if (moneyReward === 0 && itemReward == null) {
-        jobMessage = `${jobMessage}`;
-        return jobMessage;
+        return '';
     }
-
-    // They got stuff! Let's get a list of our rewards.
-    jobMessage = `${jobMessage} ${characterName} received: `;
 
     // If they got currency, add that to the reward message.
     if (moneyReward > 0) {
@@ -74,38 +81,62 @@ async function rpgJobMessageBuilder(
         );
     }
 
-    return `${jobMessage} ${rewards.join(', ')}.`;
+    return `${characterName} received: ${rewards.join(', ')}`;
 }
 
-async function rpgLootGenerator(
+/**
+ * Replaces template placeholders in a job message with actual text.
+ * @param username
+ * @param message
+ * @returns
+ */
+async function rpgJobMessageTemplateReplacement(
     username: string,
-    job: Job
-): Promise<StorableItems> {
-    const lootType = job.loot.item.itemType;
-    let loot;
+    message: string
+): Promise<string> {
+    const replacements = {
+        name: await getCharacterName(username),
+        worldName: getWorldName(),
+        worldType: getWorldType(),
+        citizenName: getWorldCitizens(),
+    };
 
-    logger('debug', `Generating loot for ${username}`);
+    const result = message.replace(
+        /#(\w+)/g,
+        (match, key) =>
+            replacements[key as keyof JobTemplateReplacements] || match
+    );
 
-    switch (lootType) {
-        case 'weapon':
-            loot = await generateWeaponForUser(username, job.loot.item.rarity);
-            break;
-        case 'armor':
-            loot = await generateArmorForUser(username, job.loot.item.rarity);
-            break;
-        case 'title':
-            loot = await generateTitleForUser(username, job.loot.item.rarity);
-            break;
-        case 'characterClass':
-            loot = await generateClassForUser(username, job.loot.item.rarity);
-            break;
-        case 'shield':
-            loot = await generateShieldForUser(username, job.loot.item.rarity);
-            break;
-        default:
-    }
+    return result;
+}
 
-    return loot;
+/**
+ * Main function for building out the message for our jobs and compiling it.
+ * @param username
+ * @param messageTemplate
+ * @param moneyReward
+ * @param itemReward
+ * @returns
+ */
+async function rpgJobMessageBuilder(
+    username: string,
+    messageTemplate: string,
+    moneyReward: number,
+    itemReward: StorableItems | null
+) {
+    const jobMessage = `@${username}: ${messageTemplate}`;
+    const rewards = await rpgJobMessageLootTemplate(
+        username,
+        moneyReward,
+        itemReward
+    );
+
+    const message = await rpgJobMessageTemplateReplacement(
+        username,
+        `${jobMessage} ${rewards}.`
+    );
+
+    return message;
 }
 
 export async function rpgJobCommand(userCommand: UserCommand) {
@@ -123,7 +154,11 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     // Generate our loot item if there is one.
     // Hand our loot to the player right away.
     if (selectJob.loot?.item?.itemType != null) {
-        itemGiven = await rpgLootGenerator(username, selectJob);
+        itemGiven = await rpgLootGenerator(
+            username,
+            selectJob.loot.item.itemType,
+            selectJob.loot.item.rarity
+        );
         await equipItemOnUser(username, itemGiven, 'backpack');
     }
 

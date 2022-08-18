@@ -1,6 +1,5 @@
-import { getNumberOfOnlineUsers, logger } from '../../firebot/firebot';
-import { WorldTendency } from '../../types/world';
-import { getPercentage } from '../utils';
+import { logger } from '../../firebot/firebot';
+import { WorldTendency, WorldTendencyTypes } from '../../types/world';
 import { setWorldStat } from './world-stats';
 import { clearWorldTendency, worldTendencyPools } from './world-tendency';
 
@@ -11,40 +10,32 @@ async function worldCycleUpdateStats() {
     logger('debug', `Updating world stats for this cycle.`);
 
     const promises: any[] = [];
-    const numOnlineUsers = await getNumberOfOnlineUsers();
 
-    Object.keys(worldTendencyPools).forEach((stat) => {
-        const positivePercentage = getPercentage(
-            worldTendencyPools[stat as keyof WorldTendency].positive,
-            numOnlineUsers
-        );
+    Object.keys(worldTendencyPools).forEach((stat: WorldTendencyTypes) => {
+        const positives =
+            worldTendencyPools[stat as keyof WorldTendency].positive;
+        const negatives =
+            worldTendencyPools[stat as keyof WorldTendency].negative;
+        const netTendency = positives - negatives;
 
-        const negativePercentage = getPercentage(
-            worldTendencyPools[stat as keyof WorldTendency].negative,
-            numOnlineUsers
-        );
-
-        // Compare our percentages to each other.
-        const netTendency = positivePercentage - negativePercentage;
-        const isPositive = netTendency > 0;
-
-        // Changes are needed, lets shrink our number and clamp it between 1 and 2.
-        // Adjust this value to have more wild fluctuations between cycles.
-        let adjustedValue = Math.round(Math.abs(netTendency) / 10);
-        adjustedValue = Math.min(Math.max(adjustedValue, 1), 2);
-
-        // If value change will be negative, make our adjusted value negative.
-        if (!isPositive) {
-            adjustedValue = -Math.abs(adjustedValue);
+        if (netTendency === 0) {
+            logger(
+                'debug',
+                `Net tendency was zero. No changes needed to world tendency for ${stat}.`
+            );
+        } else if (netTendency > 0) {
+            logger(
+                'debug',
+                `World ${stat} shifted globally by +1 for this cycle.`
+            );
+            promises.push(setWorldStat(stat, 1));
+        } else if (netTendency < 0) {
+            logger(
+                'debug',
+                `World ${stat} shifted globally by -1 for this cycle.`
+            );
+            promises.push(setWorldStat(stat, -1));
         }
-
-        logger(
-            'debug',
-            `World ${stat} shifted globally by ${adjustedValue} for this cycle.`
-        );
-
-        // Now, update our stat.
-        promises.push(setWorldStat(stat, adjustedValue));
     });
 
     return Promise.all(promises);
