@@ -34,7 +34,7 @@ export async function generateShieldForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredShield> {
-    logger('debug', `Generating a ${rarity} shield for ${username}.`);
+    logger('debug', `Generating a ${rarity} shield.`);
     const userEnchantmentValues = await getUserEnchantmentCount(username);
     const userRefinementValues = await getUserRefinementCount(username);
 

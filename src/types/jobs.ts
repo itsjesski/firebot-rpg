@@ -1,5 +1,6 @@
 import { ItemTypes, Rarity } from '../types/equipment';
 import { TendencyStat } from '../types/world';
+import { MonsterDifficulties } from './monsters';
 
 export type JobTemplateReplacements = {
     name: string;
@@ -11,7 +12,7 @@ export type JobTemplateReplacements = {
 export type Job = {
     id: number;
     template: string;
-    encounter: boolean;
+    encounter: number | MonsterDifficulties | null;
     world_tendency: TendencyStat;
     loot: {
         item?: {

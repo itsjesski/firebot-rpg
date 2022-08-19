@@ -76,7 +76,7 @@ export async function generateArmorForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredArmor> {
-    logger('debug', `Generating a ${rarity} weapon for ${username}.`);
+    logger('debug', `Generating a ${rarity} armor.`);
 
     const userEnchantmentValues = await getUserArmorEnchantmentCount(username);
     const userRefinementValues = await getUserArmorRefinementCount(username);

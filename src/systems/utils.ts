@@ -1,3 +1,5 @@
+import { DiceRoll } from '@dice-roller/rpg-dice-roller';
+
 export function getPercentage(a: number, b: number): number {
     return (a * b) / 100;
 }
@@ -77,3 +79,8 @@ export const capitalize = (str: string, lower = false) =>
         /(?:^|\s|["'([{])+\S/g,
         (match: string) => match.toUpperCase()
     );
+
+export function rollDice(dice: string): number {
+    const roll = new DiceRoll(dice);
+    return roll.total;
+}

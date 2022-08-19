@@ -7,6 +7,9 @@ export type ItemTypes =
     | 'title'
     | 'shield';
 
+export type WeaponProperties = 'two-handed' | 'light' | 'finesse' | 'thrown';
+export type WeaponDamageTypes = 'piercing' | 'bludgeoning' | 'slashing';
+
 export type Enchantments = {
     earth: number;
     wind: number;
@@ -26,8 +29,8 @@ export type Weapon = {
     name: string;
     cost: number;
     damage: string;
-    damage_type: string;
-    properties: string[];
+    damage_type: WeaponDamageTypes;
+    properties: WeaponProperties[];
     rarity: Rarity;
     itemType: 'weapon';
 };

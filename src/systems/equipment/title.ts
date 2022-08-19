@@ -27,7 +27,7 @@ export async function generateTitleForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredTitle> {
-    logger('debug', `Generating a ${rarity} title for ${username}.`);
+    logger('debug', `Generating a ${rarity} title.`);
     const title = getTitleFilteredByRarity(rarity);
 
     return {

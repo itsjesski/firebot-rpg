@@ -4,7 +4,7 @@ export const jobList: Job[] = [
     {
         id: 1,
         template: `A friendly monk wanders by and asks for #name's advice. He's thankful and gives #name a weapon from his cart.`,
-        encounter: false,
+        encounter: null,
         loot: {
             item: {
                 itemType: 'weapon',
@@ -21,7 +21,7 @@ export const jobList: Job[] = [
     {
         id: 2,
         template: `A local blacksmith offers to create a piece of armor for #name as promo for his shop. He throws it onto the back of #name's horse.`,
-        encounter: false,
+        encounter: null,
         loot: {
             item: {
                 itemType: 'armor',
@@ -37,8 +37,8 @@ export const jobList: Job[] = [
     },
     {
         id: 3,
-        template: `#name finds a magic book on the side of the road. It teaches them ancient secrets.`,
-        encounter: false,
+        template: `#name finds a magic book on the side of the road. It's bait for a trap!`,
+        encounter: 'easy',
         loot: {
             item: {
                 itemType: 'characterClass',
@@ -55,7 +55,7 @@ export const jobList: Job[] = [
     {
         id: 4,
         template: `#name stumbles on a abandoned battlefield. Whoever fought here fled in a hurry.`,
-        encounter: false,
+        encounter: 1,
         loot: {
             item: {
                 itemType: 'shield',
@@ -72,7 +72,7 @@ export const jobList: Job[] = [
     {
         id: 5,
         template: `A local lord has been keeping track of #name's exploits and grants them a title and small stipend.`,
-        encounter: false,
+        encounter: null,
         loot: {
             item: {
                 itemType: 'title',

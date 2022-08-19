@@ -34,7 +34,7 @@ export async function generateWeaponForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredWeapon> {
-    logger('debug', `Generating a ${rarity} weapon for ${username}.`);
+    logger('debug', `Generating a ${rarity} weapon.`);
     const userEnchantmentValues = await getUserEnchantmentCount(username);
     const userRefinementValues = await getUserRefinementCount(username);
 

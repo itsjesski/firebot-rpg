@@ -33,7 +33,7 @@ export async function generateClassForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredCharacterClass> {
-    logger('debug', `Generating a ${rarity} class for ${username}.`);
+    logger('debug', `Generating a ${rarity} class.`);
     const characterClass = getClassFilteredByRarity(rarity);
 
     return {
