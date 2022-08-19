@@ -1,3 +1,4 @@
+import { logger } from '../../firebot/firebot';
 import {
     Rarity,
     StoredArmor,
@@ -17,14 +18,19 @@ import { getMonsterByDifficulty, getMonsterByID } from './monsters';
 async function generateMonsterStats(
     username: string
 ): Promise<{ str: number; dex: number; int: number; hp: number }> {
+    logger('debug', `Generating monster stats.`);
     const user = await getCharacterData(username);
 
-    return {
+    const stats = {
         str: addOrSubtractRandomPercentage(user.str),
         dex: addOrSubtractRandomPercentage(user.dex),
         int: addOrSubtractRandomPercentage(user.int),
         hp: addOrSubtractRandomPercentage(user.totalHP),
     };
+
+    logger('debug', `Monster stats: ${JSON.stringify(stats)}`);
+
+    return stats;
 }
 
 async function generateMonsterOffhand(
@@ -32,6 +38,7 @@ async function generateMonsterOffhand(
     mainHandId: number,
     allowedMonsterRarity: Rarity[]
 ): Promise<StoredWeapon | StoredShield | null> {
+    logger('debug', `Generating monster off hand item.`);
     let item = null;
 
     // See if we need an off hand weapon...
@@ -82,14 +89,19 @@ export async function generateMonster(
     let selectedMonster;
     const allowedMonsterRarity = ['basic', 'rare', 'epic'] as Rarity[];
 
+    logger('debug', `Generating a monster for the encounter: ${monster}`);
+    const monsterIsID = Number(monster);
+
     // Pick the monster we're going to use.
-    if (!Number.isNaN(monster)) {
-        selectedMonster = getMonsterByID(monster as number);
-    } else {
+    if (Number.isNaN(monsterIsID)) {
         selectedMonster = getMonsterByDifficulty(
             monster as MonsterDifficulties
         );
+    } else {
+        selectedMonster = getMonsterByID(monster as number);
     }
+
+    logger('debug', `Selected monster: ${JSON.stringify(selectedMonster)}.`);
 
     // Generate our monster stats.
     const monsterStats = await generateMonsterStats(username);
@@ -152,6 +164,8 @@ export async function generateMonster(
         generatedMonster.mainHand.id,
         allowedMonsterRarity
     );
+
+    logger('debug', `Generated monster: ${JSON.stringify(generatedMonster)}.`);
 
     return generatedMonster;
 }

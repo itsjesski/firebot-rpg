@@ -3,7 +3,7 @@ import { Monster } from '../types/monsters';
 export const monsterList: Monster[] = [
     {
         id: 1,
-        difficulty: 'easy',
+        difficulty: ['easy'],
         name: 'Wolf',
         equipment: {
             armor: false,

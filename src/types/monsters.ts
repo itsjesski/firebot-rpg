@@ -4,7 +4,7 @@ export type MonsterDifficulties = 'easy' | 'medium' | 'hard' | 'legendary';
 
 export type Monster = {
     id: number;
-    difficulty: MonsterDifficulties;
+    difficulty: [MonsterDifficulties];
     name: string;
     equipment: {
         armor: boolean;

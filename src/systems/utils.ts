@@ -1,7 +1,7 @@
 import { DiceRoll } from '@dice-roller/rpg-dice-roller';
 
 export function getPercentage(a: number, b: number): number {
-    return (a * b) / 100;
+    return a / b;
 }
 
 export function sumOfObjectProperties(obj: { [x: string]: any }) {

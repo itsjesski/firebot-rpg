@@ -1,3 +1,4 @@
+import { logger } from '../../firebot/firebot';
 import { Armor, Shield, Weapon } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character, EquippableSlots } from '../../types/user';
@@ -49,10 +50,19 @@ async function didCharacterHit(
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
 ): Promise<boolean> {
-    const defenderArmor = getItemByID(defender.armor.id, 'armor') as Armor;
-    const defenderAC = defenderArmor.armorClass + defender.armor.refinements;
-    const hitBonus = Math.floor(attacker.dex / 5);
+    logger(
+        'debug',
+        `Checking if ${attacker.name} hit ${defender.name} with ${slot}.`
+    );
+    let defenderAC = 0;
 
+    // If defender has armor, let's figure out their ac.
+    if (defender.armor != null) {
+        const defenderArmor = getItemByID(defender.armor.id, 'armor') as Armor;
+        defenderAC = defenderArmor.armorClass + defender.armor.refinements;
+    }
+
+    const hitBonus = Math.floor(attacker.dex / 5);
     const roll = rollDice(`1d20 +${hitBonus}`);
 
     /**
@@ -84,32 +94,38 @@ async function attackCharacter(
     attacker: Character,
     defender: Character | GeneratedMonster
 ): Promise<number> {
-    const mainWeapon = (await getItemByID(
-        attacker.mainHand.id,
-        attacker.mainHand.itemType
-    )) as Weapon;
-
-    const offHand = (await getItemByID(
-        attacker.offHand.id,
-        attacker.offHand.itemType
-    )) as Weapon | Shield | null;
-
+    logger(
+        'debug',
+        `Attack round: ${attacker.name} is attacking ${defender.name}.`
+    );
     let damage = 0;
 
     // Check to see if we did any damage with the main hand.
-    if (didCharacterHit(attacker, defender, 'mainHand')) {
+    const mainWeapon = getItemByID(
+        attacker.mainHand.id,
+        attacker.mainHand.itemType
+    ) as Weapon;
+    if (await didCharacterHit(attacker, defender, 'mainHand')) {
         damage += rollDice(mainWeapon.damage);
     }
 
     // Offhand check
-    if (
-        offHand.itemType === 'weapon' &&
-        didCharacterHit(attacker, defender, 'offHand')
-    ) {
-        damage += rollDice(offHand.damage);
+    if (attacker.offHand != null) {
+        const offHand = getItemByID(
+            attacker.offHand.id,
+            attacker.offHand.itemType
+        ) as Weapon | Shield | null;
+        if (
+            offHand.itemType === 'weapon' &&
+            (await didCharacterHit(attacker, defender, 'offHand'))
+        ) {
+            damage += rollDice(offHand.damage);
+        }
     }
 
-    return damage;
+    logger('debug', `${attacker.name} hit ${defender.name} for ${damage} dmg.`);
+
+    return -Math.abs(damage);
 }
 
 /**
@@ -127,8 +143,12 @@ async function combatRound(
         two: 0,
     };
 
+    logger('debug', 'Combat round started.');
+
     // Determine which character goes first.
     const turnOrder = initiative(characterOne, characterTwo);
+
+    logger('debug', `Turn order: ${turnOrder[0].name}, ${turnOrder[1].name}.`);
 
     // eslint-disable-next-line no-restricted-syntax
     for (const character of turnOrder) {
@@ -141,6 +161,10 @@ async function combatRound(
 
             // If this would kill a character, immediately return results.
             if (healthResults.two - characterTwo.currentHP <= 0) {
+                logger(
+                    'debug',
+                    `Turn results: ${JSON.stringify(healthResults)}`
+                );
                 return healthResults;
             }
         } else if (character === characterTwo) {
@@ -152,11 +176,16 @@ async function combatRound(
 
             // If this would kill a character, immediately return results.
             if (healthResults.one - characterOne.currentHP <= 0) {
+                logger(
+                    'debug',
+                    `Turn results: ${JSON.stringify(healthResults)}`
+                );
                 return healthResults;
             }
         }
     }
 
+    logger('debug', `Turn results: ${JSON.stringify(healthResults)}`);
     return healthResults;
 }
 
@@ -171,19 +200,34 @@ export async function startCombat(
     characterOne: Character,
     characterTwo: Character | GeneratedMonster
 ): Promise<{ one: number; two: number }> {
+    logger(
+        'debug',
+        `Starting combat between ${characterOne.name} and ${characterTwo.name}.`
+    );
     const characterOneTemp = characterOne;
     const characterTwoTemp = characterTwo;
     let roundStats = null;
 
-    while (characterOneTemp.currentHP > 0 || characterTwoTemp.currentHP > 0) {
+    while (characterOneTemp.currentHP > 0 && characterTwoTemp.currentHP > 0) {
         // eslint-disable-next-line no-await-in-loop
         roundStats = await combatRound(characterOneTemp, characterTwoTemp);
         characterOneTemp.currentHP += roundStats.one;
         characterTwoTemp.currentHP += roundStats.two;
+        logger(
+            'debug',
+            `Current health: Player one: ${characterOneTemp.currentHP} and Player two: ${characterTwoTemp.currentHP}.`
+        );
     }
 
-    return {
+    const results = {
         one: characterOneTemp.currentHP,
         two: characterTwoTemp.currentHP,
     };
+
+    logger(
+        'debug',
+        `Combat results: Player one: ${results.one} and Player two: ${results.two}.`
+    );
+
+    return results;
 }
