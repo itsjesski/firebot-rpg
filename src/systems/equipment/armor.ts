@@ -72,6 +72,28 @@ export function getArmorFilteredByRarity(rarity: Rarity[]): Armor {
     return availableArmor[Math.floor(Math.random() * availableArmor.length)];
 }
 
+/**
+ * Returns movement speed for armor types.
+ * @param armor
+ * @returns
+ */
+export function getArmorMovementSpeed(armor: Armor): number {
+    if (armor == null) {
+        return 60;
+    }
+
+    if (armor?.properties.includes('heavy')) {
+        return 20;
+    }
+
+    if (armor?.properties.includes('medium')) {
+        return 30;
+    }
+
+    // Light armor
+    return 40;
+}
+
 export async function generateArmorForUser(
     username: string,
     rarity: Rarity[]

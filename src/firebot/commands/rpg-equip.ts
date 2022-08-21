@@ -106,14 +106,16 @@ async function equipOffHand(username: string) {
     logger('debug', `${username} is trying to equip an off hand item.`);
 
     // Don't let them equip in offhand if it's not a weapon or if there is a two handed item in the main hand.
-    if (
-        backpackDetails.properties.includes('two-handed') ||
-        mainHandItemDetails.properties.includes('two-handed')
-    ) {
-        sendChatMessage(
-            `@${username}, ${characterName} can't equip that item because they are using a two handed weapon.`
-        );
-        return;
+    if (backpackDetails.itemType === 'weapon') {
+        if (
+            backpackDetails.properties.includes('two-handed') ||
+            mainHandItemDetails.properties.includes('two-handed')
+        ) {
+            sendChatMessage(
+                `@${username}, ${characterName} can't equip that item because they are using a two handed weapon.`
+            );
+            return;
+        }
     }
 
     // Equip to off hand.

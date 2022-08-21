@@ -7,8 +7,19 @@ export type ItemTypes =
     | 'title'
     | 'shield';
 
-export type WeaponProperties = 'two-handed' | 'light' | 'finesse' | 'thrown';
+export type WeaponProperties =
+    | 'two-handed'
+    | 'light'
+    | 'finesse'
+    | 'thrown'
+    | 'ammunition'
+    | 'heavy'
+    | 'reach'
+    | 'versatile';
+
 export type WeaponDamageTypes = 'piercing' | 'bludgeoning' | 'slashing';
+
+export type ArmorProperties = 'heavy' | 'medium' | 'light';
 
 export type Enchantments = {
     earth: number;
@@ -32,6 +43,7 @@ export type Weapon = {
     damage_type: WeaponDamageTypes;
     properties: WeaponProperties[];
     rarity: Rarity;
+    range: number;
     itemType: 'weapon';
 };
 
@@ -48,7 +60,7 @@ export type Armor = {
     name: string;
     cost: number;
     armorClass: number;
-    properties: string[];
+    properties: ArmorProperties[];
     rarity: Rarity;
     itemType: 'armor';
 };
@@ -67,7 +79,7 @@ export type Shield = {
     cost: number;
     armorClass: number;
     rarity: Rarity;
-    properties: string[];
+    properties: ArmorProperties[];
     itemType: 'shield';
 };
 

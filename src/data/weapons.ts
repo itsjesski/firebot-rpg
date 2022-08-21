@@ -9,6 +9,7 @@ export const weaponList: Weapon[] = [
         damage: '1d3',
         damage_type: 'slashing',
         properties: ['light', 'thrown'],
+        range: 60,
         itemType: 'weapon',
     },
     {
@@ -19,6 +20,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        range: 60,
         itemType: 'weapon',
     },
     {
@@ -29,6 +31,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        range: 60,
         itemType: 'weapon',
     },
     {
@@ -39,6 +42,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        range: 60,
         itemType: 'weapon',
     },
     {
@@ -49,6 +53,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'piercing',
         properties: ['light', 'finesse', 'thrown'],
+        range: 60,
         itemType: 'weapon',
     },
     {
@@ -59,6 +64,7 @@ export const weaponList: Weapon[] = [
         damage: '1d3',
         damage_type: 'bludgeoning',
         properties: ['two-handed'],
+        range: 60,
         itemType: 'weapon',
     },
 ];

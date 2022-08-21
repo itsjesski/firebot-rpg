@@ -96,6 +96,7 @@ export function getItemByID(
     type: ItemTypes
 ): EquippableItemsDetails | null {
     if (id == null || type == null) {
+        logger('debug', `Null passed to getitembyid, returning null.`);
         return null;
     }
 
@@ -123,6 +124,12 @@ export function getItemByID(
             [item] = filterArrayByProperty(titleList, ['id'], id) as Title[];
             break;
         default:
+    }
+
+    if (item != null) {
+        logger('debug', `Got item: ${JSON.stringify(item)}`);
+    } else {
+        logger('debug', `Failed to find item.`);
     }
 
     return item;
