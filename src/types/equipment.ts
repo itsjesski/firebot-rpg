@@ -45,6 +45,8 @@ export type Weapon = {
     rarity: Rarity;
     range: number;
     itemType: 'weapon';
+    refinements: number;
+    enchantments: Enchantments;
 };
 
 export type StoredWeapon = {
@@ -63,6 +65,8 @@ export type Armor = {
     properties: ArmorProperties[];
     rarity: Rarity;
     itemType: 'armor';
+    refinements: number;
+    enchantments: Enchantments;
 };
 
 export type StoredArmor = {
@@ -81,6 +85,8 @@ export type Shield = {
     rarity: Rarity;
     properties: ArmorProperties[];
     itemType: 'shield';
+    refinements: number;
+    enchantments: Enchantments;
 };
 
 export type StoredShield = {
