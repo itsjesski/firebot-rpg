@@ -13,5 +13,13 @@ export type GameSettings = {
         rangedInMeleePenalty: number;
         hitBonus: number;
         damageBonus: number;
+        heavyMovementSpeed: number;
+        mediumMovementSpeed: number;
+        lightMovementSpeed: number;
+        nakedMovementSpeed: number;
+        heavyDexBonus: number;
+        mediumDexBonus: number;
+        lightDexBonus: number;
+        nakedDexBonus: number;
     };
 };

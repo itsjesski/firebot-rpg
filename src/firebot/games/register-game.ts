@@ -90,8 +90,8 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                 type: 'number',
                 title: 'Off hand fumble chance',
                 description:
-                    'If a weapon in the off hand is not "light", this is the innate miss chance.',
-                tip: 'Off hand weapons will fail to attack this often in melee.',
+                    'If a weapon in the off hand is not "light", this is the fumble chance (skipped turn).',
+                tip: 'Setting this lower makes off hand weapons stronger in melee.',
                 default: 25,
                 sortRank: 1,
                 showBottomHr: false,
@@ -103,8 +103,8 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                 type: 'number',
                 title: 'Ranged in melee fumble chance',
                 description:
-                    'If a ranged weapon is used in melee, this is the fumble chance.',
-                tip: 'Ranged weapons will fail to attack this often when in melee.',
+                    'If a ranged weapon is used in melee, this is the fumble chance (skipped turn).',
+                tip: 'Setting this lower makes ranged weapons stronger in melee.',
                 default: 25,
                 sortRank: 1,
                 showBottomHr: false,
@@ -132,6 +132,110 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Divide character stats by this number to determine damage bonus',
                 tip: 'The lower this number, the higher the damage bonus. This will make characters deal more damage.',
                 default: 10,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            heavyMovementSpeed: {
+                type: 'number',
+                title: 'Heavy Armor Movement',
+                description:
+                    'This is how fast a character moves in heavy armor.',
+                tip: 'The higher this number, the faster heavy armor characters will approach in the ranged phase of combat.',
+                default: 30,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            mediumMovementSpeed: {
+                type: 'number',
+                title: 'Medium Armor Movement',
+                description:
+                    'This is how fast a character moves in medium armor.',
+                tip: 'The higher this number, the faster medium armor characters will approach in the ranged phase of combat.',
+                default: 40,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            lightMovementSpeed: {
+                type: 'number',
+                title: 'Light Armor Movement',
+                description:
+                    'This is how fast a character moves in light armor.',
+                tip: 'The higher this number, the faster light armor characters+ will approach in the ranged phase of combat.',
+                default: 50,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            nakedMovementSpeed: {
+                type: 'number',
+                title: 'Unarmored Movement',
+                description:
+                    'This is how fast a character moves with no armor.',
+                tip: 'The higher this number, the faster unarmored characters will approach in the ranged phase of combat.',
+                default: 50,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            heavyDexBonus: {
+                type: 'number',
+                title: 'Heavy Dex Bonus',
+                description:
+                    'Percent of dex used when calculating bonus AC for this armor type.',
+                tip: 'The higher this number, the better this armor type becomes.',
+                default: 25,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            mediumDexBonus: {
+                type: 'number',
+                title: 'Medium Dex Bonus',
+                description:
+                    'Percent of dex used when calculating bonus AC for this armor type.',
+                tip: 'The higher this number, the better this armor type becomes.',
+                default: 50,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            lightDexBonus: {
+                type: 'number',
+                title: 'Light Dex Bonus',
+                description:
+                    'Percent of dex used when calculating bonus AC for this armor type.',
+                tip: 'The higher this number, the better this armor type becomes.',
+                default: 75,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            nakedDexBonus: {
+                type: 'number',
+                title: 'Unarmored Dex Bonus',
+                description:
+                    'Percent of dex used when calculating bonus AC for this armor type.',
+                tip: 'The higher this number, the better this armor type becomes.',
+                default: 100,
                 sortRank: 2,
                 showBottomHr: false,
                 validation: {

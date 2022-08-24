@@ -63,8 +63,9 @@ export async function getCharacterTotalAC(
     if (defender.armor != null) {
         const defenderArmor = getItemByID(defender.armor.id, 'armor') as Armor;
         const armorDexBonus =
-            (await getAdjustedCharacterStat(defender, 'dex')) *
-            getArmorDexBonus(defenderArmor.properties[0]);
+            ((await getAdjustedCharacterStat(defender, 'dex')) *
+                getArmorDexBonus(defenderArmor.properties[0])) /
+            10;
         defenderAC =
             defenderArmor.armorClass +
             defender.armor.refinements +

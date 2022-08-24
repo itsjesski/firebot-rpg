@@ -1,4 +1,5 @@
 import { getGameSettings } from '../firebot/firebot';
+import { ArmorProperties } from '../types/equipment';
 
 /**
  * Returns the settings for our world.
@@ -89,4 +90,44 @@ export function getDamageBonusSettings(): number {
 export function getRangedInMeleeChanceSettings(): number {
     const gameSettings = getCombatSettings();
     return gameSettings.rangedInMeleePenalty;
+}
+
+/**
+ * Returns movement speed of armor type.
+ * @param armorType
+ */
+export function getArmorMovementSpeedSettings(
+    armorType: ArmorProperties
+): number {
+    const gameSettings = getCombatSettings();
+
+    switch (armorType) {
+        case 'heavy':
+            return gameSettings.heavyMovementSpeed;
+        case 'light':
+            return gameSettings.lightMovementSpeed;
+        case 'medium':
+            return gameSettings.mediumMovementSpeed;
+        default:
+            return gameSettings.nakedMovementSpeed;
+    }
+}
+
+/**
+ * Returns movement speed of armor type.
+ * @param armorType
+ */
+export function getArmorDexBonusSettings(armorType: ArmorProperties): number {
+    const gameSettings = getCombatSettings();
+
+    switch (armorType) {
+        case 'heavy':
+            return gameSettings.heavyDexBonus;
+        case 'light':
+            return gameSettings.lightDexBonus;
+        case 'medium':
+            return gameSettings.mediumDexBonus;
+        default:
+            return gameSettings.nakedDexBonus;
+    }
 }

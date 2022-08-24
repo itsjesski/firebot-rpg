@@ -6,6 +6,10 @@ import {
     Rarity,
     StoredArmor,
 } from '../../types/equipment';
+import {
+    getArmorDexBonusSettings,
+    getArmorMovementSpeedSettings,
+} from '../settings';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -84,16 +88,7 @@ export function getArmorFilteredByRarity(rarity: Rarity[]): Armor {
  * @returns
  */
 export function getArmorDexBonus(armorType: ArmorProperties) {
-    switch (armorType) {
-        case 'heavy':
-            return 0.25;
-        case 'medium':
-            return 0.5;
-        case 'light':
-            return 0.75;
-        default:
-            return 1;
-    }
+    return getArmorDexBonusSettings(armorType) / 100;
 }
 
 /**
@@ -103,19 +98,27 @@ export function getArmorDexBonus(armorType: ArmorProperties) {
  */
 export function getArmorMovementSpeed(armor: Armor): number {
     if (armor == null) {
-        return 60;
+        return getArmorMovementSpeedSettings(null)
+            ? getArmorMovementSpeedSettings(null)
+            : 60;
     }
 
     if (armor?.properties.includes('heavy')) {
-        return 20;
+        return getArmorMovementSpeedSettings('heavy')
+            ? getArmorMovementSpeedSettings('heavy')
+            : 30;
     }
 
     if (armor?.properties.includes('medium')) {
-        return 30;
+        return getArmorMovementSpeedSettings('medium')
+            ? getArmorMovementSpeedSettings('medium')
+            : 40;
     }
 
     // Light armor
-    return 40;
+    return getArmorMovementSpeedSettings('light')
+        ? getArmorMovementSpeedSettings('light')
+        : 50;
 }
 
 export async function generateArmorForUser(
