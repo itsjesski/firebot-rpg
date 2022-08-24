@@ -3,7 +3,7 @@ import {
     armorEnchantmentNames,
 } from '../../data/enchantments';
 import { logger } from '../../firebot/firebot';
-import { Enchantments, StoredWeapon } from '../../types/equipment';
+import { Enchantments, StoredArmor, StoredWeapon } from '../../types/equipment';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -127,4 +127,31 @@ export function getEnchantmentName(
     }
 
     return enchantmentName[0].name;
+}
+
+/**
+ * Gets the armor enchantment count for a user.
+ * @param username
+ * @returns
+ */
+export async function getUserArmorEnchantmentCount(
+    username: string
+): Promise<{ armor: number }> {
+    logger('debug', `Getting armor enchantment count for ${username}.`);
+    const characterStats = await getUserData(username);
+    const armor = characterStats.armor as StoredArmor;
+    const values = {
+        armor: 0,
+    };
+
+    if (armor?.enchantments != null) {
+        values.armor = sumOfObjectProperties(armor.enchantments);
+    }
+
+    logger(
+        'debug',
+        `Enchantment count for ${username}'s armor is ${values.armor}.`
+    );
+
+    return values;
 }

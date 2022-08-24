@@ -2,7 +2,7 @@ import { logger } from '../../firebot/firebot';
 import { Weapon, Shield } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
-import { getCharacterDamageBonus } from '../characters/character-stats';
+import { getCharacterDamageBonus } from '../characters/characters';
 import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
 import { initiative } from './combat';

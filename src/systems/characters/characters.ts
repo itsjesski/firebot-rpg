@@ -38,7 +38,7 @@ export async function getAdjustedCharacterStat(
  * @param slot
  * @returns
  */
-export async function getRange(
+export async function getCharacterWeaponRange(
     character: Character | GeneratedMonster,
     slot: 'mainHand' | 'offHand'
 ): Promise<number> {

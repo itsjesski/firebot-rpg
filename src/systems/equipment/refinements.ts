@@ -1,5 +1,5 @@
 import { logger } from '../../firebot/firebot';
-import { StoredWeapon } from '../../types/equipment';
+import { StoredArmor, StoredWeapon } from '../../types/equipment';
 import { getUserData } from '../user/user';
 
 /**
@@ -34,6 +34,33 @@ export async function getUserHandItemRefinementCount(
     logger(
         'debug',
         `Refinement count for off hand of ${username} is ${values.offHand}.`
+    );
+
+    return values;
+}
+
+/**
+ * Gets the armor refinement count for a user.
+ * @param username
+ * @returns
+ */
+export async function getUserArmorRefinementCount(
+    username: string
+): Promise<{ armor: number }> {
+    logger('debug', `Getting armor refinement count for ${username}.`);
+    const characterStats = await getUserData(username);
+    const armor = characterStats.armor as StoredArmor;
+    const values = {
+        armor: 0,
+    };
+
+    if (armor?.refinements != null) {
+        values.armor = armor.refinements;
+    }
+
+    logger(
+        'debug',
+        `Refinement count for ${username}'s armor is ${values.armor}.`
     );
 
     return values;

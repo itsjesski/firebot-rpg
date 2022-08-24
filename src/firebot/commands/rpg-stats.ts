@@ -1,5 +1,5 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
-import { getAdjustedCharacterStat } from '../../systems/characters/character-stats';
+import { getAdjustedCharacterStat } from '../../systems/characters/characters';
 import {
     getFullItemTextWithStats,
     getItemByID,

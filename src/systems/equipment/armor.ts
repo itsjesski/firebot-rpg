@@ -10,58 +10,13 @@ import {
     getArmorDexBonusSettings,
     getArmorMovementSpeedSettings,
 } from '../settings';
-import { getUserData } from '../user/user';
+import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
 import {
-    addOrSubtractRandomPercentage,
-    filterArrayByProperty,
-    sumOfObjectProperties,
-} from '../utils';
-import { generateEnchantmentList } from './enchantments';
+    generateEnchantmentList,
+    getUserArmorEnchantmentCount,
+} from './enchantments';
 import { getWeightedRarity } from './helpers';
-
-export async function getUserArmorEnchantmentCount(
-    username: string
-): Promise<{ armor: number }> {
-    logger('debug', `Getting armor enchantment count for ${username}.`);
-    const characterStats = await getUserData(username);
-    const armor = characterStats.armor as StoredArmor;
-    const values = {
-        armor: 0,
-    };
-
-    if (armor?.enchantments != null) {
-        values.armor = sumOfObjectProperties(armor.enchantments);
-    }
-
-    logger(
-        'debug',
-        `Enchantment count for ${username}'s armor is ${values.armor}.`
-    );
-
-    return values;
-}
-
-export async function getUserArmorRefinementCount(
-    username: string
-): Promise<{ armor: number }> {
-    logger('debug', `Getting armor refinement count for ${username}.`);
-    const characterStats = await getUserData(username);
-    const armor = characterStats.armor as StoredArmor;
-    const values = {
-        armor: 0,
-    };
-
-    if (armor?.refinements != null) {
-        values.armor = armor.refinements;
-    }
-
-    logger(
-        'debug',
-        `Refinement count for ${username}'s armor is ${values.armor}.`
-    );
-
-    return values;
-}
+import { getUserArmorRefinementCount } from './refinements';
 
 export function getArmorFilteredByRarity(rarity: Rarity[]): Armor {
     logger('debug', `Getting armor filtered by rarity array.`);

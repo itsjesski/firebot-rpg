@@ -5,7 +5,7 @@ import { Character, EquippableSlots } from '../../types/user';
 import {
     getCharacterHitBonus,
     getCharacterTotalAC,
-} from '../characters/character-stats';
+} from '../characters/characters';
 import { getItemByID } from '../equipment/helpers';
 import {
     getOffHandMissChanceSettings,

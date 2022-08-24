@@ -4,8 +4,8 @@ import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
 import {
     getCharacterDamageBonus,
-    getRange,
-} from '../characters/character-stats';
+    getCharacterWeaponRange,
+} from '../characters/characters';
 import { getArmorMovementSpeed } from '../equipment/armor';
 import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
@@ -150,8 +150,8 @@ async function getMaxRangeOfCharacter(
 ): Promise<number> {
     const ranges = [];
 
-    ranges.push(await getRange(character, 'mainHand'));
-    ranges.push(await getRange(character, 'offHand'));
+    ranges.push(await getCharacterWeaponRange(character, 'mainHand'));
+    ranges.push(await getCharacterWeaponRange(character, 'offHand'));
 
     return Math.max(...ranges);
 }
@@ -168,11 +168,11 @@ async function getMaxRangeOfEncounter(
 ): Promise<number> {
     const ranges = [];
 
-    ranges.push(await getRange(characterOne, 'mainHand'));
-    ranges.push(await getRange(characterTwo, 'mainHand'));
+    ranges.push(await getCharacterWeaponRange(characterOne, 'mainHand'));
+    ranges.push(await getCharacterWeaponRange(characterTwo, 'mainHand'));
 
-    ranges.push(await getRange(characterOne, 'offHand'));
-    ranges.push(await getRange(characterTwo, 'offHand'));
+    ranges.push(await getCharacterWeaponRange(characterOne, 'offHand'));
+    ranges.push(await getCharacterWeaponRange(characterTwo, 'offHand'));
 
     return Math.max(...ranges);
 }
