@@ -7,7 +7,10 @@ import {
     getCharacterTotalAC,
 } from '../characters/character-stats';
 import { getItemByID } from '../equipment/helpers';
-import { getOffHandMissChanceSettings } from '../settings';
+import {
+    getOffHandMissChanceSettings,
+    getRangedInMeleeChanceSettings,
+} from '../settings';
 import { rollDice } from '../utils';
 
 /**
@@ -45,11 +48,66 @@ function offhandFumbled(attacker: Character): boolean {
 }
 
 /**
+ * Check to see if we fumbled our ranged attack in melee.
+ * @param attacker
+ * @returns
+ */
+function rangedFumbled(attacker: Character): boolean {
+    const missChance = getRangedInMeleeChanceSettings()
+        ? getRangedInMeleeChanceSettings()
+        : 25;
+    const miss = rollDice(`1d100`) <= missChance;
+    if (miss) {
+        logger('debug', `${attacker.name} ranged fumbled!`);
+        return true;
+    }
+
+    return false;
+}
+
+export async function didCharacterHitRanged(
+    attacker: Character,
+    defender: Character | GeneratedMonster,
+    slot: EquippableSlots
+) {
+    logger(
+        'debug',
+        `Checking if ${attacker.name} hit ${defender.name} with ${slot}.`
+    );
+
+    const defenderAC = await getCharacterTotalAC(defender);
+    const hitBonus = getCharacterHitBonus(attacker, slot);
+    const roll = rollDice(`1d20 +${hitBonus}`);
+
+    if (slot === 'offHand') {
+        // If we're using an offhand weapon, see if we fumbled.
+        if (offhandFumbled(attacker)) {
+            return false;
+        }
+    }
+
+    // Check to see if our roll beats or hits the defender AC.
+    if (roll >= defenderAC) {
+        logger(
+            'debug',
+            `${attacker.name} hit! Hit: ${roll} vs AC: ${defenderAC}.`
+        );
+        return true;
+    }
+
+    logger(
+        'debug',
+        `${attacker.name} missed! Hit: ${roll} vs AC: ${defenderAC}.`
+    );
+    return false;
+}
+
+/**
  * Takes two characters and checks to see if we hit.
  * @param attacker
  * @param defender
  */
-export async function didCharacterHit(
+export async function didCharacterHitMelee(
     attacker: Character,
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
@@ -62,6 +120,16 @@ export async function didCharacterHit(
     const defenderAC = await getCharacterTotalAC(defender);
     const hitBonus = getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20 +${hitBonus}`);
+
+    const item = getItemByID(
+        attacker[slot as EquippableSlots].id,
+        'weapon'
+    ) as Weapon;
+
+    // If we're using a ranged weapon in melee, see if we fumbled.
+    if (item.properties.includes('ammunition') && rangedFumbled(attacker)) {
+        return false;
+    }
 
     // If we're using an offhand weapon, see if we fumbled.
     if (slot === 'offHand') {

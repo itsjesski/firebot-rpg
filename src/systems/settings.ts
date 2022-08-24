@@ -72,3 +72,12 @@ export function getToHitBonusSettings(): number {
     const gameSettings = getCombatSettings();
     return gameSettings.toHitBonus;
 }
+
+/**
+ * The chance ranged weapons fumble in combat.
+ * @returns
+ */
+export function getRangedInMeleeChanceSettings(): number {
+    const gameSettings = getCombatSettings();
+    return gameSettings.rangedInMeleePenalty;
+}

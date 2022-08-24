@@ -7,7 +7,7 @@ import { getArmorMovementSpeed } from '../equipment/armor';
 import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
 import { initiative } from './combat';
-import { didCharacterHit } from './combat-hit';
+import { didCharacterHitRanged } from './combat-hit';
 
 async function rangedAttack(
     attacker: Character,
@@ -29,7 +29,7 @@ async function rangedAttack(
     // See if we need to attack with our main weapon.
     if (
         mainWeapon.range >= distance &&
-        (await didCharacterHit(attacker, defender, 'mainHand'))
+        (await didCharacterHitRanged(attacker, defender, 'mainHand'))
     ) {
         damage += rollDice(mainWeapon.damage);
     }
@@ -45,7 +45,7 @@ async function rangedAttack(
             // Check if we're attacking with offhand.
             if (
                 offHandWeapon.range >= distance &&
-                (await didCharacterHit(attacker, defender, 'offHand'))
+                (await didCharacterHitRanged(attacker, defender, 'offHand'))
             ) {
                 damage += rollDice(mainWeapon.damage);
             }

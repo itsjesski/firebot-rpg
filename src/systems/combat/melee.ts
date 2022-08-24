@@ -5,7 +5,7 @@ import { Character } from '../../types/user';
 import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
 import { initiative } from './combat';
-import { didCharacterHit } from './combat-hit';
+import { didCharacterHitMelee } from './combat-hit';
 
 /**
  * First character attacking second character. Returns damage dealt if any.
@@ -27,7 +27,7 @@ async function attackCharacter(
         attacker.mainHand.id,
         attacker.mainHand.itemType
     ) as Weapon;
-    if (await didCharacterHit(attacker, defender, 'mainHand')) {
+    if (await didCharacterHitMelee(attacker, defender, 'mainHand')) {
         damage += rollDice(mainWeapon.damage);
     }
 
@@ -39,7 +39,7 @@ async function attackCharacter(
         ) as Weapon | Shield | null;
         if (
             offHand.itemType === 'weapon' &&
-            (await didCharacterHit(attacker, defender, 'offHand'))
+            (await didCharacterHitMelee(attacker, defender, 'offHand'))
         ) {
             damage += rollDice(offHand.damage);
         }

@@ -88,10 +88,23 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
         settings: {
             offHandMissChance: {
                 type: 'number',
-                title: 'Off hand miss chance percentage',
+                title: 'Off hand fumble chance',
                 description:
                     'If a weapon in the off hand is not "light", this is the innate miss chance.',
-                tip: 'The lower this is the stronger offhand weapons will become and the less useful the "light" property will be.',
+                tip: 'Off hand weapons will fail to attack this often in melee.',
+                default: 25,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            rangedInMeleePenalty: {
+                type: 'number',
+                title: 'Ranged in melee fumble chance',
+                description:
+                    'If a ranged weapon is used in melee, this is the fumble chance.',
+                tip: 'Ranged weapons will fail to attack this often when in melee.',
                 default: 25,
                 sortRank: 1,
                 showBottomHr: false,
