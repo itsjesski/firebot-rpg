@@ -68,9 +68,18 @@ export function getOffHandMissChanceSettings(): number {
  * Returns our to hit bonus settings.
  * @returns
  */
-export function getToHitBonusSettings(): number {
+export function getHitBonusSettings(): number {
     const gameSettings = getCombatSettings();
-    return gameSettings.toHitBonus;
+    return gameSettings.hitBonus;
+}
+
+/**
+ * Returns our to damage bonus settings.
+ * @returns
+ */
+export function getDamageBonusSettings(): number {
+    const gameSettings = getCombatSettings();
+    return gameSettings.damageBonus;
 }
 
 /**

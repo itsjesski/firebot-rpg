@@ -11,6 +11,7 @@ export type GameSettings = {
     combatSettings: {
         offHandMissChance: number;
         rangedInMeleePenalty: number;
-        toHitBonus: number;
+        hitBonus: number;
+        damageBonus: number;
     };
 };

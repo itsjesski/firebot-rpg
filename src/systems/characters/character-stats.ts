@@ -7,7 +7,7 @@ import {
 } from '../../types/user';
 import { getArmorDexBonus } from '../equipment/armor';
 import { getItemByID } from '../equipment/helpers';
-import { getToHitBonusSettings } from '../settings';
+import { getDamageBonusSettings, getHitBonusSettings } from '../settings';
 
 export async function getAdjustedCharacterStat(
     character: Character,
@@ -86,36 +86,90 @@ export function getCharacterHitBonus(
     attacker: Character | GeneratedMonster,
     slot: EquippableSlots
 ): number {
-    const toHitDivider = getToHitBonusSettings() ? getToHitBonusSettings() : 5;
+    const toHitDivider = getHitBonusSettings() ? getHitBonusSettings() : 10;
     let item;
 
+    // Get our item first.
     if (slot === 'mainHand') {
         item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
-
-        if (item.properties.includes('heavy')) {
-            return Math.floor(attacker.str / toHitDivider);
-        }
-
-        if (item.properties.includes('finesse')) {
-            return Math.floor(attacker.dex / toHitDivider);
-        }
-
-        return Math.floor((attacker.str + attacker.dex / 2) / toHitDivider);
     }
 
     if (slot === 'offHand' && attacker.offHand.itemType === 'weapon') {
-        item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
-
-        if (item.properties.includes('heavy')) {
-            return Math.floor(attacker.str / toHitDivider);
-        }
-
-        if (item.properties.includes('finesse')) {
-            return Math.floor(attacker.dex / toHitDivider);
-        }
-
-        return Math.floor((attacker.str + attacker.dex / 2) / toHitDivider);
+        item = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
     }
 
-    return 0;
+    if (item == null) {
+        return 0;
+    }
+
+    // Now, adjust for item properties.
+    if (item.properties.includes('versatile')) {
+        return (
+            Math.floor(Math.max(attacker.str, attacker.dex)) + item.refinements
+        );
+    }
+
+    if (item.properties.includes('heavy')) {
+        return Math.floor(attacker.str / toHitDivider) + item.refinements;
+    }
+
+    if (item.properties.includes('finesse')) {
+        return Math.floor(attacker.dex / toHitDivider) + item.refinements;
+    }
+
+    // If it's a regular weapon, then we go with str + dex / 2.
+    return (
+        Math.floor((attacker.str + attacker.dex / 2) / toHitDivider) +
+        item.refinements
+    );
+}
+
+/**
+ * Gets the to hit bonus based on weapon type.
+ * @param attacker
+ * @param slot
+ * @returns
+ */
+export function getCharacterDamageBonus(
+    attacker: Character | GeneratedMonster,
+    slot: EquippableSlots
+): number {
+    const damageBonusDivider = getDamageBonusSettings()
+        ? getDamageBonusSettings()
+        : 10;
+    let item;
+
+    // Get our item first.
+    if (slot === 'mainHand') {
+        item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
+    }
+
+    if (slot === 'offHand' && attacker.offHand.itemType === 'weapon') {
+        item = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
+    }
+
+    if (item == null) {
+        return 0;
+    }
+
+    // Now, adjust for item properties.
+    if (item.properties.includes('versatile')) {
+        return (
+            Math.floor(Math.max(attacker.str, attacker.dex)) + item.refinements
+        );
+    }
+
+    if (item.properties.includes('heavy')) {
+        return Math.floor(attacker.str / damageBonusDivider) + item.refinements;
+    }
+
+    if (item.properties.includes('finesse')) {
+        return Math.floor(attacker.dex / damageBonusDivider) + item.refinements;
+    }
+
+    // If it's a regular weapon, then we go with str + dex / 2.
+    return (
+        Math.floor((attacker.str + attacker.dex / 2) / damageBonusDivider) +
+        item.refinements
+    );
 }

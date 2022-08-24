@@ -2,6 +2,7 @@ import { logger } from '../../firebot/firebot';
 import { Weapon, Shield } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
+import { getCharacterDamageBonus } from '../characters/character-stats';
 import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
 import { initiative } from './combat';
@@ -28,7 +29,9 @@ async function attackCharacter(
         attacker.mainHand.itemType
     ) as Weapon;
     if (await didCharacterHitMelee(attacker, defender, 'mainHand')) {
-        damage += rollDice(mainWeapon.damage);
+        damage +=
+            rollDice(mainWeapon.damage) +
+            getCharacterDamageBonus(attacker, 'mainHand');
     }
 
     // Offhand check
@@ -41,7 +44,9 @@ async function attackCharacter(
             offHand.itemType === 'weapon' &&
             (await didCharacterHitMelee(attacker, defender, 'offHand'))
         ) {
-            damage += rollDice(offHand.damage);
+            damage +=
+                rollDice(offHand.damage) +
+                getCharacterDamageBonus(attacker, 'offHand');
         }
     }
 

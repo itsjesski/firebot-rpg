@@ -112,13 +112,26 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     required: true,
                 },
             },
-            toHitBonus: {
+            hitBonus: {
                 type: 'number',
-                title: 'To hit bonus',
+                title: 'Hit bonus',
                 description:
                     'Divide character stats by this number to determine hit bonus',
                 tip: 'The lower this number, the higher the hit bonus. This will make characters hit more often.',
-                default: 5,
+                default: 10,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            damageBonus: {
+                type: 'number',
+                title: 'Damage bonus',
+                description:
+                    'Divide character stats by this number to determine damage bonus',
+                tip: 'The lower this number, the higher the damage bonus. This will make characters deal more damage.',
+                default: 10,
                 sortRank: 2,
                 showBottomHr: false,
                 validation: {
