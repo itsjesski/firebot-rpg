@@ -8,7 +8,11 @@ import {
     StoredWeapon,
     Weapon,
 } from '../../types/equipment';
-import { GeneratedMonster, MonsterDifficulties } from '../../types/monsters';
+import {
+    GeneratedMonster,
+    Monster,
+    MonsterDifficulties,
+} from '../../types/monsters';
 import { getItemByID } from '../equipment/helpers';
 import { rpgLootGenerator } from '../equipment/loot-generation';
 import { getUserData } from '../user/user';
@@ -16,7 +20,8 @@ import { addOrSubtractRandomPercentage } from '../utils';
 import { getMonsterByDifficulty, getMonsterByID } from './monsters';
 
 async function generateMonsterStats(
-    username: string
+    username: string,
+    monster: Monster
 ): Promise<{ str: number; dex: number; int: number; hp: number }> {
     logger('debug', `Generating monster stats.`);
     const user = await getUserData(username);
@@ -27,6 +32,11 @@ async function generateMonsterStats(
         int: addOrSubtractRandomPercentage(user.int),
         hp: addOrSubtractRandomPercentage(user.totalHP),
     };
+
+    stats.str += stats.str * (monster.bonuses.str / 100);
+    stats.dex += stats.dex * (monster.bonuses.dex / 100);
+    stats.int += stats.int * (monster.bonuses.int / 100);
+    stats.hp += stats.hp * (monster.bonuses.hp / 100);
 
     logger('debug', `Monster stats: ${JSON.stringify(stats)}`);
 
@@ -104,17 +114,17 @@ export async function generateMonster(
     logger('debug', `Selected monster: ${JSON.stringify(selectedMonster)}.`);
 
     // Generate our monster stats.
-    const monsterStats = await generateMonsterStats(username);
+    const monsterStats = await generateMonsterStats(username, selectedMonster);
 
     // Our generated monster stats.
     const generatedMonster: GeneratedMonster = {
         id: selectedMonster.id,
         name: selectedMonster.name,
-        totalHP: monsterStats.hp + selectedMonster.bonuses.hp,
-        currentHP: monsterStats.hp + selectedMonster.bonuses.hp,
-        str: monsterStats.str + selectedMonster.bonuses.str,
-        dex: monsterStats.dex + selectedMonster.bonuses.dex,
-        int: monsterStats.int + selectedMonster.bonuses.int,
+        totalHP: monsterStats.hp,
+        currentHP: monsterStats.hp,
+        str: monsterStats.str,
+        dex: monsterStats.dex,
+        int: monsterStats.int,
         backpack: null,
         armor: null,
         mainHand: null,
