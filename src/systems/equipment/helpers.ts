@@ -193,8 +193,8 @@ export function getFullItemTextWithStats(item: StorableItems | null) {
             message = `${fullName} | ${dbItem.damage} DMG | ${
                 dbItem.damage_type
             } | ${dbItem.properties.join(', ')} | ${
-                dbItem.rarity
-            } ${getItemTypeDisplayName(dbItem)}`;
+                dbItem.range > 0 ? dbItem.range : 'melee'
+            } range | ${dbItem.rarity} ${getItemTypeDisplayName(dbItem)}`;
             break;
         case 'armor':
         case 'shield':

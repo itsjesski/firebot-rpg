@@ -349,7 +349,7 @@ export const weaponList: Weapon[] = [
         damage: '1d10',
         damage_type: 'slashing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 0,
         enchantments: {
@@ -409,7 +409,7 @@ export const weaponList: Weapon[] = [
         damage: '1d10',
         damage_type: 'slashing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 0,
         enchantments: {
@@ -429,7 +429,7 @@ export const weaponList: Weapon[] = [
         damage: '1d12',
         damage_type: 'piercing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 0,
         enchantments: {
@@ -509,7 +509,7 @@ export const weaponList: Weapon[] = [
         damage: '1d10',
         damage_type: 'piercing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 0,
         enchantments: {
@@ -649,7 +649,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'slashing',
         properties: ['finesse', 'reach'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 0,
         enchantments: {
@@ -1089,7 +1089,7 @@ export const weaponList: Weapon[] = [
         damage: '1d10',
         damage_type: 'slashing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 1,
         enchantments: {
@@ -1149,7 +1149,7 @@ export const weaponList: Weapon[] = [
         damage: '1d10',
         damage_type: 'slashing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 1,
         enchantments: {
@@ -1169,7 +1169,7 @@ export const weaponList: Weapon[] = [
         damage: '1d12',
         damage_type: 'piercing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 1,
         enchantments: {
@@ -1249,7 +1249,7 @@ export const weaponList: Weapon[] = [
         damage: '1d10',
         damage_type: 'piercing',
         properties: ['heavy', 'reach', 'two-handed'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 1,
         enchantments: {
@@ -1389,7 +1389,7 @@ export const weaponList: Weapon[] = [
         damage: '1d4',
         damage_type: 'slashing',
         properties: ['finesse', 'reach'],
-        range: 0,
+        range: 50,
         itemType: 'weapon',
         refinements: 1,
         enchantments: {
