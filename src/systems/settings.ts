@@ -37,7 +37,38 @@ export function getWorldCitizens(): string {
     return gameSettings.citizens;
 }
 
-export function getWorldCycleTime(): number {
+/**
+ * Get our world cycle time.
+ * @returns
+ */
+export function getWorldCycleTimeSettings(): number {
     const gameSettings = getWorldSettings();
     return gameSettings.cycleTime;
+}
+
+/**
+ * Get all combat settings
+ * @returns
+ */
+export function getCombatSettings() {
+    const settings = getGameSettings();
+    return settings.combatSettings;
+}
+
+/**
+ * Return our innate off hand miss chance.
+ * @returns
+ */
+export function getOffHandMissChanceSettings(): number {
+    const gameSettings = getCombatSettings();
+    return gameSettings.offHandMissChance;
+}
+
+/**
+ * Returns our to hit bonus settings.
+ * @returns
+ */
+export function getToHitBonusSettings(): number {
+    const gameSettings = getCombatSettings();
+    return gameSettings.toHitBonus;
 }

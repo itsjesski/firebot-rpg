@@ -35,7 +35,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                 title: 'Cycle Time',
                 description:
                     'How many seconds should each world cycle be? Changing this requires you restart Firebot.',
-                tip: 'This is the timer used for each "round" of the game.',
+                tip: 'This is the timer used for each "round" of the game. Extending this time will slow down how often world stats change.',
                 default: 60,
                 sortRank: 1,
                 showBottomHr: false,
@@ -74,6 +74,39 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                 tip: 'This just adds flavor. You could have a kingdom of elves, orcs, humans, people, etc...',
                 default: 'People',
                 sortRank: 4,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+        },
+    },
+    combatSettings: {
+        title: 'Combat Settings',
+        description: 'Settings related to combat.',
+        sortRank: 3,
+        settings: {
+            offHandMissChance: {
+                type: 'number',
+                title: 'Off hand miss chance percentage',
+                description:
+                    'If a weapon in the off hand is not "light", this is the innate miss chance.',
+                tip: 'The lower this is the stronger offhand weapons will become and the less useful the "light" property will be.',
+                default: 25,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            toHitBonus: {
+                type: 'number',
+                title: 'To hit bonus',
+                description:
+                    'Divide character stats by this number to determine hit bonus',
+                tip: 'The lower this number, the higher the hit bonus. This will make characters hit more often.',
+                default: 5,
+                sortRank: 2,
                 showBottomHr: false,
                 validation: {
                     required: true,

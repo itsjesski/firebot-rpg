@@ -8,4 +8,8 @@ export type GameSettings = {
         citizens: string;
         cycleTime: number;
     };
+    combatSettings: {
+        offHandMissChance: number;
+        toHitBonus: number;
+    };
 };

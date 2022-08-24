@@ -1,25 +1,18 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
 import {
-    getCharacterMeta,
+    getCharacterMeta as getUserMeta,
     logger,
-    setCharacterMeta,
+    setCharacterMeta as setUserMeta,
 } from '../../firebot/firebot';
 import {
-    CharacterClass,
     StoredArmor,
     StoredCharacterClass,
     StoredShield,
     StoredTitle,
     StoredWeapon,
-    Title,
 } from '../../types/equipment';
-import {
-    Character,
-    CharacterStatNames,
-    EquippableSlots,
-} from '../../types/user';
-import { getItemByID } from '../equipment/helpers';
+import { Character, EquippableSlots } from '../../types/user';
 
 /**
  * Returns the raw character meta data.
@@ -27,8 +20,8 @@ import { getItemByID } from '../equipment/helpers';
  * @param username
  * @returns
  */
-export async function getCharacterData(username: string): Promise<Character> {
-    const characterMeta = await getCharacterMeta(username);
+export async function getUserData(username: string): Promise<Character> {
+    const characterMeta = await getUserMeta(username);
     return characterMeta;
 }
 
@@ -37,8 +30,8 @@ export async function getCharacterData(username: string): Promise<Character> {
  * @param username
  * @returns
  */
-export async function getCharacterName(username: string): Promise<string> {
-    const character = await getCharacterData(username);
+export async function getUserName(username: string): Promise<string> {
+    const character = await getUserData(username);
     if (character.name != null) {
         return character.name;
     }
@@ -51,11 +44,11 @@ export async function getCharacterName(username: string): Promise<string> {
  * Also serves to build an initial character.
  * @param firebot
  */
-export async function verifyCharacter(userCommand: UserCommand) {
+export async function verifyUser(userCommand: UserCommand) {
     const userName = userCommand.commandSender;
     logger('debug', `Verifying the character state for ${userName}...`);
 
-    const characterStats = await getCharacterData(userName);
+    const characterStats = await getUserData(userName);
 
     if (characterStats == null) {
         logger(
@@ -110,7 +103,7 @@ export async function verifyCharacter(userCommand: UserCommand) {
             },
         };
 
-        await setCharacterMeta(userName, newCharacter);
+        await setUserMeta(userName, newCharacter);
         return;
     }
 
@@ -136,29 +129,5 @@ export async function equipItemOnUser(
         | StoredTitle,
     slot: EquippableSlots
 ) {
-    setCharacterMeta(username, item, slot);
-}
-
-export async function getAdjustedUserStat(
-    username: string,
-    stat: CharacterStatNames
-): Promise<number> {
-    const character = await getCharacterData(username);
-    const baseStat = character[stat as CharacterStatNames];
-
-    const title = getItemByID(character.title.id, 'title') as Title;
-    const characterClass = getItemByID(
-        character.characterClass.id,
-        'characterClass'
-    ) as CharacterClass;
-
-    const titleBonus = title.bonuses[stat as CharacterStatNames];
-    const characterClassBonus =
-        characterClass.bonuses[stat as CharacterStatNames];
-
-    const totalEquipmentBonusPercentage =
-        (titleBonus + characterClassBonus) / 100;
-
-    // Round down.
-    return Math.floor(baseStat * (1 + totalEquipmentBonusPercentage));
+    setUserMeta(username, item, slot);
 }

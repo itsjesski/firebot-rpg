@@ -1,11 +1,11 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
-import { getCharacterName } from '../../systems/user/user';
+import { getUserName } from '../../systems/user/user';
 import { logger, sendChatMessage, setCharacterMeta } from '../firebot';
 
 export async function rpgNameCommand(userCommand: UserCommand) {
     const username = userCommand.commandSender;
     const { args } = userCommand;
-    const originalName = await getCharacterName(username);
+    const originalName = await getUserName(username);
     const newName = args.splice(1, 5).join(' ');
 
     if (newName.length > 30 || newName.length === 0) {

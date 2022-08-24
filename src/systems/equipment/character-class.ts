@@ -8,6 +8,11 @@ import {
 import { filterArrayByProperty } from '../utils';
 import { getWeightedRarity } from './helpers';
 
+/**
+ * Gets a random class by the given rarity.
+ * @param rarity
+ * @returns
+ */
 export function getClassFilteredByRarity(rarity: Rarity[]): CharacterClass {
     logger('debug', `Getting class filtered by rarity array.`);
 
@@ -29,8 +34,12 @@ export function getClassFilteredByRarity(rarity: Rarity[]): CharacterClass {
     ];
 }
 
-export async function generateClassForUser(
-    username: string,
+/**
+ * Generates a class for user on character.
+ * @param rarity
+ * @returns
+ */
+export async function generateClass(
     rarity: Rarity[]
 ): Promise<StoredCharacterClass> {
     logger('debug', `Generating a ${rarity} class.`);

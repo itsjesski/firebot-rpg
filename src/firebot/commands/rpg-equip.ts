@@ -1,11 +1,11 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 import { getItemByID } from '../../systems/equipment/helpers';
-import { getCharacterData, getCharacterName } from '../../systems/user/user';
+import { getUserData, getUserName } from '../../systems/user/user';
 import { Shield, Weapon } from '../../types/equipment';
 import { logger, sendChatMessage, setCharacterMeta } from '../firebot';
 
 async function isBackpackEmpty(username: string) {
-    const { backpack } = await getCharacterData(username);
+    const { backpack } = await getUserData(username);
     if (backpack == null) {
         return true;
     }
@@ -13,8 +13,8 @@ async function isBackpackEmpty(username: string) {
 }
 
 async function equipMainHand(username: string) {
-    const { backpack } = await getCharacterData(username);
-    const characterName = await getCharacterName(username);
+    const { backpack } = await getUserData(username);
+    const characterName = await getUserName(username);
     const backpackIsEmpty = await isBackpackEmpty(username);
 
     // Check if backpack is empty first.
@@ -65,8 +65,8 @@ async function equipMainHand(username: string) {
 }
 
 async function equipOffHand(username: string) {
-    const { backpack, mainHand } = await getCharacterData(username);
-    const characterName = await getCharacterName(username);
+    const { backpack, mainHand } = await getUserData(username);
+    const characterName = await getUserName(username);
     const backpackIsEmpty = await isBackpackEmpty(username);
 
     // Check if backpack is empty.
@@ -127,8 +127,8 @@ async function equipOffHand(username: string) {
 }
 
 async function equipArmor(username: string) {
-    const { backpack } = await getCharacterData(username);
-    const characterName = await getCharacterName(username);
+    const { backpack } = await getUserData(username);
+    const characterName = await getUserName(username);
     const backpackIsEmpty = await isBackpackEmpty(username);
 
     if (backpackIsEmpty) {
@@ -156,8 +156,8 @@ async function equipArmor(username: string) {
 }
 
 async function equipTitle(username: string) {
-    const { backpack } = await getCharacterData(username);
-    const characterName = await getCharacterName(username);
+    const { backpack } = await getUserData(username);
+    const characterName = await getUserName(username);
     const backpackIsEmpty = await isBackpackEmpty(username);
 
     if (backpackIsEmpty) {
@@ -185,8 +185,8 @@ async function equipTitle(username: string) {
 }
 
 async function equipClass(username: string) {
-    const { backpack } = await getCharacterData(username);
-    const characterName = await getCharacterName(username);
+    const { backpack } = await getUserData(username);
+    const characterName = await getUserName(username);
     const backpackIsEmpty = await isBackpackEmpty(username);
 
     if (backpackIsEmpty) {
@@ -218,7 +218,7 @@ export async function rpgEquipCommand(userCommand: UserCommand) {
     const { args } = userCommand;
     const commandUsed = args[1] as string;
     const backpackIsEmpty = await isBackpackEmpty(username);
-    const characterName = await getCharacterName(username);
+    const characterName = await getUserName(username);
 
     logger('debug', `${username} is trying to equip an item.`);
 

@@ -1,9 +1,9 @@
 import { logger } from '../../firebot/firebot';
 import { ItemTypes, Rarity, StorableItems } from '../../types/equipment';
 import { generateArmorForUser } from './armor';
-import { generateClassForUser } from './character-class';
+import { generateClass } from './character-class';
 import { generateShieldForUser } from './shields';
-import { generateTitleForUser } from './title';
+import { generateTitleByRarity } from './title';
 import { generateWeaponForUser } from './weapons';
 
 export async function rpgLootGenerator(
@@ -23,10 +23,10 @@ export async function rpgLootGenerator(
             loot = await generateArmorForUser(username, lootRarity);
             break;
         case 'title':
-            loot = await generateTitleForUser(username, lootRarity);
+            loot = await generateTitleByRarity(lootRarity);
             break;
         case 'characterClass':
-            loot = await generateClassForUser(username, lootRarity);
+            loot = await generateClass(lootRarity);
             break;
         case 'shield':
             loot = await generateShieldForUser(username, lootRarity);

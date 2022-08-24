@@ -453,7 +453,7 @@ export const armorList: Armor[] = [
     },
     {
         id: 26,
-        rarity: 'epic',
+        rarity: 'legendary',
         name: 'Plate',
         cost: 1,
         armorClass: 18,

@@ -1,33 +1,22 @@
 import { armorList } from '../../data/armor';
 import { classList } from '../../data/classes';
-import {
-    armorEnchantmentNames,
-    weaponEnchantmentNames,
-} from '../../data/enchantments';
 import { shieldList } from '../../data/shields';
 import { titleList } from '../../data/titles';
 import { weaponList } from '../../data/weapons';
 import { logger } from '../../firebot/firebot';
 import {
     Armor,
-    Enchantments,
     EquippableItemsDetails,
     Rarity,
     StorableItems,
-    StoredWeapon,
     Weapon,
     ItemTypes,
     CharacterClass,
     Shield,
     Title,
 } from '../../types/equipment';
-import { getCharacterData } from '../user/user';
-import {
-    filterArrayByProperty,
-    getTopValuesFromObject,
-    addOrSubtractRandomPercentage,
-    sumOfObjectProperties,
-} from '../utils';
+import { filterArrayByProperty } from '../utils';
+import { getEnchantmentName } from './enchantments';
 
 /**
  * Let's us translate our db item types to better display names.
@@ -136,54 +125,6 @@ export function getItemByID(
 }
 
 /**
- * Takes a list of enchantments and item type, and returns a neat enchantment name based on that combination.
- * @param enchantments
- * @param itemType
- */
-export function getEnchantmentName(
-    enchantments: Enchantments,
-    itemType: string
-): string | null {
-    const topValues = getTopValuesFromObject(enchantments, 2);
-    let enchantmentName = null;
-
-    if (topValues.length === 0 || topValues == null) {
-        return null;
-    }
-
-    logger(
-        'debug',
-        `Generating enchantment name. Top values were ${topValues[0]} and ${topValues[1]}.`
-    );
-
-    switch (itemType) {
-        case 'weapon':
-            enchantmentName = filterArrayByProperty(
-                weaponEnchantmentNames,
-                ['enchantments'],
-                topValues
-            );
-            break;
-        case 'armor':
-        case 'shield':
-            enchantmentName = filterArrayByProperty(
-                armorEnchantmentNames,
-                ['enchantments'],
-                topValues
-            );
-            break;
-        default:
-            enchantmentName = [
-                {
-                    name: 'Magic',
-                },
-            ];
-    }
-
-    return enchantmentName[0].name;
-}
-
-/**
  * This takes a stored item, and assembles its full name using it's reinforcements and enchantments.
  * @param item
  */
@@ -221,6 +162,11 @@ export function getFullItemName(item: StorableItems | null): string {
     return itemName;
 }
 
+/**
+ * This puts together an item name, including it's stats, for displaying item details.
+ * @param item
+ * @returns
+ */
 export function getFullItemTextWithStats(item: StorableItems | null) {
     logger('debug', 'Compiling full item name with stats.');
 
@@ -281,95 +227,4 @@ export function getFullItemTextWithStats(item: StorableItems | null) {
     }
 
     return message;
-}
-
-export function generateEnchantmentListForUser(
-    baseEnchantmentValue: number
-): Enchantments {
-    let availablePoints = addOrSubtractRandomPercentage(baseEnchantmentValue);
-    const enchantments = {
-        earth: 0,
-        wind: 0,
-        fire: 0,
-        water: 0,
-        light: 0,
-        darkness: 0,
-    };
-    const enchantmentKeys = Object.keys(enchantments);
-
-    // TODO: This could probably be improved.
-    // Randomly assign our pool of points until we're out of them.
-    while (availablePoints > 0) {
-        const selectedEnchantment =
-            enchantmentKeys[Math.floor(Math.random() * enchantmentKeys.length)];
-        // @ts-ignore
-        enchantments[selectedEnchantment] += 1;
-        availablePoints -= 1;
-    }
-
-    return enchantments;
-}
-
-export async function getUserEnchantmentCount(
-    username: string
-): Promise<{ main_hand: number; off_hand: number }> {
-    logger('debug', `Getting weapon enchantment count for ${username}.`);
-    const characterStats = await getCharacterData(username);
-    const mainHand = characterStats.mainHand as StoredWeapon;
-    const offHand = characterStats.offHand as StoredWeapon;
-    const values = {
-        main_hand: 0,
-        off_hand: 0,
-    };
-
-    if (mainHand?.enchantments != null) {
-        values.main_hand = sumOfObjectProperties(mainHand.enchantments);
-    }
-
-    if (offHand?.enchantments != null) {
-        values.off_hand = sumOfObjectProperties(offHand.enchantments);
-    }
-
-    logger(
-        'debug',
-        `Enchantment count for main hand of ${username} is ${values.main_hand}.`
-    );
-    logger(
-        'debug',
-        `Enchantment count for off hand of ${username} is ${values.off_hand}.`
-    );
-
-    return values;
-}
-
-export async function getUserRefinementCount(
-    username: string
-): Promise<{ mainHand: number; offHand: number }> {
-    logger('debug', `Getting weapon refinement count for ${username}.`);
-    const characterStats = await getCharacterData(username);
-    const mainHand = characterStats.mainHand as StoredWeapon;
-    const offHand = characterStats.offHand as StoredWeapon;
-    const values = {
-        mainHand: 0,
-        offHand: 0,
-    };
-
-    if (mainHand?.refinements != null) {
-        values.mainHand = mainHand.refinements;
-    }
-
-    if (offHand?.refinements != null) {
-        values.offHand = offHand.refinements;
-    }
-
-    logger(
-        'debug',
-        `Refinement count for main hand of ${username} is ${values.mainHand}.`
-    );
-    logger(
-        'debug',
-        `Refinement count for off hand of ${username} is ${values.offHand}.`
-    );
-
-    return values;
 }

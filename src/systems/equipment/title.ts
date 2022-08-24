@@ -23,8 +23,12 @@ export function getTitleFilteredByRarity(rarity: Rarity[]): Title {
     return availableTitles[Math.floor(Math.random() * availableTitles.length)];
 }
 
-export async function generateTitleForUser(
-    username: string,
+/**
+ * Generates a title to be used on a character.
+ * @param rarity
+ * @returns
+ */
+export async function generateTitleByRarity(
     rarity: Rarity[]
 ): Promise<StoredTitle> {
     logger('debug', `Generating a ${rarity} title.`);

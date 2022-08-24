@@ -3,7 +3,7 @@ import {
     SystemCommandTriggerEvent,
 } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
-import { verifyCharacter } from '../../systems/user/user';
+import { verifyUser } from '../../systems/user/user';
 import { logger, registerSystemCommand } from '../firebot';
 import { rpgEquipCommand } from './rpg-equip';
 import { rpgJobCommand } from './rpg-job';
@@ -149,7 +149,7 @@ export function registerCommands() {
             }
 
             // Verify the user has a character build before running any other command.
-            await verifyCharacter(userCommand);
+            await verifyUser(userCommand);
 
             // Now, parse the subcommand.
             const commandUsed = args[0];

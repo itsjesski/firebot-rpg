@@ -5,6 +5,42 @@ import { approachPhase } from './approach';
 import { meleePhase } from './melee';
 
 /**
+ * Returns an array of characters in turn order.
+ * @param characterOne
+ * @param characterTwo
+ * @returns
+ */
+export function initiative(
+    characterOne: Character,
+    characterTwo: Character | GeneratedMonster
+): Character[] | GeneratedMonster[] {
+    logger('debug', 'Getting initiative order.');
+    const turnOrder = [];
+
+    // Initiative
+    if (characterOne.dex > characterTwo.dex) {
+        turnOrder.push(characterOne);
+    } else if (characterTwo.dex > characterOne.dex) {
+        turnOrder.push(characterTwo);
+    } else {
+        const playerOneFirst = Math.random() < 0.5;
+        if (playerOneFirst) {
+            turnOrder.push(characterOne);
+        } else {
+            turnOrder.push(characterTwo);
+        }
+    }
+
+    if (turnOrder.includes(characterOne)) {
+        turnOrder.push(characterTwo);
+    } else if (turnOrder.includes(characterTwo)) {
+        turnOrder.push(characterOne);
+    }
+
+    return turnOrder;
+}
+
+/**
  * Initiates combat between two characters.
  * Returns the remaining HP of both parties on combat end.
  * @param characterOne

@@ -16,8 +16,8 @@ import {
 } from '../../systems/settings';
 import {
     equipItemOnUser,
-    getCharacterData,
-    getCharacterName,
+    getUserData,
+    getUserName,
 } from '../../systems/user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -71,7 +71,7 @@ async function rpgJobMessageLootTemplate(
     itemReward: StorableItems | null
 ): Promise<string> {
     const currencyName = getCurrencyName();
-    const characterName = await getCharacterName(username);
+    const characterName = await getUserName(username);
     const rewards: string[] = [];
 
     // They didn't get anything.
@@ -93,7 +93,7 @@ async function rpgJobMessageLootTemplate(
         );
     }
 
-    return `${characterName} received: ${rewards.join(', ')}`;
+    return `${characterName} received: ${rewards.join(', ')}.`;
 }
 
 /**
@@ -107,7 +107,7 @@ async function rpgJobMessageTemplateReplacement(
     message: string
 ): Promise<string> {
     const replacements = {
-        name: await getCharacterName(username),
+        name: await getUserName(username),
         worldName: getWorldName(),
         worldType: getWorldType(),
         citizenName: getWorldCitizens(),
@@ -130,8 +130,8 @@ async function rpgJobMessageCombatTemplate(
         return '';
     }
 
-    const characterName = await getCharacterName(username);
-    const character = await getCharacterData(username);
+    const characterName = await getUserName(username);
+    const character = await getUserData(username);
     const monster = await getMonsterByID(combatResults.fought.id);
     const playerWon = combatResults.won ? 'won' : 'lost';
 
@@ -156,10 +156,10 @@ async function rpgJobMessageCombatTemplate(
     }
 
     if (amount != null) {
-        return `${characterName} fought a ${amount} and ${playerWon}`;
+        return `${characterName} fought a ${amount} and ${playerWon}.`;
     }
 
-    return `${characterName} fought a ${monster.name} and ${playerWon}`;
+    return `${characterName} fought a ${monster.name} and ${playerWon}.`;
 }
 
 /**
@@ -187,7 +187,7 @@ async function rpgJobMessageBuilder(
 
     const message = await rpgJobMessageTemplateReplacement(
         username,
-        `${jobMessage} ${combat} ${rewards}.`
+        `${jobMessage} ${combat} ${rewards}`
     );
 
     return message;
@@ -206,7 +206,7 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     if (selectJob.encounter != null) {
         logger('debug', `This job has an encounter: ${selectJob.encounter}`);
         const monster = await generateMonster(username, selectJob.encounter);
-        const player = await getCharacterData(username);
+        const player = await getUserData(username);
         const combat = await startCombat(player, monster);
         combatResults = {
             fought: monster,

@@ -2,10 +2,12 @@ import { logger } from '../../firebot/firebot';
 import { Armor, Weapon } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
+import { getRange } from '../characters/character-stats';
 import { getArmorMovementSpeed } from '../equipment/armor';
 import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
-import { didCharacterHit, getRange, initiative } from './helpers';
+import { initiative } from './combat';
+import { didCharacterHit } from './combat-hit';
 
 async function rangedAttack(
     attacker: Character,

@@ -1,19 +1,25 @@
 import { armorList } from '../../data/armor';
 import { logger } from '../../firebot/firebot';
-import { Armor, Rarity, StoredArmor } from '../../types/equipment';
-import { getCharacterData } from '../user/user';
+import {
+    Armor,
+    ArmorProperties,
+    Rarity,
+    StoredArmor,
+} from '../../types/equipment';
+import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
     filterArrayByProperty,
     sumOfObjectProperties,
 } from '../utils';
-import { getWeightedRarity, generateEnchantmentListForUser } from './helpers';
+import { generateEnchantmentList } from './enchantments';
+import { getWeightedRarity } from './helpers';
 
 export async function getUserArmorEnchantmentCount(
     username: string
 ): Promise<{ armor: number }> {
     logger('debug', `Getting armor enchantment count for ${username}.`);
-    const characterStats = await getCharacterData(username);
+    const characterStats = await getUserData(username);
     const armor = characterStats.armor as StoredArmor;
     const values = {
         armor: 0,
@@ -35,7 +41,7 @@ export async function getUserArmorRefinementCount(
     username: string
 ): Promise<{ armor: number }> {
     logger('debug', `Getting armor refinement count for ${username}.`);
-    const characterStats = await getCharacterData(username);
+    const characterStats = await getUserData(username);
     const armor = characterStats.armor as StoredArmor;
     const values = {
         armor: 0,
@@ -70,6 +76,24 @@ export function getArmorFilteredByRarity(rarity: Rarity[]): Armor {
 
     // Then, pick a random item from our selected armor.
     return availableArmor[Math.floor(Math.random() * availableArmor.length)];
+}
+
+/**
+ * Returns our dex bonus for certain armor types.
+ * @param armorType
+ * @returns
+ */
+export function getArmorDexBonus(armorType: ArmorProperties) {
+    switch (armorType) {
+        case 'heavy':
+            return 0.25;
+        case 'medium':
+            return 0.5;
+        case 'light':
+            return 0.75;
+        default:
+            return 1;
+    }
 }
 
 /**
@@ -110,7 +134,7 @@ export async function generateArmorForUser(
     const refinementValue = addOrSubtractRandomPercentage(
         userRefinementValues.armor
     );
-    const enchantmentStats = generateEnchantmentListForUser(
+    const enchantmentStats = generateEnchantmentList(
         userEnchantmentValues.armor
     );
 

@@ -3,12 +3,17 @@ import { logger } from '../../firebot/firebot';
 import { Rarity, Shield, StoredShield } from '../../types/equipment';
 import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
 import {
-    generateEnchantmentListForUser,
-    getUserEnchantmentCount,
-    getUserRefinementCount,
-    getWeightedRarity,
-} from './helpers';
+    getUserHandItemEnchantmentCount,
+    generateEnchantmentList,
+} from './enchantments';
+import { getWeightedRarity } from './helpers';
+import { getUserHandItemRefinementCount } from './refinements';
 
+/**
+ * Get a random shield from a certain rarity.
+ * @param rarity
+ * @returns
+ */
 export function getShieldFilteredByRarity(rarity: Rarity[]): Shield {
     logger('debug', `Getting shield filtered by rarity array.`);
 
@@ -30,13 +35,21 @@ export function getShieldFilteredByRarity(rarity: Rarity[]): Shield {
     ];
 }
 
+/**
+ * Generates a shield for a user around their level.
+ * @param username
+ * @param rarity
+ * @returns
+ */
 export async function generateShieldForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredShield> {
     logger('debug', `Generating a ${rarity} shield.`);
-    const userEnchantmentValues = await getUserEnchantmentCount(username);
-    const userRefinementValues = await getUserRefinementCount(username);
+    const userEnchantmentValues = await getUserHandItemEnchantmentCount(
+        username
+    );
+    const userRefinementValues = await getUserHandItemRefinementCount(username);
 
     logger('debug', `Got user enchantment and refinement base counts.`);
 
@@ -52,8 +65,7 @@ export async function generateShieldForUser(
     // Get our weapon, our new refinement value, and our new enchantment stats.
     const shield = getShieldFilteredByRarity(rarity);
     const refinementValue = addOrSubtractRandomPercentage(baseRefinementValue);
-    const enchantmentStats =
-        generateEnchantmentListForUser(baseEnchantmentValue);
+    const enchantmentStats = generateEnchantmentList(baseEnchantmentValue);
 
     // Combine them into a "stored shield" and return.
     return {

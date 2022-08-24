@@ -1,21 +1,18 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
+import { getAdjustedCharacterStat } from '../../systems/characters/character-stats';
 import {
     getFullItemTextWithStats,
     getItemByID,
 } from '../../systems/equipment/helpers';
 
-import {
-    getAdjustedUserStat,
-    getCharacterData,
-    getCharacterName,
-} from '../../systems/user/user';
+import { getUserData, getUserName } from '../../systems/user/user';
 import { logger, sendChatMessage } from '../firebot';
 
 export async function rpgStatsCommand(userCommand: UserCommand) {
     logger('debug', 'Sending world command.');
 
     const username = userCommand.commandSender;
-    const character = await getCharacterData(username);
+    const character = await getUserData(username);
     const { args } = userCommand;
     const commandUsed = args[1] as string;
     let message = null;
@@ -25,9 +22,9 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
     let str;
     let dex;
     let int;
-    const characterName = await getCharacterName(username);
+    const characterName = await getUserName(username);
     const { backpack, mainHand, offHand, armor, title, characterClass } =
-        await getCharacterData(username);
+        await getUserData(username);
 
     switch (commandUsed) {
         case 'backpack':
@@ -65,9 +62,9 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
                 'characterClass'
             );
             storedTitle = getItemByID(character.title.id, 'title');
-            str = await getAdjustedUserStat(username, 'str');
-            dex = await getAdjustedUserStat(username, 'dex');
-            int = await getAdjustedUserStat(username, 'int');
+            str = await getAdjustedCharacterStat(character, 'str');
+            dex = await getAdjustedCharacterStat(character, 'dex');
+            int = await getAdjustedCharacterStat(character, 'int');
             message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
     }
 

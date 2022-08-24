@@ -4,7 +4,8 @@ import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
 import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
-import { didCharacterHit, initiative } from './helpers';
+import { initiative } from './combat';
+import { didCharacterHit } from './combat-hit';
 
 /**
  * First character attacking second character. Returns damage dealt if any.

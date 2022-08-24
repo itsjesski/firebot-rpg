@@ -3,12 +3,17 @@ import { logger } from '../../firebot/firebot';
 import { Rarity, StoredWeapon, Weapon } from '../../types/equipment';
 import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
 import {
-    generateEnchantmentListForUser,
-    getUserEnchantmentCount,
-    getUserRefinementCount,
-    getWeightedRarity,
-} from './helpers';
+    getUserHandItemEnchantmentCount,
+    generateEnchantmentList,
+} from './enchantments';
+import { getWeightedRarity } from './helpers';
+import { getUserHandItemRefinementCount } from './refinements';
 
+/**
+ * Selects a random weapon of a certain rarity.
+ * @param rarity
+ * @returns
+ */
 export function getWeaponFilteredByRarity(rarity: Rarity[]): Weapon {
     logger('debug', `Getting weapon filtered by rarity array.`);
 
@@ -30,13 +35,21 @@ export function getWeaponFilteredByRarity(rarity: Rarity[]): Weapon {
     ];
 }
 
+/**
+ * Generates a new weapon for a user.
+ * @param username
+ * @param rarity
+ * @returns
+ */
 export async function generateWeaponForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredWeapon> {
     logger('debug', `Generating a ${rarity} weapon.`);
-    const userEnchantmentValues = await getUserEnchantmentCount(username);
-    const userRefinementValues = await getUserRefinementCount(username);
+    const userEnchantmentValues = await getUserHandItemEnchantmentCount(
+        username
+    );
+    const userRefinementValues = await getUserHandItemRefinementCount(username);
 
     logger('debug', `Got user enchantment and refinement base counts.`);
 
@@ -52,8 +65,7 @@ export async function generateWeaponForUser(
     // Get our weapon, our new refinement value, and our new enchantment stats.
     const weapon = getWeaponFilteredByRarity(rarity);
     const refinementValue = addOrSubtractRandomPercentage(baseRefinementValue);
-    const enchantmentStats =
-        generateEnchantmentListForUser(baseEnchantmentValue);
+    const enchantmentStats = generateEnchantmentList(baseEnchantmentValue);
 
     // Combine them into a "stored weapon" and return.
     return {

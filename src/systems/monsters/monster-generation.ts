@@ -11,7 +11,7 @@ import {
 import { GeneratedMonster, MonsterDifficulties } from '../../types/monsters';
 import { getItemByID } from '../equipment/helpers';
 import { rpgLootGenerator } from '../equipment/loot-generation';
-import { getCharacterData } from '../user/user';
+import { getUserData } from '../user/user';
 import { addOrSubtractRandomPercentage } from '../utils';
 import { getMonsterByDifficulty, getMonsterByID } from './monsters';
 
@@ -19,7 +19,7 @@ async function generateMonsterStats(
     username: string
 ): Promise<{ str: number; dex: number; int: number; hp: number }> {
     logger('debug', `Generating monster stats.`);
-    const user = await getCharacterData(username);
+    const user = await getUserData(username);
 
     const stats = {
         str: addOrSubtractRandomPercentage(user.str),
