@@ -204,7 +204,11 @@ async function getDistanceMoved(
     let approacherArmor = null;
 
     if (characterOneMaxRange >= characterTwoMaxRange) {
-        approacherArmor = await getItemByID(characterTwo.armor?.id, 'armor');
+        approacherArmor = (await getItemByID(
+            characterTwo.armor?.id,
+            'armor'
+        )) as Armor;
+        return getArmorMovementSpeed(approacherArmor);
     }
 
     approacherArmor = (await getItemByID(
@@ -253,11 +257,6 @@ async function shootoutCombat(
         one: characterOneTemp.currentHP,
         two: characterTwoTemp.currentHP,
     };
-
-    logger(
-        'debug',
-        `Shootout phase results: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}.`
-    );
 
     return results;
 }
@@ -317,7 +316,7 @@ async function approachCombat(
 
     logger(
         'debug',
-        `Approach phase results: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}.`
+        `Approach phase complete: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}.`
     );
 
     return results;

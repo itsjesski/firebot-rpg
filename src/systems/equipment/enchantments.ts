@@ -13,6 +13,7 @@ import {
 } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character, EquippableSlots } from '../../types/user';
+import { getDamageBonusSettings } from '../settings';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -183,6 +184,11 @@ export function getElementalDamageOfAttack(
     let shield;
     let damage = 0;
 
+    const damageBonusDivider = getDamageBonusSettings()
+        ? getDamageBonusSettings()
+        : 10;
+    const intDmgBonus = Math.floor(attacker.int / damageBonusDivider);
+
     if (slot === 'mainHand') {
         item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
     }
@@ -227,7 +233,8 @@ export function getElementalDamageOfAttack(
         }
 
         // Now, figure out how much damage we took from this element.
-        const roundDamage = totalAttackerValue - totalDefenderValue;
+        const roundDamage =
+            totalAttackerValue + intDmgBonus - totalDefenderValue;
 
         logger(
             'debug',

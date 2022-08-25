@@ -141,7 +141,7 @@ export async function meleePhase(
 
     logger(
         'debug',
-        `Melee phase results: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}.`
+        `Melee phase complete: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}.`
     );
 
     return results;

@@ -58,17 +58,28 @@ export function calculateDamage(
     slot: EquippableSlots
 ) {
     logger('debug', `Calculating damage...`);
-    let damage = 0;
+    let roll = 0;
+    let dmgBonus = 0;
+    let elemental = 0;
 
     if (slot === 'mainHand') {
         const mainWeapon = getItemByID(
             attacker.mainHand.id,
             attacker.mainHand.itemType
         ) as Weapon;
-        damage +=
-            rollDice(mainWeapon.damage) +
-            getCharacterDamageBonus(attacker, 'mainHand') +
-            getElementalDamageOfAttack(attacker, defender, 'mainHand');
+
+        roll = rollDice(mainWeapon.damage);
+        dmgBonus = getCharacterDamageBonus(attacker, 'mainHand');
+        elemental = getElementalDamageOfAttack(attacker, defender, 'mainHand');
+
+        logger(
+            'debug',
+            `Damage: ${roll} roll, ${dmgBonus} dmg bonus, ${elemental} elemental. Total: ${
+                roll + dmgBonus + elemental
+            }`
+        );
+
+        return roll + dmgBonus + elemental;
     }
 
     if (attacker.offHand != null && attacker.offHand.itemType === 'weapon') {
@@ -77,18 +88,21 @@ export function calculateDamage(
             attacker.offHand.itemType
         ) as Weapon;
 
-        damage +=
-            rollDice(offHand.damage) +
-            getCharacterDamageBonus(attacker, 'offHand') +
-            getElementalDamageOfAttack(attacker, defender, 'offHand');
+        roll = rollDice(offHand.damage);
+        dmgBonus = getCharacterDamageBonus(attacker, 'offHand');
+        elemental = getElementalDamageOfAttack(attacker, defender, 'offHand');
+
+        logger(
+            'debug',
+            `Damage: ${roll} roll, ${dmgBonus} dmg bonus, ${elemental} elemental. Total: ${
+                roll + dmgBonus + elemental
+            }`
+        );
+
+        return roll + dmgBonus + elemental;
     }
 
-    // Sanity check.
-    if (damage < 0) {
-        return 0;
-    }
-
-    return damage;
+    return 0;
 }
 
 /**

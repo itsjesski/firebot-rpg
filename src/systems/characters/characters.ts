@@ -140,11 +140,17 @@ export function getCharacterHitBonus(
         );
     }
 
-    if (item.properties.includes('heavy')) {
+    if (
+        item.properties.includes('heavy') ||
+        item.damage_type === 'bludgeoning'
+    ) {
         return Math.floor(attacker.str / toHitDivider) + item.refinements;
     }
 
-    if (item.properties.includes('finesse')) {
+    if (
+        item.properties.includes('finesse') ||
+        item.damage_type === 'piercing'
+    ) {
         return Math.floor(attacker.dex / toHitDivider) + item.refinements;
     }
 
@@ -192,11 +198,17 @@ export function getCharacterDamageBonus(
         );
     }
 
-    if (item.properties.includes('heavy')) {
+    if (
+        item.properties.includes('heavy') ||
+        item.damage_type === 'bludgeoning'
+    ) {
         return Math.floor(attacker.str / damageBonusDivider) + item.refinements;
     }
 
-    if (item.properties.includes('finesse')) {
+    if (
+        item.properties.includes('finesse') ||
+        item.damage_type === 'piercing'
+    ) {
         return Math.floor(attacker.dex / damageBonusDivider) + item.refinements;
     }
 
