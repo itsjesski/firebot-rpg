@@ -145,13 +145,9 @@ async function rpgJobMessageCombatTemplate(
     let amount = null;
 
     // Figure out if which "amount" we want to show.
-    logger(
-        'debug',
-        `Monster was ${percentageDiff} stronger / weaker than the player. Monster: ${monsterStats} vs Player: ${playerStats}.`
-    );
     if (percentageDiff > 1.5) {
         amount = monster.amount.many;
-    } else if (percentageDiff > 1.1) {
+    } else if (percentageDiff > 1.25) {
         amount = monster.amount.couple;
     }
 
