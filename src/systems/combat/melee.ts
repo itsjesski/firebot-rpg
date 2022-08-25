@@ -139,10 +139,5 @@ export async function meleePhase(
         two: characterTwoTemp.currentHP,
     };
 
-    logger(
-        'debug',
-        `Melee phase complete: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}.`
-    );
-
     return results;
 }
