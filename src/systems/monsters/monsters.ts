@@ -1,5 +1,4 @@
 import { monsterList } from '../../data/monsters';
-import { logger } from '../../firebot/firebot';
 import { Monster, MonsterDifficulties } from '../../types/monsters';
 import { filterArrayByProperty } from '../utils';
 
@@ -27,6 +26,5 @@ export function getMonsterByDifficulty(
  */
 export function getMonsterByID(id: number): Monster {
     const monsters = filterArrayByProperty(monsterList, ['id'], id);
-    logger('debug', `Monster list by ID (${id}): ${JSON.stringify(monsters)}`);
     return monsters[0];
 }

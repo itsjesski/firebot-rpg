@@ -72,7 +72,7 @@ export async function didCharacterHitRanged(
 ) {
     const defenderAC = await getCharacterTotalAC(defender);
     const hitBonus = getCharacterHitBonus(attacker, slot);
-    const roll = rollDice(`1d20 +${hitBonus}`);
+    const roll = rollDice(`1d20`) + hitBonus;
 
     if (slot === 'offHand') {
         // If we're using an offhand weapon, see if we fumbled.
@@ -85,14 +85,14 @@ export async function didCharacterHitRanged(
     if (roll >= defenderAC) {
         logger(
             'debug',
-            `${attacker.name} hit! Hit: ${roll} vs AC: ${defenderAC}.`
+            `${attacker.name} hit! Hit: ${roll} (+${hitBonus}) vs AC: ${defenderAC}.`
         );
         return true;
     }
 
     logger(
         'debug',
-        `${attacker.name} missed! Hit: ${roll} vs AC: ${defenderAC}.`
+        `${attacker.name} missed! Hit: ${roll} (+${hitBonus}) vs AC: ${defenderAC}.`
     );
     return false;
 }
