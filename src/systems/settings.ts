@@ -1,5 +1,6 @@
 import { getGameSettings } from '../firebot/firebot';
 import { ArmorProperties } from '../types/equipment';
+import { MonsterDifficulties } from '../types/monsters';
 
 /**
  * Returns the settings for our world.
@@ -54,6 +55,15 @@ export function getWorldCycleTimeSettings(): number {
 export function getCombatSettings() {
     const settings = getGameSettings();
     return settings.combatSettings;
+}
+
+/**
+ * Get all creature settings.
+ * @returns
+ */
+export function getCreatureSettings() {
+    const settings = getGameSettings();
+    return settings.creatureSettings;
 }
 
 /**
@@ -131,5 +141,24 @@ export function getArmorDexBonusSettings(
             return gameSettings.mediumDexBonus;
         default:
             return gameSettings.nakedDexBonus;
+    }
+}
+
+/**
+ * Returns minimum hp for a creature difficulty.
+ * @param difficulty
+ */
+export function getMinimumMonsterHP(difficulty: MonsterDifficulties): number {
+    const gameSettings = getCreatureSettings();
+
+    switch (difficulty) {
+        case 'legendary':
+            return gameSettings.legendaryMinHP;
+        case 'medium':
+            return gameSettings.mediumMinHP;
+        case 'hard':
+            return gameSettings.hardMinHP;
+        default:
+            return gameSettings.easyMinHP;
     }
 }

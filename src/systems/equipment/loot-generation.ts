@@ -1,4 +1,3 @@
-import { logger } from '../../firebot/firebot';
 import { ItemTypes, Rarity, StorableItems } from '../../types/equipment';
 import { generateArmorForUser } from './armor';
 import { generateClass } from './character-class';
@@ -12,8 +11,6 @@ export async function rpgLootGenerator(
     lootRarity: Rarity[]
 ): Promise<StorableItems> {
     let loot;
-
-    logger('debug', `Generating loot for ${username}`);
 
     switch (lootType) {
         case 'weapon':

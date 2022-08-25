@@ -8,6 +8,12 @@ export type GameSettings = {
         citizens: string;
         cycleTime: number;
     };
+    creatureSettings: {
+        easyMinHP: number;
+        mediumMinHP: number;
+        hardMinHP: number;
+        legendaryMinHP: number;
+    };
     combatSettings: {
         offHandMissChance: number;
         rangedInMeleePenalty: number;

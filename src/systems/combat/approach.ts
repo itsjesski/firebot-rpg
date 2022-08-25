@@ -51,10 +51,17 @@ async function rangedAttack(
         }
     }
 
-    logger(
-        'debug',
-        `${attacker.name} hit ${defender.name} for ${damage} dmg total.`
-    );
+    if (damage === 0) {
+        logger(
+            'debug',
+            `${attacker.name} missed ${defender.name} or was not in range.`
+        );
+    } else {
+        logger(
+            'debug',
+            `${attacker.name} hit ${defender.name} for ${damage} dmg total.`
+        );
+    }
 
     return -Math.abs(damage);
 }
@@ -93,10 +100,6 @@ async function rangedCombatRound(
 
             // If this would kill a character, immediately return results.
             if (characterTwo.currentHP + healthResults.two <= 0) {
-                logger(
-                    'debug',
-                    `Turn results: ${JSON.stringify(healthResults)}`
-                );
                 return healthResults;
             }
         } else if (character === characterTwo) {
@@ -109,10 +112,6 @@ async function rangedCombatRound(
 
             // If this would kill a character, immediately return results.
             if (characterOne.currentHP + healthResults.one <= 0) {
-                logger(
-                    'debug',
-                    `Turn results: ${JSON.stringify(healthResults)}`
-                );
                 return healthResults;
             }
         }
@@ -198,7 +197,6 @@ async function getDistanceMoved(
     characterOne: Character,
     characterTwo: Character | GeneratedMonster
 ): Promise<number> {
-    logger('debug', `Calculating move distance.`);
     const characterOneMaxRange = await getMaxRangeOfCharacter(characterOne);
     const characterTwoMaxRange = await getMaxRangeOfCharacter(characterTwo);
     let approacherArmor = null;

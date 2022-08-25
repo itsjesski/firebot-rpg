@@ -1,5 +1,4 @@
 import { armorList } from '../../data/armor';
-import { logger } from '../../firebot/firebot';
 import {
     Armor,
     ArmorProperties,
@@ -19,12 +18,8 @@ import { getWeightedRarity } from './helpers';
 import { getUserArmorRefinementCount } from './refinements';
 
 export function getArmorFilteredByRarity(rarity: Rarity[]): Armor {
-    logger('debug', `Getting armor filtered by rarity array.`);
-
     // First, pick which rarity our item will be.
     const selectedRarity = getWeightedRarity(rarity);
-
-    logger('debug', `Our selected rarity is ${selectedRarity}`);
 
     // Then, narrow down our armor list to only items with that rarity.
     const availableArmor = filterArrayByProperty(
@@ -80,12 +75,8 @@ export async function generateArmorForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredArmor> {
-    logger('debug', `Generating a ${rarity} armor.`);
-
     const userEnchantmentValues = await getUserArmorEnchantmentCount(username);
     const userRefinementValues = await getUserArmorRefinementCount(username);
-
-    logger('debug', `Got user armor enchantment and refinement base counts.`);
 
     // Get our weapon, our new refinement value, and our new enchantment stats.
     const armor = getArmorFilteredByRarity(rarity);

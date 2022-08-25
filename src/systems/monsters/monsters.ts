@@ -17,11 +17,6 @@ export function getMonsterByDifficulty(
         difficulty
     );
 
-    logger(
-        'debug',
-        `Monster list (${difficulty}): ${JSON.stringify(monsters)}`
-    );
-
     return monsters[Math.floor(Math.random() * monsters.length)];
 }
 

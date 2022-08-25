@@ -19,7 +19,6 @@ import { rollDice } from '../utils';
  * @returns
  */
 function offhandFumbled(attacker: Character): boolean {
-    logger('debug', `Checking if offhand weapon fumbled.`);
     const offhand = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
 
     if (offhand == null) {
@@ -54,7 +53,6 @@ function offhandFumbled(attacker: Character): boolean {
  * @returns
  */
 function rangedFumbled(attacker: Character): boolean {
-    logger('debug', `Checking if ranged weapon fumbled...`);
     const missChance = getRangedInMeleeChanceSettings()
         ? getRangedInMeleeChanceSettings()
         : 25;
@@ -72,11 +70,6 @@ export async function didCharacterHitRanged(
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
 ) {
-    logger(
-        'debug',
-        `Checking if ${attacker.name} hit ${defender.name} with ${slot}.`
-    );
-
     const defenderAC = await getCharacterTotalAC(defender);
     const hitBonus = getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20 +${hitBonus}`);
@@ -114,11 +107,6 @@ export async function didCharacterHitMelee(
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
 ): Promise<boolean> {
-    logger(
-        'debug',
-        `Checking if ${attacker.name} hit ${defender.name} with ${slot}.`
-    );
-
     const defenderAC = await getCharacterTotalAC(defender);
     const hitBonus = getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20 +${hitBonus}`);

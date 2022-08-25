@@ -15,12 +15,8 @@ import { getUserHandItemRefinementCount } from './refinements';
  * @returns
  */
 export function getWeaponFilteredByRarity(rarity: Rarity[]): Weapon {
-    logger('debug', `Getting weapon filtered by rarity array.`);
-
     // First, pick which rarity our item will be.
     const selectedRarity = getWeightedRarity(rarity);
-
-    logger('debug', `Our selected rarity is ${selectedRarity}`);
 
     // Then, narrow down our weapon list to only items with that rarity.
     const availableWeapons = filterArrayByProperty(
@@ -45,7 +41,6 @@ export async function generateWeaponForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredWeapon> {
-    logger('debug', `Generating a ${rarity} weapon.`);
     const userEnchantmentValues = await getUserHandItemEnchantmentCount(
         username
     );

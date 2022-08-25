@@ -81,10 +81,70 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
             },
         },
     },
+    creatureSettings: {
+        title: 'Creature Settings',
+        description:
+            'Settings related to the creatures and monsters in the world.',
+        sortRank: 3,
+        settings: {
+            easyMinHP: {
+                type: 'number',
+                title: 'Easy Creature Min Health',
+                description:
+                    'This is the minimum health of an "easy" rank creature.',
+                tip: 'Setting this higher makes "easy" rank creatures more difficult.',
+                default: 10,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            mediumMinHP: {
+                type: 'number',
+                title: 'Medium Creature Min Health',
+                description:
+                    'This is the minimum health of an "medium" rank creature.',
+                tip: 'Setting this higher makes "medium" rank creatures more difficult.',
+                default: 50,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            hardMinHP: {
+                type: 'number',
+                title: 'Hard Creature Min Health',
+                description:
+                    'This is the minimum health of an "hard" rank creature.',
+                tip: 'Setting this higher makes "hard" rank creatures more difficult.',
+                default: 100,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            legendaryMinHP: {
+                type: 'number',
+                title: 'Legendary Creature Min Health',
+                description:
+                    'This is the minimum health of an "legendary" rank creature.',
+                tip: 'Setting this higher makes "legendary" rank creatures more difficult.',
+                default: 200,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+        },
+    },
     combatSettings: {
         title: 'Combat Settings',
         description: 'Settings related to combat.',
-        sortRank: 3,
+        sortRank: 4,
         settings: {
             offHandMissChance: {
                 type: 'number',

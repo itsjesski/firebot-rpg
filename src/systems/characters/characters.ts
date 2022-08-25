@@ -1,4 +1,3 @@
-import { logger } from '../../firebot/firebot';
 import {
     Armor,
     CharacterClass,
@@ -71,7 +70,6 @@ export async function getCharacterWeaponRange(
 export async function getCharacterTotalAC(
     defender: Character | GeneratedMonster
 ): Promise<number> {
-    logger('debug', `Getting character total AC for ${defender.name}.`);
     let defenderAC = 0;
 
     // Calculate armor AC.
@@ -101,8 +99,6 @@ export async function getCharacterTotalAC(
         defenderAC += defenderShield.armorClass + defender.offHand.refinements;
     }
 
-    logger('debug', `${defender.name} AC is ${Math.floor(defenderAC)} total.`);
-
     return Math.floor(defenderAC);
 }
 
@@ -116,7 +112,6 @@ export function getCharacterHitBonus(
     attacker: Character | GeneratedMonster,
     slot: EquippableSlots
 ): number {
-    logger('debug', `Getting character hit bonus for ${attacker.name}.`);
     const toHitDivider = getHitBonusSettings() ? getHitBonusSettings() : 10;
     let item;
 
@@ -192,9 +187,9 @@ export function getCharacterDamageBonus(
     // Now, adjust for item properties.
     if (item.properties.includes('versatile')) {
         return (
-            Math.floor(Math.max(attacker.str, attacker.dex)) /
-                damageBonusDivider +
-            item.refinements
+            Math.floor(
+                Math.max(attacker.str, attacker.dex) / damageBonusDivider
+            ) + item.refinements
         );
     }
 

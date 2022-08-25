@@ -63,7 +63,6 @@ export function generateEnchantmentList(
 export async function getUserHandItemEnchantmentCount(
     username: string
 ): Promise<{ main_hand: number; off_hand: number }> {
-    logger('debug', `Getting weapon enchantment count for ${username}.`);
     const characterStats = await getUserData(username);
     const mainHand = characterStats.mainHand as StoredWeapon;
     const offHand = characterStats.offHand as StoredWeapon;
@@ -79,15 +78,6 @@ export async function getUserHandItemEnchantmentCount(
     if (offHand?.enchantments != null) {
         values.off_hand = sumOfObjectProperties(offHand.enchantments);
     }
-
-    logger(
-        'debug',
-        `Enchantment count for main hand of ${username} is ${values.main_hand}.`
-    );
-    logger(
-        'debug',
-        `Enchantment count for off hand of ${username} is ${values.off_hand}.`
-    );
 
     return values;
 }
@@ -148,7 +138,6 @@ export function getEnchantmentName(
 export async function getUserArmorEnchantmentCount(
     username: string
 ): Promise<{ armor: number }> {
-    logger('debug', `Getting armor enchantment count for ${username}.`);
     const characterStats = await getUserData(username);
     const armor = characterStats.armor as StoredArmor;
     const values = {
@@ -158,11 +147,6 @@ export async function getUserArmorEnchantmentCount(
     if (armor?.enchantments != null) {
         values.armor = sumOfObjectProperties(armor.enchantments);
     }
-
-    logger(
-        'debug',
-        `Enchantment count for ${username}'s armor is ${values.armor}.`
-    );
 
     return values;
 }
@@ -177,8 +161,6 @@ export function getElementalDamageOfAttack(
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
 ): number {
-    logger('debug', `Calculating elemental damage of attack in ${slot}.`);
-
     let item;
     let armor;
     let shield;
@@ -233,8 +215,7 @@ export function getElementalDamageOfAttack(
         }
 
         // Now, figure out how much damage we took from this element.
-        const roundDamage =
-            totalAttackerValue + intDmgBonus - totalDefenderValue;
+        const roundDamage = totalAttackerValue - totalDefenderValue;
 
         logger(
             'debug',
@@ -246,5 +227,5 @@ export function getElementalDamageOfAttack(
         }
     }
 
-    return damage;
+    return damage + intDmgBonus;
 }

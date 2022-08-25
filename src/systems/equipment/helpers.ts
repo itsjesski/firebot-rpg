@@ -38,7 +38,6 @@ export function getItemTypeDisplayName(item: EquippableItemsDetails) {
  * @returns
  */
 export function getWeightedRarity(rarity: Rarity[]) {
-    logger('debug', 'Calculating weighted rarity.');
     const weights: number[] = [];
 
     // Here we're defining the rarity of each rarity type.
@@ -85,7 +84,6 @@ export function getItemByID(
     type: ItemTypes
 ): EquippableItemsDetails | null {
     if (id == null || type == null) {
-        logger('debug', `Null passed to getitembyid, returning null.`);
         return null;
     }
 

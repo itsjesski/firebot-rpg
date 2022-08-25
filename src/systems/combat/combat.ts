@@ -19,13 +19,15 @@ export function initiative(
     characterOne: Character,
     characterTwo: Character | GeneratedMonster
 ): Character[] | GeneratedMonster[] {
-    logger('debug', 'Getting initiative order.');
     const turnOrder = [];
 
+    const characterOneTotal = rollDice(`1d20 +${characterOne.dex / 10}`);
+    const characterTwoTotal = rollDice(`1d20 +${characterTwo.dex / 10}`);
+
     // Initiative
-    if (characterOne.dex > characterTwo.dex) {
+    if (characterOneTotal > characterTwoTotal) {
         turnOrder.push(characterOne);
-    } else if (characterTwo.dex > characterOne.dex) {
+    } else if (characterTwoTotal > characterOneTotal) {
         turnOrder.push(characterTwo);
     } else {
         const playerOneFirst = Math.random() < 0.5;
@@ -36,6 +38,7 @@ export function initiative(
         }
     }
 
+    // Push whichever player isnt in initiative yet, they're last.
     if (turnOrder.includes(characterOne)) {
         turnOrder.push(characterTwo);
     } else if (turnOrder.includes(characterTwo)) {
@@ -57,7 +60,6 @@ export function calculateDamage(
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
 ) {
-    logger('debug', `Calculating damage...`);
     let roll = 0;
     let dmgBonus = 0;
     let elemental = 0;

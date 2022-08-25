@@ -17,6 +17,7 @@ import {
 } from '../../types/monsters';
 import { getItemByID } from '../equipment/helpers';
 import { rpgLootGenerator } from '../equipment/loot-generation';
+import { getMinimumMonsterHP } from '../settings';
 import { getUserData } from '../user/user';
 import { addOrSubtractRandomPercentage } from '../utils';
 import { getMonsterByDifficulty, getMonsterByID } from './monsters';
@@ -25,7 +26,6 @@ async function generateMonsterStats(
     username: string,
     monster: Monster
 ): Promise<{ str: number; dex: number; int: number; hp: number }> {
-    logger('debug', `Generating monster stats.`);
     const user = await getUserData(username);
 
     const stats = {
@@ -40,8 +40,6 @@ async function generateMonsterStats(
     stats.int += Math.floor(stats.int * (monster.bonuses.int / 100));
     stats.hp += Math.floor(stats.hp * (monster.bonuses.hp / 100));
 
-    logger('debug', `Monster stats: ${JSON.stringify(stats)}`);
-
     return stats;
 }
 
@@ -50,7 +48,6 @@ async function generateMonsterOffhand(
     mainHandId: number,
     allowedMonsterRarity: Rarity[]
 ): Promise<StoredWeapon | StoredShield | null> {
-    logger('debug', `Generating monster off hand item.`);
     let item = null;
 
     // See if we need an off hand weapon...
@@ -100,8 +97,6 @@ export async function generateMonster(
 ): Promise<GeneratedMonster> {
     let selectedMonster;
     const allowedMonsterRarity = ['basic', 'rare', 'epic'] as Rarity[];
-
-    logger('debug', `Generating a monster for the encounter: ${monster}`);
     const monsterIsID = Number(monster);
 
     // Pick the monster we're going to use.
@@ -113,10 +108,14 @@ export async function generateMonster(
         selectedMonster = getMonsterByID(monster as number);
     }
 
-    logger('debug', `Selected monster: ${JSON.stringify(selectedMonster)}.`);
-
     // Generate our monster stats.
     const monsterStats = await generateMonsterStats(username, selectedMonster);
+
+    // Make sure the stats hit our minimums.
+    const minimumHP = getMinimumMonsterHP(selectedMonster.difficulty[0]);
+    if (monsterStats.hp < minimumHP) {
+        monsterStats.hp = minimumHP;
+    }
 
     // Our generated monster stats.
     const generatedMonster: GeneratedMonster = {

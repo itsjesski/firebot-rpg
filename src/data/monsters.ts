@@ -13,7 +13,7 @@ export const monsterList: Monster[] = [
         },
         bonuses: {
             str: 0,
-            dex: 2,
+            dex: 20,
             int: 0,
             hp: 0,
         },

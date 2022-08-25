@@ -15,12 +15,8 @@ import { getUserHandItemRefinementCount } from './refinements';
  * @returns
  */
 export function getShieldFilteredByRarity(rarity: Rarity[]): Shield {
-    logger('debug', `Getting shield filtered by rarity array.`);
-
     // First, pick which rarity our item will be.
     const selectedRarity = getWeightedRarity(rarity);
-
-    logger('debug', `Our selected rarity is ${selectedRarity}`);
 
     // Then, narrow down our shield list to only items with that rarity.
     const availableShields = filterArrayByProperty(
@@ -45,7 +41,6 @@ export async function generateShieldForUser(
     username: string,
     rarity: Rarity[]
 ): Promise<StoredShield> {
-    logger('debug', `Generating a ${rarity} shield.`);
     const userEnchantmentValues = await getUserHandItemEnchantmentCount(
         username
     );
