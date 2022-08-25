@@ -19,6 +19,7 @@ import { rollDice } from '../utils';
  * @returns
  */
 function offhandFumbled(attacker: Character): boolean {
+    logger('debug', `Checking if offhand weapon fumbled.`);
     const offhand = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
 
     if (offhand == null) {
@@ -53,6 +54,7 @@ function offhandFumbled(attacker: Character): boolean {
  * @returns
  */
 function rangedFumbled(attacker: Character): boolean {
+    logger('debug', `Checking if ranged weapon fumbled...`);
     const missChance = getRangedInMeleeChanceSettings()
         ? getRangedInMeleeChanceSettings()
         : 25;
@@ -125,6 +127,14 @@ export async function didCharacterHitMelee(
         attacker[slot as EquippableSlots].id,
         'weapon'
     ) as Weapon;
+
+    if (item == null) {
+        logger(
+            'debug',
+            `Could not get item in ${slot}. Assuming character missed...`
+        );
+        return false;
+    }
 
     // If we're using a ranged weapon in melee, see if we fumbled.
     if (item.properties.includes('ammunition') && rangedFumbled(attacker)) {

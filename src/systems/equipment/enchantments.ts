@@ -3,7 +3,16 @@ import {
     armorEnchantmentNames,
 } from '../../data/enchantments';
 import { logger } from '../../firebot/firebot';
-import { Enchantments, StoredArmor, StoredWeapon } from '../../types/equipment';
+import {
+    Armor,
+    Enchantments,
+    Shield,
+    StoredArmor,
+    StoredWeapon,
+    Weapon,
+} from '../../types/equipment';
+import { GeneratedMonster } from '../../types/monsters';
+import { Character, EquippableSlots } from '../../types/user';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -11,6 +20,7 @@ import {
     getTopValuesFromObject,
     sumOfObjectProperties,
 } from '../utils';
+import { getItemByID } from './helpers';
 
 /**
  * Generates an enchantment list using the given number of enchantment points.
@@ -154,4 +164,80 @@ export async function getUserArmorEnchantmentCount(
     );
 
     return values;
+}
+
+/**
+ * Calculates the total elemental damage done to a defender.
+ * @param attacker
+ * @param defender
+ */
+export function getElementalDamageOfAttack(
+    attacker: Character,
+    defender: Character | GeneratedMonster,
+    slot: EquippableSlots
+): number {
+    logger('debug', `Calculating elemental damage of attack in ${slot}.`);
+
+    let item;
+    let armor;
+    let shield;
+    let damage = 0;
+
+    if (slot === 'mainHand') {
+        item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
+    }
+
+    if (slot === 'offHand' && attacker.offHand.itemType === 'weapon') {
+        item = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
+    }
+
+    if (item == null) {
+        return 0;
+    }
+
+    if (defender.armor != null) {
+        armor = getItemByID(defender.armor.id, 'armor') as Armor;
+    }
+
+    if (defender.offHand != null && defender.offHand?.itemType === 'shield') {
+        shield = getItemByID(defender.armor.id, 'shield') as Shield;
+    }
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [enchantment, enchantmentValue] of Object.entries(
+        item.enchantments
+    )) {
+        // Get attacker offenses.
+        const totalAttackerValue =
+            enchantmentValue +
+            item.enchantments[enchantment as keyof Enchantments];
+
+        // Figure out opponent defenses.
+        let totalDefenderValue = 0;
+
+        if (armor != null) {
+            totalDefenderValue +=
+                defender.armor.enchantments[enchantment as keyof Enchantments] +
+                armor.enchantments[enchantment as keyof Enchantments];
+        }
+
+        if (shield != null) {
+            totalDefenderValue +=
+                shield.enchantments[enchantment as keyof Enchantments];
+        }
+
+        // Now, figure out how much damage we took from this element.
+        const roundDamage = totalAttackerValue - totalDefenderValue;
+
+        logger(
+            'debug',
+            `${attacker.name} did ${roundDamage} ${enchantment} damage to ${defender.name}.`
+        );
+
+        if (roundDamage > 0) {
+            damage += roundDamage;
+        }
+    }
+
+    return damage;
 }

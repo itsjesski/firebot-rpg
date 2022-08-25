@@ -2,14 +2,10 @@ import { logger } from '../../firebot/firebot';
 import { Armor, Weapon } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
-import {
-    getCharacterDamageBonus,
-    getCharacterWeaponRange,
-} from '../characters/characters';
+import { getCharacterWeaponRange } from '../characters/characters';
 import { getArmorMovementSpeed } from '../equipment/armor';
 import { getItemByID } from '../equipment/helpers';
-import { rollDice } from '../utils';
-import { initiative } from './combat';
+import { calculateDamage, initiative } from './combat';
 import { didCharacterHitRanged } from './combat-hit';
 
 async function rangedAttack(
@@ -34,9 +30,7 @@ async function rangedAttack(
         mainWeapon.range >= distance &&
         (await didCharacterHitRanged(attacker, defender, 'mainHand'))
     ) {
-        damage +=
-            rollDice(mainWeapon.damage) +
-            getCharacterDamageBonus(attacker, 'mainHand');
+        damage += calculateDamage(attacker, defender, 'mainHand');
     }
 
     // Try the offhand.
@@ -52,9 +46,7 @@ async function rangedAttack(
                 offHandWeapon.range >= distance &&
                 (await didCharacterHitRanged(attacker, defender, 'offHand'))
             ) {
-                damage +=
-                    rollDice(mainWeapon.damage) +
-                    getCharacterDamageBonus(attacker, 'offHand');
+                damage += calculateDamage(attacker, defender, 'offHand');
             }
         }
     }

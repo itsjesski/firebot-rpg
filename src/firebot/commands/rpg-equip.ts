@@ -247,6 +247,7 @@ export async function rpgEquipCommand(userCommand: UserCommand) {
             await equipOffHand(username);
             break;
         case 'armor':
+        case 'armour':
             await equipArmor(username);
             break;
         case 'title':

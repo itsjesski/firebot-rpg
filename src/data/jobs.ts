@@ -55,7 +55,7 @@ export const jobList: Job[] = [
     {
         id: 4,
         template: `#name stumbles on a abandoned battlefield. Whoever fought here fled in a hurry.`,
-        encounter: 1,
+        encounter: 'medium',
         loot: {
             item: {
                 itemType: 'shield',
@@ -83,6 +83,23 @@ export const jobList: Job[] = [
         world_tendency: {
             happiness: 0,
             resources: 0,
+            research: 1,
+        },
+    },
+    {
+        id: 6,
+        template: `The #citizenName of the #worldType of #worldName demand you destroy the monster destroying local farms!`,
+        encounter: 'legendary',
+        loot: {
+            item: {
+                itemType: 'weapon',
+                rarity: ['rare', 'epic', 'legendary'],
+            },
+            money: 50,
+        },
+        world_tendency: {
+            happiness: 2,
+            resources: 1,
             research: 1,
         },
     },

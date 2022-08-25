@@ -33,10 +33,10 @@ export const monsterList: Monster[] = [
             potion: false,
         },
         bonuses: {
-            str: 5,
+            str: 10,
             dex: 0,
             int: 0,
-            hp: 5,
+            hp: 15,
         },
         amount: {
             couple: 'group of Barbarians',
@@ -54,10 +54,10 @@ export const monsterList: Monster[] = [
             potion: false,
         },
         bonuses: {
-            str: 5,
+            str: 35,
             dex: 0,
             int: 10,
-            hp: 10,
+            hp: 35,
         },
         amount: {
             couple: 'expert Spellsword',
@@ -75,10 +75,10 @@ export const monsterList: Monster[] = [
             potion: true,
         },
         bonuses: {
-            str: 15,
-            dex: 15,
-            int: 10,
-            hp: 25,
+            str: 25,
+            dex: 25,
+            int: 25,
+            hp: 100,
         },
         amount: {
             couple: 'old Black Dragon',

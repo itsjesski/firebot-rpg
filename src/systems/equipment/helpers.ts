@@ -89,7 +89,6 @@ export function getItemByID(
         return null;
     }
 
-    logger('debug', `Getting ${id} in ${type} list.`);
     let item = null;
 
     switch (type) {
@@ -115,9 +114,7 @@ export function getItemByID(
         default:
     }
 
-    if (item != null) {
-        logger('debug', `Got item: ${JSON.stringify(item)}`);
-    } else {
+    if (item == null) {
         logger('debug', `Failed to find item.`);
     }
 

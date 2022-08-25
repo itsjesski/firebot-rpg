@@ -1,11 +1,13 @@
 import { logger } from '../../firebot/firebot';
 import {
+    CharacterClass,
     Rarity,
     StoredArmor,
     StoredCharacterClass,
     StoredShield,
     StoredTitle,
     StoredWeapon,
+    Title,
     Weapon,
 } from '../../types/equipment';
 import {
@@ -33,10 +35,10 @@ async function generateMonsterStats(
         hp: addOrSubtractRandomPercentage(user.totalHP),
     };
 
-    stats.str += stats.str * (monster.bonuses.str / 100);
-    stats.dex += stats.dex * (monster.bonuses.dex / 100);
-    stats.int += stats.int * (monster.bonuses.int / 100);
-    stats.hp += stats.hp * (monster.bonuses.hp / 100);
+    stats.str += Math.floor(stats.str * (monster.bonuses.str / 100));
+    stats.dex += Math.floor(stats.dex * (monster.bonuses.dex / 100));
+    stats.int += Math.floor(stats.int * (monster.bonuses.int / 100));
+    stats.hp += Math.floor(stats.hp * (monster.bonuses.hp / 100));
 
     logger('debug', `Monster stats: ${JSON.stringify(stats)}`);
 
@@ -157,6 +159,18 @@ export async function generateMonster(
             'characterClass',
             allowedMonsterRarity
         )) as StoredCharacterClass;
+
+        const characterClass = getItemByID(
+            generatedMonster.characterClass.id,
+            'characterClass'
+        ) as CharacterClass;
+
+        generatedMonster.str +=
+            generatedMonster.str * (characterClass.bonuses.str / 100);
+        generatedMonster.dex +=
+            generatedMonster.dex * (characterClass.bonuses.dex / 100);
+        generatedMonster.int +=
+            generatedMonster.int * (characterClass.bonuses.int / 100);
     }
 
     // Generate a title for our monster.
@@ -166,6 +180,18 @@ export async function generateMonster(
             'title',
             allowedMonsterRarity
         )) as StoredTitle;
+
+        const characterTitle = getItemByID(
+            generatedMonster.title.id,
+            'title'
+        ) as Title;
+
+        generatedMonster.str +=
+            generatedMonster.str * (characterTitle.bonuses.str / 100);
+        generatedMonster.dex +=
+            generatedMonster.dex * (characterTitle.bonuses.dex / 100);
+        generatedMonster.int +=
+            generatedMonster.int * (characterTitle.bonuses.int / 100);
     }
 
     // Generated our off hand if we need one.

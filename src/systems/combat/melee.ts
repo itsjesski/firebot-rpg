@@ -2,10 +2,8 @@ import { logger } from '../../firebot/firebot';
 import { Weapon, Shield } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
-import { getCharacterDamageBonus } from '../characters/characters';
 import { getItemByID } from '../equipment/helpers';
-import { rollDice } from '../utils';
-import { initiative } from './combat';
+import { calculateDamage, initiative } from './combat';
 import { didCharacterHitMelee } from './combat-hit';
 
 /**
@@ -24,14 +22,8 @@ async function attackCharacter(
     let damage = 0;
 
     // Check to see if we did any damage with the main hand.
-    const mainWeapon = getItemByID(
-        attacker.mainHand.id,
-        attacker.mainHand.itemType
-    ) as Weapon;
     if (await didCharacterHitMelee(attacker, defender, 'mainHand')) {
-        damage +=
-            rollDice(mainWeapon.damage) +
-            getCharacterDamageBonus(attacker, 'mainHand');
+        damage += calculateDamage(attacker, defender, 'mainHand');
     }
 
     // Offhand check
@@ -44,9 +36,7 @@ async function attackCharacter(
             offHand.itemType === 'weapon' &&
             (await didCharacterHitMelee(attacker, defender, 'offHand'))
         ) {
-            damage +=
-                rollDice(offHand.damage) +
-                getCharacterDamageBonus(attacker, 'offHand');
+            damage += calculateDamage(attacker, defender, 'offHand');
         }
     }
 
@@ -94,12 +84,6 @@ async function combatRound(
 
             // If this would kill a character, immediately return results.
             if (characterTwo.currentHP + healthResults.two <= 0) {
-                logger(
-                    'debug',
-                    `Turn results (${
-                        characterTwo.name
-                    } dead.): ${JSON.stringify(healthResults)}`
-                );
                 return healthResults;
             }
         }
@@ -113,18 +97,11 @@ async function combatRound(
 
             // If this would kill a character, immediately return results.
             if (characterOne.currentHP + healthResults.one <= 0) {
-                logger(
-                    'debug',
-                    `Turn results (${
-                        characterOne.name
-                    } dead.): ${JSON.stringify(healthResults)}`
-                );
                 return healthResults;
             }
         }
     }
 
-    logger('debug', `Turn results: ${JSON.stringify(healthResults)}`);
     return healthResults;
 }
 

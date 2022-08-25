@@ -117,7 +117,9 @@ export function getArmorMovementSpeedSettings(
  * Returns movement speed of armor type.
  * @param armorType
  */
-export function getArmorDexBonusSettings(armorType: ArmorProperties): number {
+export function getArmorDexBonusSettings(
+    armorType: ArmorProperties | null
+): number {
     const gameSettings = getCombatSettings();
 
     switch (armorType) {

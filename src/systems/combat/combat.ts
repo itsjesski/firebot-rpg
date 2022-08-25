@@ -1,6 +1,11 @@
 import { logger } from '../../firebot/firebot';
+import { Weapon } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
-import { Character } from '../../types/user';
+import { Character, EquippableSlots } from '../../types/user';
+import { getCharacterDamageBonus } from '../characters/characters';
+import { getElementalDamageOfAttack } from '../equipment/enchantments';
+import { getItemByID } from '../equipment/helpers';
+import { rollDice } from '../utils';
 import { approachPhase } from './approach';
 import { meleePhase } from './melee';
 
@@ -38,6 +43,52 @@ export function initiative(
     }
 
     return turnOrder;
+}
+
+/**
+ * Calculate our damage for a certain attack against a specific character.
+ * @param attacker
+ * @param defender
+ * @param slot
+ * @returns
+ */
+export function calculateDamage(
+    attacker: Character,
+    defender: Character | GeneratedMonster,
+    slot: EquippableSlots
+) {
+    logger('debug', `Calculating damage...`);
+    let damage = 0;
+
+    if (slot === 'mainHand') {
+        const mainWeapon = getItemByID(
+            attacker.mainHand.id,
+            attacker.mainHand.itemType
+        ) as Weapon;
+        damage +=
+            rollDice(mainWeapon.damage) +
+            getCharacterDamageBonus(attacker, 'mainHand') +
+            getElementalDamageOfAttack(attacker, defender, 'mainHand');
+    }
+
+    if (attacker.offHand != null && attacker.offHand.itemType === 'weapon') {
+        const offHand = getItemByID(
+            attacker.offHand.id,
+            attacker.offHand.itemType
+        ) as Weapon;
+
+        damage +=
+            rollDice(offHand.damage) +
+            getCharacterDamageBonus(attacker, 'offHand') +
+            getElementalDamageOfAttack(attacker, defender, 'offHand');
+    }
+
+    // Sanity check.
+    if (damage < 0) {
+        return 0;
+    }
+
+    return damage;
 }
 
 /**

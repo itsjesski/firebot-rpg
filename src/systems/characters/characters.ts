@@ -1,4 +1,11 @@
-import { Armor, CharacterClass, Title, Weapon } from '../../types/equipment';
+import { logger } from '../../firebot/firebot';
+import {
+    Armor,
+    CharacterClass,
+    Shield,
+    Title,
+    Weapon,
+} from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import {
     Character,
@@ -10,23 +17,29 @@ import { getItemByID } from '../equipment/helpers';
 import { getDamageBonusSettings, getHitBonusSettings } from '../settings';
 
 export async function getAdjustedCharacterStat(
-    character: Character,
+    character: Character | GeneratedMonster,
     stat: CharacterStatNames
 ): Promise<number> {
     const baseStat = character[stat as CharacterStatNames];
+    let bonus = 0;
 
-    const title = getItemByID(character.title.id, 'title') as Title;
-    const characterClass = getItemByID(
-        character.characterClass.id,
-        'characterClass'
-    ) as CharacterClass;
+    if (character.title != null) {
+        const title = getItemByID(character.title.id, 'title') as Title;
+        const titleBonus = title.bonuses[stat as CharacterStatNames];
+        bonus += titleBonus;
+    }
 
-    const titleBonus = title.bonuses[stat as CharacterStatNames];
-    const characterClassBonus =
-        characterClass.bonuses[stat as CharacterStatNames];
+    if (character.characterClass != null) {
+        const characterClass = getItemByID(
+            character.characterClass.id,
+            'characterClass'
+        ) as CharacterClass;
+        const characterClassBonus =
+            characterClass.bonuses[stat as CharacterStatNames];
+        bonus += characterClassBonus;
+    }
 
-    const totalEquipmentBonusPercentage =
-        (titleBonus + characterClassBonus) / 100;
+    const totalEquipmentBonusPercentage = bonus / 100;
 
     // Round down.
     return Math.floor(baseStat * (1 + totalEquipmentBonusPercentage));
@@ -58,9 +71,11 @@ export async function getCharacterWeaponRange(
 export async function getCharacterTotalAC(
     defender: Character | GeneratedMonster
 ): Promise<number> {
+    logger('debug', `Getting character total AC for ${defender.name}.`);
     let defenderAC = 0;
 
-    if (defender.armor != null) {
+    // Calculate armor AC.
+    if (defender.armor !== null) {
         const defenderArmor = getItemByID(defender.armor.id, 'armor') as Armor;
         const armorDexBonus =
             ((await getAdjustedCharacterStat(defender, 'dex')) *
@@ -71,10 +86,24 @@ export async function getCharacterTotalAC(
             defender.armor.refinements +
             armorDexBonus;
     } else {
-        defenderAC = await getAdjustedCharacterStat(defender, 'dex');
+        defenderAC =
+            ((await getAdjustedCharacterStat(defender, 'dex')) *
+                getArmorDexBonus(null)) /
+            10;
     }
 
-    return defenderAC;
+    // Get shield AC value.
+    if (defender.offHand !== null && defender.offHand?.itemType === 'shield') {
+        const defenderShield = getItemByID(
+            defender.offHand.id,
+            'shield'
+        ) as Shield;
+        defenderAC += defenderShield.armorClass + defender.offHand.refinements;
+    }
+
+    logger('debug', `${defender.name} AC is ${Math.floor(defenderAC)} total.`);
+
+    return Math.floor(defenderAC);
 }
 
 /**
@@ -87,6 +116,7 @@ export function getCharacterHitBonus(
     attacker: Character | GeneratedMonster,
     slot: EquippableSlots
 ): number {
+    logger('debug', `Getting character hit bonus for ${attacker.name}.`);
     const toHitDivider = getHitBonusSettings() ? getHitBonusSettings() : 10;
     let item;
 
@@ -156,7 +186,9 @@ export function getCharacterDamageBonus(
     // Now, adjust for item properties.
     if (item.properties.includes('versatile')) {
         return (
-            Math.floor(Math.max(attacker.str, attacker.dex)) + item.refinements
+            Math.floor(Math.max(attacker.str, attacker.dex)) /
+                damageBonusDivider +
+            item.refinements
         );
     }
 

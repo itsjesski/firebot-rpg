@@ -1,5 +1,8 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
-import { getAdjustedCharacterStat } from '../../systems/characters/characters';
+import {
+    getAdjustedCharacterStat,
+    getCharacterTotalAC,
+} from '../../systems/characters/characters';
 import {
     getFullItemTextWithStats,
     getItemByID,
@@ -22,6 +25,7 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
     let str;
     let dex;
     let int;
+    let acTotal;
     const characterName = await getUserName(username);
     const { backpack, mainHand, offHand, armor, title, characterClass } =
         await getUserData(username);
@@ -65,7 +69,8 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
             str = await getAdjustedCharacterStat(character, 'str');
             dex = await getAdjustedCharacterStat(character, 'dex');
             int = await getAdjustedCharacterStat(character, 'int');
-            message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, and ${character.currentHP}/${character.totalHP} HP.`;
+            acTotal = await getCharacterTotalAC(character);
+            message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, ${acTotal} AC, and ${character.currentHP}/${character.totalHP} HP.`;
     }
 
     if (message != null) {
