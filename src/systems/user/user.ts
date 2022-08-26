@@ -131,3 +131,13 @@ export async function equipItemOnUser(
 ) {
     setUserMeta(username, item, slot);
 }
+
+/**
+ * Sets the users current HP to a specific amount.
+ * @param username
+ * @param health
+ */
+export async function setUserCurrentHP(username: string, health: number) {
+    console.log(`setting health to ${health}`);
+    await setUserMeta(username, health, 'currentHP');
+}

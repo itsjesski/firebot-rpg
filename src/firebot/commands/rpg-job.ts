@@ -18,6 +18,7 @@ import {
     equipItemOnUser,
     getUserData,
     getUserName,
+    setUserCurrentHP,
 } from '../../systems/user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -30,7 +31,7 @@ import { GeneratedMonster } from '../../types/monsters';
 import { WorldTendencyTypes } from '../../types/world';
 import {
     getCurrencyName,
-    giveCurrencyToUser,
+    adjustCurrencyForUser,
     logger,
     sendChatMessage,
 } from '../firebot';
@@ -53,7 +54,7 @@ async function giveJobCurrencyReward(
 
     const total = addOrSubtractRandomPercentage(amount);
 
-    await giveCurrencyToUser(total, username);
+    await adjustCurrencyForUser(total, username);
 
     return total;
 }
@@ -204,6 +205,11 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         const monster = await generateMonster(username, selectJob.encounter);
         const player = await getUserData(username);
         const combat = await startCombat(player, monster);
+
+        // Set character health to whatever was remaining after combat.
+        await setUserCurrentHP(username, combat.one);
+
+        // Next, move on to our combat results and output a message.
         combatResults = {
             fought: monster,
             won: combat.one > 0,

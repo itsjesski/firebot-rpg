@@ -134,7 +134,18 @@ export async function setCharacterMeta(
     );
 }
 
-export async function giveCurrencyToUser(amount: number, username: string) {
+export async function getUserCurrencyTotal(username: string) {
+    const { currencyDb } = firebot.modules;
+    const gameSettings = getGameSettings();
+    const { currencyId } = gameSettings.generalSettings;
+    const currencyTotal = await currencyDb.getUserCurrencyAmount(
+        username,
+        currencyId
+    );
+    return currencyTotal;
+}
+
+export async function adjustCurrencyForUser(amount: number, username: string) {
     const { currencyDb } = firebot.modules;
     const gameSettings = getGameSettings();
     const { currencyId } = gameSettings.generalSettings;

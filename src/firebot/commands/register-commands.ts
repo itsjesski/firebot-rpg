@@ -6,6 +6,7 @@ import {
 import { verifyUser } from '../../systems/user/user';
 import { logger, registerSystemCommand } from '../firebot';
 import { rpgEquipCommand } from './rpg-equip';
+import { rpgHealerCommand } from './rpg-healer';
 import { rpgJobCommand } from './rpg-job';
 import { rpgNameCommand } from './rpg-name';
 import { rpgStatsCommand } from './rpg-stats';
@@ -75,7 +76,20 @@ function getSubCommands(): SubCommand[] {
             arg: 'job',
             cooldown: {
                 global: 0,
-                user: 60,
+                user: 120,
+            },
+        },
+        {
+            id: 'fbrpg:healer',
+            usage: 'healer',
+            name: '!rpg healer',
+            description: 'Pay a healer to heal your character.',
+            active: true,
+            trigger: 'healer',
+            arg: 'healer',
+            cooldown: {
+                global: 0,
+                user: 30,
             },
         },
         {
@@ -177,6 +191,10 @@ export function registerCommands() {
                 }
                 case 'name': {
                     rpgNameCommand(userCommand);
+                    break;
+                }
+                case 'healer': {
+                    rpgHealerCommand(userCommand);
                     break;
                 }
                 case 'shop': {

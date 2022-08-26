@@ -133,8 +133,10 @@ export async function startCombat(
     // Check if anyone died in approach phase.
     if (characterOneTemp.currentHP <= 0 || characterTwoTemp.currentHP <= 0) {
         const results = {
-            one: characterOneTemp.currentHP,
-            two: characterTwoTemp.currentHP,
+            one:
+                characterOneTemp.currentHP < 0 ? 0 : characterOneTemp.currentHP,
+            two:
+                characterTwoTemp.currentHP < 0 ? 0 : characterTwoTemp.currentHP,
         };
 
         logger(
@@ -154,12 +156,14 @@ export async function startCombat(
 
     // Alright, lets return our results.
     const results = {
-        one: characterOneTemp.currentHP,
-        two: characterTwoTemp.currentHP,
+        one: characterOneTemp.currentHP < 0 ? 0 : characterOneTemp.currentHP,
+        two: characterTwoTemp.currentHP < 0 ? 0 : characterTwoTemp.currentHP,
     };
+
     logger(
         'debug',
-        `Final combat results: ${characterOne.name}: ${characterOne.currentHP} and ${characterTwo.name}: ${characterTwo.currentHP}.`
+        `Final combat results: ${characterOne.name}: ${characterOneTemp.currentHP} and ${characterTwo.name}: ${characterTwoTemp.currentHP}.`
     );
+
     return results;
 }
