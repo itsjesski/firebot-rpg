@@ -138,6 +138,5 @@ export async function equipItemOnUser(
  * @param health
  */
 export async function setUserCurrentHP(username: string, health: number) {
-    console.log(`setting health to ${health}`);
     await setUserMeta(username, health, 'currentHP');
 }
