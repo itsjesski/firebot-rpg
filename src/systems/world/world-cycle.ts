@@ -1,7 +1,42 @@
-import { logger } from '../../firebot/firebot';
-import { WorldTendency, WorldTendencyTypes } from '../../types/world';
-import { setWorldStat } from './world-stats';
+import { getWorldMeta, logger, sendChatMessage } from '../../firebot/firebot';
+import {
+    WorldBuildingTypes,
+    WorldTendency,
+    WorldTendencyTypes,
+} from '../../types/world';
+import { setWorldStat, setWorldUpgrade } from './world-stats';
 import { clearWorldTendency, worldTendencyPools } from './world-tendency';
+
+async function upgradeBuilding() {
+    const { research } = await getWorldMeta();
+
+    if (research < 100) {
+        return;
+    }
+
+    const buildings = [
+        'blacksmith',
+        'guild',
+        'shipyard',
+        'tavern',
+        'tower',
+    ] as WorldBuildingTypes[];
+
+    const selectedBuilding =
+        buildings[Math.floor(Math.random() * buildings.length)];
+
+    // Upgrade the building by 1.
+    await setWorldUpgrade(selectedBuilding, 1);
+
+    // Reset research level.
+    await setWorldStat('research', 0, true);
+
+    logger('debug', `${selectedBuilding} was upgraded!`);
+
+    sendChatMessage(
+        `Research complete! ${selectedBuilding} has been upgraded!`
+    );
+}
 
 /**
  * Updates our world stats based on our world tendency pools for this cycle.
@@ -50,5 +85,6 @@ export async function worldCycle() {
         'World cycle complete! Adjusting world stats and restarting the cycle.'
     );
     await worldCycleUpdateStats();
+    await upgradeBuilding();
     clearWorldTendency();
 }

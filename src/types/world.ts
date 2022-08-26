@@ -1,17 +1,27 @@
 export type WorldTendencyTypes = 'happiness' | 'resources' | 'research';
 
+export type WorldBuildingTypes =
+    | 'blacksmith'
+    | 'tower'
+    | 'tavern'
+    | 'shipyard'
+    | 'guild'
+    | 'field';
+
+export type WorldBuildings = {
+    blacksmith: number;
+    tower: number;
+    tavern: number;
+    shipyard: number;
+    guild: number;
+    field: number;
+};
+
 export type WorldStats = {
     happiness: number;
     resources: number;
     research: number;
-    upgrades: {
-        blacksmith: number;
-        defenses: number;
-        stable: number;
-        tavern: number;
-        tower: number;
-        shipyard: number;
-    };
+    upgrades: WorldBuildings;
 };
 
 export type WorldTendency = {

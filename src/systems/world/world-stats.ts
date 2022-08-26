@@ -1,5 +1,10 @@
 import { logger, updateWorldMeta, getWorldMeta } from '../../firebot/firebot';
-import { WorldStats, WorldTendencyTypes } from '../../types/world';
+import {
+    WorldBuildings,
+    WorldBuildingTypes,
+    WorldStats,
+    WorldTendencyTypes,
+} from '../../types/world';
 
 /**
  * Generic function for updating any world property.
@@ -7,7 +12,7 @@ import { WorldStats, WorldTendencyTypes } from '../../types/world';
  * @param property
  * @param value
  */
-async function updateWorldProperty(property: string, value: number) {
+async function updateWorldProperty(property: string, value: any) {
     const rpgMeta = await getWorldMeta();
 
     if (Number.isNaN(value)) {
@@ -27,8 +32,26 @@ async function updateWorldProperty(property: string, value: number) {
         return;
     }
 
-    logger('debug', `Setting world ${property} to ${value}.`);
+    logger('debug', `Setting world ${property} to ${JSON.stringify(value)}.`);
     await updateWorldMeta(value, property);
+}
+
+export async function setWorldUpgrade(
+    upgrade: WorldBuildingTypes,
+    value: number
+) {
+    if (Number.isNaN(value)) {
+        logger('error', `Trying to set ${upgrade} to invalid value, ${value}.`);
+        return;
+    }
+
+    const { upgrades } = await getWorldMeta();
+
+    // Set our value.
+    upgrades[upgrade as keyof WorldBuildings] += value;
+
+    // Now, feed the entire upgrades object back into the world.
+    await updateWorldProperty('upgrades', upgrades);
 }
 
 /**
@@ -79,11 +102,10 @@ export async function verifyWorld() {
             research: 0,
             upgrades: {
                 blacksmith: 0,
-                defenses: 0,
-                stable: 0,
                 tavern: 0,
                 tower: 0,
                 shipyard: 0,
+                guild: 0,
             },
         };
         await updateWorldMeta(newWorld);
