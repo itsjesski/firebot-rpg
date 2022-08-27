@@ -4,6 +4,7 @@ import {
     WorldTendency,
     WorldTendencyTypes,
 } from '../../types/world';
+import { capitalize } from '../utils';
 import { setWorldStat, setWorldUpgrade } from './world-stats';
 import { clearWorldTendency, worldTendencyPools } from './world-tendency';
 
@@ -20,7 +21,6 @@ async function upgradeBuilding() {
         'tavern',
         'shipyard',
         'guild',
-        'trainer',
     ] as WorldBuildingTypes[];
 
     const selectedBuilding =
@@ -35,7 +35,9 @@ async function upgradeBuilding() {
     logger('debug', `${selectedBuilding} was upgraded!`);
 
     sendChatMessage(
-        `Research complete! ${selectedBuilding} has been upgraded!`
+        `Research complete! The ${capitalize(
+            selectedBuilding
+        )} has been upgraded!`
     );
 }
 

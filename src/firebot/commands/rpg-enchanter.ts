@@ -6,6 +6,7 @@ import {
     getEnchantmentLevelLimit,
 } from '../../systems/settings';
 import { getUserName, getUserData } from '../../systems/user/user';
+import { capitalize } from '../../systems/utils';
 import { EnchantmentTypes } from '../../types/equipment';
 import { EquippableSlots } from '../../types/user';
 import {
@@ -14,6 +15,7 @@ import {
     getUserCurrencyTotal,
     sendChatMessage,
     adjustCurrencyForUser,
+    logger,
 } from '../firebot';
 
 async function shopEnchantItem(
@@ -42,10 +44,12 @@ async function shopEnchantItem(
 
     const baseCost =
         item.enchantments[elementTypeToEnchant] * getEnchantmentBaseCost();
-    const costToEnchant = baseCost + baseCost * getEnchantmentCostMultiplier();
+    const costToEnchant =
+        baseCost + baseCost * (getEnchantmentCostMultiplier() / 100);
 
     // See if they even have enough money.
     if (characterCurrencyTotal < costToEnchant) {
+        logger('debug', `${username} didn't have enough money to enchant.`);
         sendChatMessage(
             `@${username}, ${characterName} needs ${costToEnchant} ${currencyName} to enchant an item.`
         );
@@ -54,6 +58,7 @@ async function shopEnchantItem(
 
     // Check to see if they're at max already.
     if (item.enchantments[elementTypeToEnchant] >= statLimit) {
+        logger('debug', `${username} hit the enchantment limit for an item.`);
         sendChatMessage(
             `@${username}, ${characterName} has hit the enchantment limit for that item. The enchanter needs upgrades to increase this limit.`
         );
@@ -61,12 +66,18 @@ async function shopEnchantItem(
     }
 
     // Okay, lets enchant.
-    increaseEnchantmentOfUserItem(username, itemSlot, elementTypeToEnchant);
+    await increaseEnchantmentOfUserItem(
+        username,
+        itemSlot,
+        elementTypeToEnchant
+    );
 
     // Deduct currency from user.
     await adjustCurrencyForUser(-Math.abs(costToEnchant), username);
     sendChatMessage(
-        `@${username}, ${characterName} increased their ${elementTypeToEnchant} enchantment by one.`
+        `@${username}, ${characterName} increased their ${capitalize(
+            elementTypeToEnchant
+        )} enchantment by one.`
     );
 }
 

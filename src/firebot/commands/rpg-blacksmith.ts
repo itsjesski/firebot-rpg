@@ -14,6 +14,7 @@ import {
     getUserCurrencyTotal,
     sendChatMessage,
     adjustCurrencyForUser,
+    logger,
 } from '../firebot';
 
 async function shopReinforceItem(
@@ -42,12 +43,17 @@ async function shopReinforceItem(
 
     const baseCost =
         item.enchantments[elementTypeToEnchant] * getRefinementBaseCost();
-    const costToReinforce = baseCost + baseCost * getRefinementCostMultiplier();
+    const costToReinforce =
+        baseCost + baseCost * (getRefinementCostMultiplier() / 100);
 
     // See if they even have enough money.
     if (characterCurrencyTotal < costToReinforce) {
+        logger(
+            'debug',
+            `${username} did not have enough money to refine an item.`
+        );
         sendChatMessage(
-            `@${username}, ${characterName} needs ${costToReinforce} ${currencyName} to reinforce an item.`
+            `@${username}, ${characterName} needs ${costToReinforce} ${currencyName} to refine an item.`
         );
         return;
     }
@@ -56,18 +62,19 @@ async function shopReinforceItem(
     if (
         item.enchantments[elementTypeToEnchant as EnchantmentTypes] >= statLimit
     ) {
+        logger('debug', `${username} hit the refinement limit for an item.`);
         sendChatMessage(
-            `@${username}, ${characterName} has hit the enchantment limit for that item. The blacksmith needs upgrades to increase this limit.`
+            `@${username}, ${characterName} has hit the refinement limit for that item. The blacksmith needs upgrades to increase this limit.`
         );
         return;
     }
 
     // Okay, lets enchant.
-    increaseRefinementLevelOfUserItem(username, itemSlot);
+    await increaseRefinementLevelOfUserItem(username, itemSlot);
 
     // Deduct currency from user.
     await adjustCurrencyForUser(-Math.abs(costToReinforce), username);
-    sendChatMessage(`@${username}, ${characterName} reinforced their item.`);
+    sendChatMessage(`@${username}, ${characterName} refined their item.`);
 }
 
 /**

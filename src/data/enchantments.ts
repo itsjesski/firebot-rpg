@@ -6,6 +6,10 @@ export const weaponEnchantmentNames: EnchantmentName[] = [
         enchantments: ['earth', 'fire'],
     },
     {
+        name: 'Scalding',
+        enchantments: ['water', 'fire'],
+    },
+    {
         name: 'Lightning',
         enchantments: ['wind', 'water'],
     },
@@ -26,6 +30,10 @@ export const weaponEnchantmentNames: EnchantmentName[] = [
         enchantments: ['fire', 'darkness'],
     },
     {
+        name: 'Good',
+        enchantments: ['water', 'light'],
+    },
+    {
         name: 'Clarity',
         enchantments: ['water', 'light'],
     },
@@ -33,11 +41,11 @@ export const weaponEnchantmentNames: EnchantmentName[] = [
 
 export const armorEnchantmentNames: EnchantmentName[] = [
     {
-        name: 'Earth',
+        name: 'Stone',
         enchantments: ['earth', 'fire'],
     },
     {
-        name: 'Wind',
+        name: 'Grounding',
         enchantments: ['wind', 'water'],
     },
     {
@@ -55,6 +63,10 @@ export const armorEnchantmentNames: EnchantmentName[] = [
     {
         name: 'Evil',
         enchantments: ['fire', 'darkness'],
+    },
+    {
+        name: 'Good',
+        enchantments: ['water', 'light'],
     },
     {
         name: 'Clarity',

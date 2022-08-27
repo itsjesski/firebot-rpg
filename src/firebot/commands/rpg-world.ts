@@ -3,10 +3,13 @@ import {
     getWorldName,
     getWorldType,
 } from '../../systems/settings';
+import { verifyWorld } from '../../systems/world/world-stats';
 import { logger, sendChatMessage, getWorldMeta } from '../firebot';
 
 export async function worldCommand() {
     logger('debug', 'Sending world command.');
+
+    await verifyWorld();
 
     const worldName = getWorldName();
     const worldType = getWorldType();

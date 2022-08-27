@@ -26,8 +26,8 @@ function getSubCommands(): SubCommand[] {
             trigger: 'world',
             arg: 'world',
             cooldown: {
-                global: 60,
-                user: 60,
+                global: 120,
+                user: 0,
             },
         },
         {
@@ -40,7 +40,7 @@ function getSubCommands(): SubCommand[] {
             arg: 'stats',
             cooldown: {
                 global: 0,
-                user: 30,
+                user: 10,
             },
         },
         {
@@ -53,7 +53,7 @@ function getSubCommands(): SubCommand[] {
             arg: 'name',
             cooldown: {
                 global: 0,
-                user: 120,
+                user: 3600,
             },
         },
         {

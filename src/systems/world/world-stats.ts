@@ -103,7 +103,7 @@ export async function verifyWorld() {
             upgrades: {
                 blacksmith: 0,
                 tavern: 0,
-                tower: 0,
+                enchanter: 0,
                 shipyard: 0,
                 guild: 0,
             },

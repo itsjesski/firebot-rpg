@@ -122,11 +122,10 @@ export function getEnchantmentName(
             );
             break;
         default:
-            enchantmentName = [
-                {
-                    name: 'Magic',
-                },
-            ];
+    }
+
+    if (enchantmentName == null || enchantmentName === []) {
+        return 'Magic';
     }
 
     return enchantmentName[0].name;
@@ -259,6 +258,10 @@ export async function increaseEnchantmentOfUserItem(
 
     // Figure out current enchantment level, and then add one to the item.
     const currentLevel = item.enchantments[element];
+    logger(
+        'debug',
+        `Increasing enchantment from ${currentLevel} to ${currentLevel + 1}.`
+    );
     item.enchantments[element] = currentLevel + 1;
 
     // Return the item to it's slot with the new properties.
