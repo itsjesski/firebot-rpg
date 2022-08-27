@@ -120,7 +120,7 @@ export function getItemByID(
 }
 
 /**
- * This takes a stored item, and assembles its full name using it's reinforcements and enchantments.
+ * This takes a stored item, and assembles its full name using it's refinements and enchantments.
  * @param item
  */
 export function getFullItemName(item: StorableItems | null): string {

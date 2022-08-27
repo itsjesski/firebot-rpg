@@ -1,4 +1,6 @@
-import { StoredArmor, StoredWeapon } from '../../types/equipment';
+import { setCharacterMeta } from '../../firebot/firebot';
+import { StoredArmor, StoredShield, StoredWeapon } from '../../types/equipment';
+import { EquippableSlots } from '../../types/user';
 import { getUserData } from '../user/user';
 
 /**
@@ -46,4 +48,35 @@ export async function getUserArmorRefinementCount(
         values.armor = armor.refinements;
     }
     return values;
+}
+
+/**
+ * Increase the refinement level of an item.
+ * @param username
+ * @param slot
+ * @returns
+ */
+export async function increaseRefinementLevelOfUserItem(
+    username: string,
+    slot: EquippableSlots
+) {
+    const userdata = await getUserData(username);
+
+    // Make sure the slot is a valid one that can get enchantments.
+    if (slot !== 'armor' && slot !== 'mainHand' && slot !== 'offHand') {
+        return;
+    }
+
+    // Then, get the item from that slot.
+    const item = userdata[slot] as StoredArmor | StoredWeapon | StoredShield;
+    if (item == null) {
+        return;
+    }
+
+    // Figure out current refinement level, and then add one to the item.
+    const currentLevel = item.refinements;
+    item.refinements = currentLevel + 1;
+
+    // Return the item to it's slot with the new properties.
+    await setCharacterMeta(username, item, slot);
 }

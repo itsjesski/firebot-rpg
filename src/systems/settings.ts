@@ -67,6 +67,15 @@ export function getCreatureSettings() {
 }
 
 /**
+ * Get all shop settings.
+ * @returns
+ */
+export function getShopSettings() {
+    const settings = getGameSettings();
+    return settings.shops;
+}
+
+/**
  * Return our innate off hand miss chance.
  * @returns
  */
@@ -161,4 +170,54 @@ export function getMinimumMonsterHP(difficulty: MonsterDifficulties): number {
         default:
             return gameSettings.easyMinHP;
     }
+}
+
+/**
+ * Gets base enchantment cost from settings.
+ */
+export function getEnchantmentBaseCost() {
+    const gameSettings = getShopSettings();
+    return gameSettings.enchantmentBaseCost;
+}
+
+/**
+ * Gets enchantment multiplier cost from settings.
+ */
+export function getEnchantmentCostMultiplier() {
+    const gameSettings = getShopSettings();
+    return gameSettings.enchantmentMultiplier;
+}
+
+/**
+ * Gets base refinement cost from settings.
+ */
+export function getRefinementBaseCost() {
+    const gameSettings = getShopSettings();
+    return gameSettings.refinementBaseCost;
+}
+
+/**
+ * Gets refinement multiplier cost from settings.
+ */
+export function getRefinementCostMultiplier() {
+    const gameSettings = getShopSettings();
+    return gameSettings.refinementMultiplier;
+}
+
+/**
+ * Get the number of refinements we can have per blacksmith level.
+ * @returns
+ */
+export function getRefinementLevelLimit() {
+    const gameSettings = getShopSettings();
+    return gameSettings.refinementsPerLevel;
+}
+
+/**
+ * Get the number of enchantments we can have per enchanter level.
+ * @returns
+ */
+export function getEnchantmentLevelLimit() {
+    const gameSettings = getShopSettings();
+    return gameSettings.enchantmentsPerLevel;
 }

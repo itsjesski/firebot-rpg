@@ -2,12 +2,14 @@ import {
     weaponEnchantmentNames,
     armorEnchantmentNames,
 } from '../../data/enchantments';
-import { logger } from '../../firebot/firebot';
+import { logger, setCharacterMeta } from '../../firebot/firebot';
 import {
     Armor,
     Enchantments,
+    EnchantmentTypes,
     Shield,
     StoredArmor,
+    StoredShield,
     StoredWeapon,
     Weapon,
 } from '../../types/equipment';
@@ -228,4 +230,37 @@ export function getElementalDamageOfAttack(
     }
 
     return damage + intDmgBonus;
+}
+
+/**
+ * Increase the enchanted element on an item by one.
+ * @param username
+ * @param slot
+ * @param element
+ * @returns
+ */
+export async function increaseEnchantmentOfUserItem(
+    username: string,
+    slot: EquippableSlots,
+    element: EnchantmentTypes
+) {
+    const userdata = await getUserData(username);
+
+    // Make sure the slot is a valid one that can get enchantments.
+    if (slot !== 'armor' && slot !== 'mainHand' && slot !== 'offHand') {
+        return;
+    }
+
+    // Then, get the item from that slot.
+    const item = userdata[slot] as StoredArmor | StoredWeapon | StoredShield;
+    if (item == null) {
+        return;
+    }
+
+    // Figure out current enchantment level, and then add one to the item.
+    const currentLevel = item.enchantments[element];
+    item.enchantments[element] = currentLevel + 1;
+
+    // Return the item to it's slot with the new properties.
+    await setCharacterMeta(username, item, slot);
 }

@@ -14,6 +14,14 @@ export type GameSettings = {
         hardMinHP: number;
         legendaryMinHP: number;
     };
+    shops: {
+        refinementBaseCost: number;
+        refinementMultiplier: number;
+        refinementsPerLevel: number;
+        enchantmentBaseCost: number;
+        enchantmentMultiplier: number;
+        enchantmentsPerLevel: number;
+    };
     combatSettings: {
         offHandMissChance: number;
         rangedInMeleePenalty: number;

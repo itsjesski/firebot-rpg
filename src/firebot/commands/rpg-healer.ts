@@ -1,13 +1,21 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
-import { getUserData, getUserName } from '../../systems/user/user';
+import {
+    getUserData,
+    getUserName,
+    setUserCurrentHP,
+} from '../../systems/user/user';
 import {
     getCurrencyName,
+    getUserCurrencyTotal,
     adjustCurrencyForUser,
     sendChatMessage,
-    setCharacterMeta,
-    getUserCurrencyTotal,
 } from '../firebot';
 
+/**
+ * Heals the player to full, as long as they have the money.
+ * @param userCommand
+ * @returns
+ */
 export async function rpgHealerCommand(userCommand: UserCommand) {
     const username = userCommand.commandSender;
     const { currentHP, totalHP } = await getUserData(username);
@@ -19,7 +27,7 @@ export async function rpgHealerCommand(userCommand: UserCommand) {
     // User has enough money to heal to full.
     if (characterCurrencyTotal >= amountToHeal) {
         // If no payment provided, then heal for full.
-        await setCharacterMeta(username, totalHP, 'currentHP');
+        await setUserCurrentHP(username, totalHP);
         await adjustCurrencyForUser(-Math.abs(amountToHeal), username);
         sendChatMessage(
             `@${username}, ${characterName} healed for ${amountToHeal}. It cost ${amountToHeal} ${currencyName}.`
@@ -29,7 +37,7 @@ export async function rpgHealerCommand(userCommand: UserCommand) {
 
     // User doesn't have enough money to heal to full, so use whatever currency they have left.
     const healAmount = currentHP + characterCurrencyTotal;
-    await setCharacterMeta(username, healAmount, 'currentHP');
+    await setUserCurrentHP(username, totalHP);
     await adjustCurrencyForUser(-Math.abs(characterCurrencyTotal), username);
     sendChatMessage(
         `@${username}, ${characterName} healed for ${healAmount}. It cost ${healAmount} ${currencyName}.`

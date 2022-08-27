@@ -186,10 +186,8 @@ export function getCharacterDamageBonus(
 
     // Now, adjust for item properties.
     if (item.properties.includes('versatile')) {
-        return (
-            Math.floor(
-                Math.max(attacker.str, attacker.dex) / damageBonusDivider
-            ) + item.refinements
+        return Math.floor(
+            Math.max(attacker.str, attacker.dex) / damageBonusDivider
         );
     }
 
@@ -197,19 +195,16 @@ export function getCharacterDamageBonus(
         item.properties.includes('heavy') ||
         item.damage_type === 'bludgeoning'
     ) {
-        return Math.floor(attacker.str / damageBonusDivider) + item.refinements;
+        return Math.floor(attacker.str / damageBonusDivider);
     }
 
     if (
         item.properties.includes('finesse') ||
         item.damage_type === 'piercing'
     ) {
-        return Math.floor(attacker.dex / damageBonusDivider) + item.refinements;
+        return Math.floor(attacker.dex / damageBonusDivider);
     }
 
     // If it's a regular weapon, then we go with str + dex / 2.
-    return (
-        Math.floor((attacker.str + attacker.dex / 2) / damageBonusDivider) +
-        item.refinements
-    );
+    return Math.floor((attacker.str + attacker.dex / 2) / damageBonusDivider);
 }

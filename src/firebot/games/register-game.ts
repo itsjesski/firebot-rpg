@@ -141,10 +141,95 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
             },
         },
     },
+    shops: {
+        title: 'Shops',
+        description: 'Settings related to the shops',
+        sortRank: 4,
+        settings: {
+            refinementBaseCost: {
+                type: 'number',
+                title: 'Refinement Base Cost',
+                description:
+                    'The lower this is the cheaper refinements will be.',
+                tip: 'This is the base cost of a refinement.',
+                default: 500,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            refinementMultiplier: {
+                type: 'number',
+                title: 'Refinement Cost Multiplier',
+                description:
+                    'This is a percentage of how much more each refinement level will cost than the last.',
+                tip: 'Each refinement will be this much more than the last. Keep this at zero to keep costs the same, otherwise they get progressively more expensive.',
+                default: 25,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            refinementsPerLevel: {
+                type: 'number',
+                title: 'Refinement Limit',
+                description:
+                    'This is the number of refinements someone can have per blacksmith level.',
+                tip: 'The lower this is, the slower the power creep in the game.',
+                default: 5,
+                sortRank: 3,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            enchantmentBaseCost: {
+                type: 'number',
+                title: 'Enchantment Base Cost',
+                description:
+                    'The lower this is the cheaper enchantments will be.',
+                tip: 'This is the base cost of a enchantments.',
+                default: 500,
+                sortRank: 4,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            enchantmentMultiplier: {
+                type: 'number',
+                title: 'Enchantment Cost Multiplier',
+                description:
+                    'This is a percentage of how much more each enchantment level will cost than the last.',
+                tip: 'Each enchantment will be this much more than the last. Keep this at zero to keep costs the same, otherwise they get progressively more expensive.',
+                default: 25,
+                sortRank: 5,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            enchantmentsPerLevel: {
+                type: 'number',
+                title: 'Enchantment Limit',
+                description:
+                    'This is the number of enchantment someone can have per enchanter level.',
+                tip: 'The lower this is, the slower the power creep in the game.',
+                default: 5,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+        },
+    },
     combatSettings: {
         title: 'Combat Settings',
         description: 'Settings related to combat.',
-        sortRank: 4,
+        sortRank: 5,
         settings: {
             offHandMissChance: {
                 type: 'number',

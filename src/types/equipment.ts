@@ -21,6 +21,14 @@ export type WeaponDamageTypes = 'piercing' | 'bludgeoning' | 'slashing';
 
 export type ArmorProperties = 'heavy' | 'medium' | 'light';
 
+export type EnchantmentTypes =
+    | 'earth'
+    | 'wind'
+    | 'fire'
+    | 'water'
+    | 'light'
+    | 'darkness';
+
 export type Enchantments = {
     earth: number;
     wind: number;

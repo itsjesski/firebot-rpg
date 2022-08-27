@@ -4,6 +4,7 @@
         "Equippable",
         "fblogger",
         "fbrpg",
-        "firebot"
+        "firebot",
+        "userdata"
     ]
 }

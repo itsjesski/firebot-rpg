@@ -5,10 +5,13 @@ import {
 
 import { verifyUser } from '../../systems/user/user';
 import { logger, registerSystemCommand } from '../firebot';
+import { rpgBlacksmithCommand } from './rpg-blacksmith';
+import { rpgEnchanterCommand } from './rpg-enchanter';
 import { rpgEquipCommand } from './rpg-equip';
 import { rpgHealerCommand } from './rpg-healer';
 import { rpgJobCommand } from './rpg-job';
 import { rpgNameCommand } from './rpg-name';
+import { rpgShopCommand } from './rpg-shop';
 import { rpgStatsCommand } from './rpg-stats';
 import { worldCommand } from './rpg-world';
 
@@ -29,7 +32,7 @@ function getSubCommands(): SubCommand[] {
         },
         {
             id: 'fbrpg:rpg-stats',
-            usage: 'stats',
+            usage: 'stats [slot]',
             name: '!rpg stats',
             description: 'Shows the stats of your character.',
             active: true,
@@ -42,7 +45,7 @@ function getSubCommands(): SubCommand[] {
         },
         {
             id: 'fbrpg:rpg-name',
-            usage: 'name',
+            usage: 'name [name]',
             name: '!rpg name',
             description: 'Lets you change your character name.',
             active: true,
@@ -55,7 +58,7 @@ function getSubCommands(): SubCommand[] {
         },
         {
             id: 'fbrpg:rpg-equip',
-            usage: 'equip',
+            usage: 'equip [slot]',
             name: '!rpg equip',
             description: 'Equips the currently held item.',
             active: true,
@@ -80,42 +83,56 @@ function getSubCommands(): SubCommand[] {
             },
         },
         {
-            id: 'fbrpg:healer',
+            id: 'fbrpg:rpg-healer',
             usage: 'healer',
             name: '!rpg healer',
-            description: 'Pay a healer to heal your character.',
+            description: 'A healer will heal the player.',
             active: true,
             trigger: 'healer',
             arg: 'healer',
             cooldown: {
                 global: 0,
-                user: 30,
+                user: 60,
+            },
+        },
+        {
+            id: 'fbrpg:rpg-enchanter',
+            usage: 'enchanter [slot] [element]',
+            name: '!rpg enchanter',
+            description:
+                'Players can enchant their items with specific elements.',
+            active: true,
+            trigger: 'enchanter',
+            arg: 'enchanter',
+            cooldown: {
+                global: 0,
+                user: 60,
+            },
+        },
+        {
+            id: 'fbrpg:rpg-blacksmith',
+            usage: 'blacksmith [slot]',
+            name: '!rpg blacksmith',
+            description: 'Players can improve their items at the blacksmith.',
+            active: true,
+            trigger: 'blacksmith',
+            arg: 'blacksmith',
+            cooldown: {
+                global: 0,
+                user: 60,
             },
         },
         {
             id: 'fbrpg:rpg-shop',
             usage: 'shop',
             name: '!rpg shop',
-            description: 'Lists out items currently available in the shop.',
+            description: 'Players can shop for specific items.',
             active: true,
             trigger: 'shop',
             arg: 'shop',
             cooldown: {
                 global: 0,
-                user: 30,
-            },
-        },
-        {
-            id: 'fbrpg:rpg-shop-buy',
-            usage: 'shop-buy [number]',
-            name: '!rpg shop-buy',
-            description: 'Buys the item in the designated shop slot.',
-            active: true,
-            trigger: 'shop-buy',
-            arg: 'shop-buy',
-            cooldown: {
-                global: 0,
-                user: 30,
+                user: 60,
             },
         },
     ];
@@ -197,12 +214,16 @@ export function registerCommands() {
                     rpgHealerCommand(userCommand);
                     break;
                 }
-                case 'shop': {
-                    // TODO: Implement
+                case 'enchanter': {
+                    rpgEnchanterCommand(userCommand);
                     break;
                 }
-                case 'shop-buy': {
-                    // TODO: Implement
+                case 'blacksmith': {
+                    rpgBlacksmithCommand(userCommand);
+                    break;
+                }
+                case 'shop': {
+                    rpgShopCommand(userCommand);
                     break;
                 }
                 // eslint-disable-next-line no-empty

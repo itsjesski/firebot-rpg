@@ -16,10 +16,11 @@ async function upgradeBuilding() {
 
     const buildings = [
         'blacksmith',
-        'guild',
-        'shipyard',
+        'enchanter',
         'tavern',
-        'tower',
+        'shipyard',
+        'guild',
+        'trainer',
     ] as WorldBuildingTypes[];
 
     const selectedBuilding =
