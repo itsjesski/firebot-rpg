@@ -5,6 +5,7 @@ import {
     WorldStats,
     WorldTendencyTypes,
 } from '../../types/world';
+import { getResetID } from '../settings';
 
 /**
  * Generic function for updating any world property.
@@ -94,9 +95,10 @@ export async function verifyWorld() {
 
     const worldStats = await getWorldMeta();
 
-    if (worldStats == null) {
+    if (worldStats == null || worldStats.resetID !== getResetID()) {
         logger('debug', `World doesn't exist yet! Creating a new one.`);
         const newWorld: WorldStats = {
+            resetID: getResetID(),
             happiness: 50,
             resources: 50,
             research: 0,

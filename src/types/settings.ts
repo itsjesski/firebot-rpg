@@ -1,6 +1,7 @@
 export type GameSettings = {
     generalSettings: {
         currencyId: string;
+        resetId: string;
     };
     worldSettings: {
         name: string;

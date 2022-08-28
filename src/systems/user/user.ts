@@ -17,6 +17,7 @@ import {
     CharacterStatNames,
     EquippableSlots,
 } from '../../types/user';
+import { getResetID } from '../settings';
 
 /**
  * Returns the raw character meta data.
@@ -54,12 +55,13 @@ export async function verifyUser(userCommand: UserCommand) {
 
     const characterStats = await getUserData(userName);
 
-    if (characterStats == null) {
+    if (characterStats == null || characterStats.resetId !== getResetID()) {
         logger(
             'debug',
             `RPG: ${userName} doesn't exist yet! Creating a new character.`
         );
         const newCharacter: Character = {
+            resetId: getResetID(),
             name: userName,
             totalHP: 10,
             currentHP: 10,

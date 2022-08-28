@@ -1,5 +1,6 @@
 import { SettingCategoryDefinition } from '@crowbartools/firebot-custom-scripts-types/types/modules/game-manager';
 import { startGameCycle } from '../../systems/cycle';
+import { formatDate } from '../../systems/utils';
 
 import { verifyWorld } from '../../systems/world/world-stats';
 import { registerCommands } from '../commands/register-commands';
@@ -17,6 +18,18 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                 description: 'Which currency to use for this game.',
                 tip: 'Select the currency players will use throughout the game.',
                 default: '',
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            resetId: {
+                type: 'string',
+                title: 'Reset ID',
+                description: 'This id is set on all characters when created.',
+                tip: 'If a character does not have this reset id, then they will be reset the next time they run a command. Change this to reset the game.',
+                default: formatDate(new Date()),
                 sortRank: 1,
                 showBottomHr: false,
                 validation: {

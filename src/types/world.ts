@@ -18,6 +18,7 @@ export type WorldBuildings = {
 };
 
 export type WorldStats = {
+    resetID: string;
     happiness: number;
     resources: number;
     research: number;

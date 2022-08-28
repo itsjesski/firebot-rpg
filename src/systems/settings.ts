@@ -246,3 +246,12 @@ export function getTrainingLevelLimit() {
     const gameSettings = getShopSettings();
     return gameSettings.trainingsPerLevel;
 }
+
+/**
+ * Gets our game reset id.
+ * @returns
+ */
+export function getResetID() {
+    const settings = getGameSettings();
+    return settings.generalSettings.resetId;
+}

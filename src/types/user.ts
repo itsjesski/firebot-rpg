@@ -19,6 +19,7 @@ export type EquippableSlots =
 export type CharacterStatNames = 'str' | 'dex' | 'int' | 'totalHP';
 
 export type Character = {
+    resetId: string;
     name: string;
     totalHP: number;
     currentHP: number;

@@ -119,6 +119,7 @@ export async function generateMonster(
 
     // Our generated monster stats.
     const generatedMonster: GeneratedMonster = {
+        created: new Date(),
         id: selectedMonster.id,
         name: selectedMonster.name,
         totalHP: monsterStats.hp,
