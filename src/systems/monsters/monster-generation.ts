@@ -17,7 +17,7 @@ import {
 } from '../../types/monsters';
 import { getItemByID } from '../equipment/helpers';
 import { rpgLootGenerator } from '../equipment/loot-generation';
-import { getMinimumMonsterHP } from '../settings';
+import { getMinimumMonsterHP, getResetID } from '../settings';
 import { getUserData } from '../user/user';
 import { addOrSubtractRandomPercentage } from '../utils';
 import { getMonsterByDifficulty, getMonsterByID } from './monsters';
@@ -119,7 +119,7 @@ export async function generateMonster(
 
     // Our generated monster stats.
     const generatedMonster: GeneratedMonster = {
-        created: new Date(),
+        resetId: getResetID(),
         id: selectedMonster.id,
         name: selectedMonster.name,
         totalHP: monsterStats.hp,
