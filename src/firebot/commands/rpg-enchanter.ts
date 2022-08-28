@@ -5,6 +5,7 @@ import {
     getEnchantmentCostMultiplier,
     getEnchantmentLevelLimit,
 } from '../../systems/settings';
+import { calculateShopCost } from '../../systems/shops/shops';
 import { getUserName, getUserData } from '../../systems/user/user';
 import { capitalize } from '../../systems/utils';
 import { EnchantmentTypes } from '../../types/equipment';
@@ -46,12 +47,13 @@ async function shopEnchantItem(
         item.enchantments[elementTypeToEnchant] * getEnchantmentBaseCost();
     const costToEnchant =
         baseCost + baseCost * (getEnchantmentCostMultiplier() / 100);
+    const totalCost = await calculateShopCost(costToEnchant);
 
     // See if they even have enough money.
-    if (characterCurrencyTotal < costToEnchant) {
+    if (characterCurrencyTotal < totalCost) {
         logger('debug', `${username} didn't have enough money to enchant.`);
         sendChatMessage(
-            `@${username}, ${characterName} needs ${costToEnchant} ${currencyName} to enchant an item.`
+            `@${username}, ${characterName} needs ${totalCost} ${currencyName} to enchant an item.`
         );
         return;
     }
@@ -73,11 +75,11 @@ async function shopEnchantItem(
     );
 
     // Deduct currency from user.
-    await adjustCurrencyForUser(-Math.abs(costToEnchant), username);
+    await adjustCurrencyForUser(-Math.abs(totalCost), username);
     sendChatMessage(
         `@${username}, ${characterName} increased their ${capitalize(
             elementTypeToEnchant
-        )} enchantment by one.`
+        )} enchantment by one. It cost ${totalCost} ${currencyName}.`
     );
 }
 
@@ -96,7 +98,7 @@ export async function rpgEnchanterCommand(userCommand: UserCommand) {
 
     if (enchanter < 1) {
         sendChatMessage(
-            `@${username}, ${characterName} approached the enchanter tower. There was a sign on the door said "Coming soon!".`
+            `@${username}, ${characterName} approached the enchanter tower. There was a sign on the door that said "Coming soon!".`
         );
         return;
     }

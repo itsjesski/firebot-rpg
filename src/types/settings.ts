@@ -21,6 +21,9 @@ export type GameSettings = {
         enchantmentBaseCost: number;
         enchantmentMultiplier: number;
         enchantmentsPerLevel: number;
+        trainingBaseCost: number;
+        trainingMultiplier: number;
+        trainingsPerLevel: number;
     };
     combatSettings: {
         offHandMissChance: number;

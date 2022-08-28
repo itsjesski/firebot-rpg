@@ -189,6 +189,15 @@ export function getEnchantmentCostMultiplier() {
 }
 
 /**
+ * Get the number of enchantments we can have per enchanter level.
+ * @returns
+ */
+export function getEnchantmentLevelLimit() {
+    const gameSettings = getShopSettings();
+    return gameSettings.enchantmentsPerLevel;
+}
+
+/**
  * Gets base refinement cost from settings.
  */
 export function getRefinementBaseCost() {
@@ -214,10 +223,26 @@ export function getRefinementLevelLimit() {
 }
 
 /**
- * Get the number of enchantments we can have per enchanter level.
+ * Gets base training cost from settings.
+ */
+export function getTrainingBaseCost() {
+    const gameSettings = getShopSettings();
+    return gameSettings.trainingBaseCost;
+}
+
+/**
+ * Gets training multiplier cost from settings.
+ */
+export function getTrainingCostMultiplier() {
+    const gameSettings = getShopSettings();
+    return gameSettings.trainingMultiplier;
+}
+
+/**
+ * Get the number of trainings we can have per blacksmith level.
  * @returns
  */
-export function getEnchantmentLevelLimit() {
+export function getTrainingLevelLimit() {
     const gameSettings = getShopSettings();
-    return gameSettings.enchantmentsPerLevel;
+    return gameSettings.trainingsPerLevel;
 }

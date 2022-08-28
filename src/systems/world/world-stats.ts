@@ -106,6 +106,7 @@ export async function verifyWorld() {
                 enchanter: 0,
                 shipyard: 0,
                 guild: 0,
+                trainer: 0,
             },
         };
         await updateWorldMeta(newWorld);

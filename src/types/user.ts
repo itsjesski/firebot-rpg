@@ -16,7 +16,7 @@ export type EquippableSlots =
     | 'characterClass'
     | 'title';
 
-export type CharacterStatNames = 'str' | 'dex' | 'int';
+export type CharacterStatNames = 'str' | 'dex' | 'int' | 'totalHP';
 
 export type Character = {
     name: string;

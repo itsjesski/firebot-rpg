@@ -5,8 +5,9 @@ import {
     getRefinementCostMultiplier,
     getRefinementLevelLimit,
 } from '../../systems/settings';
+import { calculateShopCost } from '../../systems/shops/shops';
 import { getUserName, getUserData } from '../../systems/user/user';
-import { EnchantmentTypes } from '../../types/equipment';
+import { StoredWeapon } from '../../types/equipment';
 import { EquippableSlots } from '../../types/user';
 import {
     getWorldMeta,
@@ -22,14 +23,12 @@ async function shopReinforceItem(
     itemSlot: EquippableSlots
 ) {
     const username = userCommand.commandSender;
-    const { args } = userCommand;
     const { upgrades } = await getWorldMeta();
     const characterName = await getUserName(username);
     const { blacksmith } = upgrades;
     const statLimit = blacksmith * getRefinementLevelLimit();
     const userdata = await getUserData(username);
-    const elementTypeToEnchant = args[2] as EnchantmentTypes;
-    const item = userdata[itemSlot];
+    const item = userdata[itemSlot] as StoredWeapon;
     const currencyName = getCurrencyName();
     const characterCurrencyTotal = await getUserCurrencyTotal(username);
 
@@ -41,27 +40,25 @@ async function shopReinforceItem(
         return;
     }
 
-    const baseCost =
-        item.enchantments[elementTypeToEnchant] * getRefinementBaseCost();
+    const baseCost = item.refinements * getRefinementBaseCost();
     const costToReinforce =
         baseCost + baseCost * (getRefinementCostMultiplier() / 100);
+    const totalCost = await calculateShopCost(costToReinforce);
 
     // See if they even have enough money.
-    if (characterCurrencyTotal < costToReinforce) {
+    if (characterCurrencyTotal < totalCost) {
         logger(
             'debug',
             `${username} did not have enough money to refine an item.`
         );
         sendChatMessage(
-            `@${username}, ${characterName} needs ${costToReinforce} ${currencyName} to refine an item.`
+            `@${username}, ${characterName} needs ${totalCost} ${currencyName} to refine an item.`
         );
         return;
     }
 
     // Check to see if they're at max already.
-    if (
-        item.enchantments[elementTypeToEnchant as EnchantmentTypes] >= statLimit
-    ) {
+    if (item.refinements >= statLimit) {
         logger('debug', `${username} hit the refinement limit for an item.`);
         sendChatMessage(
             `@${username}, ${characterName} has hit the refinement limit for that item. The blacksmith needs upgrades to increase this limit.`
@@ -69,16 +66,18 @@ async function shopReinforceItem(
         return;
     }
 
-    // Okay, lets enchant.
+    // Okay, lets apply the changes..
     await increaseRefinementLevelOfUserItem(username, itemSlot);
 
     // Deduct currency from user.
-    await adjustCurrencyForUser(-Math.abs(costToReinforce), username);
-    sendChatMessage(`@${username}, ${characterName} refined their item.`);
+    await adjustCurrencyForUser(-Math.abs(totalCost), username);
+    sendChatMessage(
+        `@${username}, ${characterName} refined their item. It cost ${totalCost} ${currencyName}.`
+    );
 }
 
 /**
- * The enchanter allows the player to enchant their items.
+ * The blacksmith allows users to upgrade an item.
  * @param userCommand
  */
 export async function rpgBlacksmithCommand(userCommand: UserCommand) {
@@ -91,7 +90,7 @@ export async function rpgBlacksmithCommand(userCommand: UserCommand) {
 
     if (blacksmith < 1) {
         sendChatMessage(
-            `@${username}, ${characterName} approached the blacksmith shop. There was a sign on the door said "Coming soon!".`
+            `@${username}, ${characterName} approached the blacksmith shop. There was a sign on the door that said "Coming soon!".`
         );
         return;
     }
@@ -111,7 +110,7 @@ export async function rpgBlacksmithCommand(userCommand: UserCommand) {
             break;
         default:
             sendChatMessage(
-                `@${username}, specify a slot to enchant. Slots: main, off, armor. Example: !rpg shop enchanter armor fire`
+                `@${username}, specify a slot to enchant. Slots: main, off, armor. Example: !rpg blacksmith armor`
             );
     }
 }

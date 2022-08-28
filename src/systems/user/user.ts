@@ -12,7 +12,11 @@ import {
     StoredTitle,
     StoredWeapon,
 } from '../../types/equipment';
-import { Character, EquippableSlots } from '../../types/user';
+import {
+    Character,
+    CharacterStatNames,
+    EquippableSlots,
+} from '../../types/user';
 
 /**
  * Returns the raw character meta data.
@@ -139,4 +143,21 @@ export async function equipItemOnUser(
  */
 export async function setUserCurrentHP(username: string, health: number) {
     await setUserMeta(username, health, 'currentHP');
+}
+
+/**
+ * Adjusts a characters stat by X amount.
+ * @param username
+ * @param stat
+ */
+export async function setUserStat(
+    username: string,
+    stat: CharacterStatNames,
+    amount: number
+) {
+    const user = await getUserData(username);
+    const currentStat = user[stat];
+    const newStat = currentStat + amount;
+
+    await setUserMeta(username, newStat, stat);
 }

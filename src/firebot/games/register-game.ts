@@ -224,6 +224,45 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     required: true,
                 },
             },
+            trainingBaseCost: {
+                type: 'number',
+                title: 'Training Base Cost',
+                description:
+                    'The lower this is the cheaper stat training will be.',
+                tip: 'This is the base cost of a stat training.',
+                default: 500,
+                sortRank: 4,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            trainingMultiplier: {
+                type: 'number',
+                title: 'Training Cost Multiplier',
+                description:
+                    'This is a percentage of how much more each training level will cost than the last.',
+                tip: 'Each training will be this much more than the last. Keep this at zero to keep costs the same, otherwise they get progressively more expensive.',
+                default: 25,
+                sortRank: 5,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            trainingsPerLevel: {
+                type: 'number',
+                title: 'Training Limit',
+                description:
+                    'This is the number of trainings someone can have per trainer level.',
+                tip: 'The lower this is, the slower the power creep in the game.',
+                default: 5,
+                sortRank: 2,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
         },
     },
     combatSettings: {

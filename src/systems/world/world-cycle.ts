@@ -21,6 +21,7 @@ async function upgradeBuilding() {
         'tavern',
         'shipyard',
         'guild',
+        'trainer',
     ] as WorldBuildingTypes[];
 
     const selectedBuilding =
@@ -29,16 +30,64 @@ async function upgradeBuilding() {
     // Upgrade the building by 1.
     await setWorldUpgrade(selectedBuilding, 1);
 
+    // These building immediately affect world stats.
+    switch (selectedBuilding) {
+        case 'blacksmith':
+            sendChatMessage(
+                `Research complete! The ${capitalize(
+                    selectedBuilding
+                )} has been upgraded! Refinement limit increased.`
+            );
+            break;
+        case 'enchanter':
+            sendChatMessage(
+                `Research complete! The ${capitalize(
+                    selectedBuilding
+                )} has been upgraded! Enchantment limit increased.`
+            );
+            break;
+        case 'guild':
+            sendChatMessage(
+                `Research complete! The ${capitalize(
+                    selectedBuilding
+                )} has been upgraded! Job payment and options increased.`
+            );
+            break;
+        case 'shipyard':
+            await setWorldStat('resources', 20);
+            sendChatMessage(
+                `Research complete! The ${capitalize(
+                    selectedBuilding
+                )} has been upgraded! World resources increased.`
+            );
+            break;
+        case 'tavern':
+            await setWorldStat('happiness', 20);
+            sendChatMessage(
+                `Research complete! The ${capitalize(
+                    selectedBuilding
+                )} has been upgraded! World happiness increased.`
+            );
+            break;
+        case 'trainer':
+            sendChatMessage(
+                `Research complete! The ${capitalize(
+                    selectedBuilding
+                )} has been upgraded! Stat training limit increased.`
+            );
+            break;
+        default:
+            sendChatMessage(
+                `Research complete! The ${capitalize(
+                    selectedBuilding
+                )} has been upgraded!`
+            );
+    }
+
     // Reset research level.
     await setWorldStat('research', 0, true);
 
     logger('debug', `${selectedBuilding} was upgraded!`);
-
-    sendChatMessage(
-        `Research complete! The ${capitalize(
-            selectedBuilding
-        )} has been upgraded!`
-    );
 }
 
 /**

@@ -1,4 +1,5 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
+import { calculateShopCost } from '../../systems/shops/shops';
 import {
     getUserData,
     getUserName,
@@ -24,22 +25,25 @@ export async function rpgHealerCommand(userCommand: UserCommand) {
     const currencyName = getCurrencyName();
     const characterCurrencyTotal = await getUserCurrencyTotal(username);
 
+    const totalCost = await calculateShopCost(amountToHeal);
+
     // User has enough money to heal to full.
-    if (characterCurrencyTotal >= amountToHeal) {
+    if (characterCurrencyTotal >= totalCost) {
         // If no payment provided, then heal for full.
         await setUserCurrentHP(username, totalHP);
-        await adjustCurrencyForUser(-Math.abs(amountToHeal), username);
+        await adjustCurrencyForUser(-Math.abs(totalCost), username);
         sendChatMessage(
-            `@${username}, ${characterName} healed for ${amountToHeal}. It cost ${amountToHeal} ${currencyName}.`
+            `@${username}, ${characterName} healed for ${amountToHeal}. It cost ${totalCost} ${currencyName}.`
         );
         return;
     }
 
     // User doesn't have enough money to heal to full, so use whatever currency they have left.
     const healAmount = currentHP + characterCurrencyTotal;
+    const partialCost = await calculateShopCost(healAmount);
     await setUserCurrentHP(username, totalHP);
-    await adjustCurrencyForUser(-Math.abs(characterCurrencyTotal), username);
+    await adjustCurrencyForUser(-Math.abs(partialCost), username);
     sendChatMessage(
-        `@${username}, ${characterName} healed for ${healAmount}. It cost ${healAmount} ${currencyName}.`
+        `@${username}, ${characterName} healed for ${healAmount}. It cost ${partialCost} ${currencyName}.`
     );
 }

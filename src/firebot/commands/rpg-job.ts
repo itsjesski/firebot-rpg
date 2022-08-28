@@ -22,6 +22,7 @@ import {
 } from '../../systems/user/user';
 import {
     addOrSubtractRandomPercentage,
+    filterArrayByProperty,
     getPercentage,
 } from '../../systems/utils';
 import { updateWorldTendency } from '../../systems/world/world-tendency';
@@ -34,6 +35,7 @@ import {
     adjustCurrencyForUser,
     logger,
     sendChatMessage,
+    getWorldMeta,
 } from '../firebot';
 
 /**
@@ -47,16 +49,36 @@ async function giveJobCurrencyReward(
     username: string
 ): Promise<number> {
     const amount = job.loot.money;
+    const world = await getWorldMeta();
+    const guildLevel = world.upgrades.guild;
+    const { happiness } = world;
+    let happinessBonus = 0;
 
     if (amount == null || amount === 0) {
         return 0;
     }
 
+    // Figure out bonus payment from current happiness level.
+    if (happiness < 25) {
+        happinessBonus = -0.25;
+    } else if (happiness >= 25 && happiness < 50) {
+        happinessBonus = -0.1;
+    } else if (happiness >= 50 && happiness < 75) {
+        happinessBonus = 0.1;
+    } else {
+        happinessBonus = 0.25;
+    }
+
+    // Add all of our bonuses together.
     const total = addOrSubtractRandomPercentage(amount);
+    const totalWithGuildBonus = total * (guildLevel / 100) + total;
+    const finalTotal = Math.floor(
+        totalWithGuildBonus * happinessBonus + totalWithGuildBonus
+    );
 
-    await adjustCurrencyForUser(total, username);
+    await adjustCurrencyForUser(finalTotal, username);
 
-    return total;
+    return finalTotal;
 }
 
 /**
@@ -190,9 +212,49 @@ async function rpgJobMessageBuilder(
     return message;
 }
 
+/**
+ * Selects a job at random based on guild level.
+ * @returns
+ */
+export async function selectJob(): Promise<Job> {
+    const world = await getWorldMeta();
+    const guildLevel = world.upgrades.guild;
+    let filteredJobs: Job[] = [];
+
+    // Let's build a new job list user the jobs that are available for the current guild level.
+    if (guildLevel >= 9) {
+        filteredJobs.concat(
+            filterArrayByProperty(jobList, ['challenge'], 'legendary')
+        );
+    }
+
+    if (guildLevel >= 6) {
+        filteredJobs.concat(
+            filterArrayByProperty(jobList, ['challenge'], 'hard')
+        );
+    }
+
+    if (guildLevel >= 3) {
+        filteredJobs.concat(
+            filterArrayByProperty(jobList, ['challenge'], 'medium')
+        );
+    }
+
+    filteredJobs.concat(
+        (filteredJobs = filterArrayByProperty(jobList, ['challenge'], 'easy'))
+    );
+
+    return filteredJobs[Math.floor(Math.random() * filteredJobs.length)];
+}
+
+/**
+ * Sends the player on a job where they can earn equipment and get paid.
+ * @param userCommand
+ * @returns
+ */
 export async function rpgJobCommand(userCommand: UserCommand) {
     const username = userCommand.commandSender;
-    const selectJob: Job = jobList[Math.floor(Math.random() * jobList.length)];
+    const selectedJob = await selectJob();
     let itemGiven = null;
     let combatResults = null;
     let jobMessage = '';
@@ -200,9 +262,9 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     logger('debug', `JOB STARTED: ${username}`);
 
     // Combat time.
-    if (selectJob.encounter != null) {
-        logger('debug', `This job has an encounter: ${selectJob.encounter}`);
-        const monster = await generateMonster(username, selectJob.encounter);
+    if (selectedJob.encounter != null) {
+        logger('debug', `This job has an encounter: ${selectedJob.encounter}`);
+        const monster = await generateMonster(username, selectedJob.encounter);
         const player = await getUserData(username);
         const combat = await startCombat(player, monster);
 
@@ -219,15 +281,15 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         if (!combatResults.won) {
             jobMessage = await rpgJobMessageBuilder(
                 username,
-                selectJob.template,
+                selectedJob.template,
                 0,
                 null,
                 combatResults
             );
 
-            Object.keys(selectJob.world_tendency).forEach((stat) => {
+            Object.keys(selectedJob.world_tendency).forEach((stat) => {
                 const key = stat as WorldTendencyTypes;
-                const statValue = -Math.abs(selectJob.world_tendency[key]);
+                const statValue = -Math.abs(selectedJob.world_tendency[key]);
                 if (statValue !== 0) {
                     updateWorldTendency(key, statValue);
                 }
@@ -239,23 +301,23 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     }
 
     // Give currency to the user if this job rewards that.
-    const currencyGiven = await giveJobCurrencyReward(selectJob, username);
+    const currencyGiven = await giveJobCurrencyReward(selectedJob, username);
 
     // Generate our loot item if there is one.
     // Hand our loot to the player right away.
-    if (selectJob.loot?.item?.itemType != null) {
+    if (selectedJob.loot?.item?.itemType != null) {
         itemGiven = await rpgLootGenerator(
             username,
-            selectJob.loot.item.itemType,
-            selectJob.loot.item.rarity
+            selectedJob.loot.item.itemType,
+            selectedJob.loot.item.rarity
         );
         await equipItemOnUser(username, itemGiven, 'backpack');
     }
 
     // Add result to the world tendency pool.
-    Object.keys(selectJob.world_tendency).forEach((stat) => {
+    Object.keys(selectedJob.world_tendency).forEach((stat) => {
         const key = stat as WorldTendencyTypes;
-        const statValue = selectJob.world_tendency[key];
+        const statValue = selectedJob.world_tendency[key];
         if (statValue !== 0) {
             updateWorldTendency(key, statValue);
         }
@@ -264,7 +326,7 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     // Create our response message.
     jobMessage = await rpgJobMessageBuilder(
         username,
-        selectJob.template,
+        selectedJob.template,
         currencyGiven,
         itemGiven,
         combatResults

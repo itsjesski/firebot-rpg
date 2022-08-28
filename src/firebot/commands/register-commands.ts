@@ -13,6 +13,7 @@ import { rpgJobCommand } from './rpg-job';
 import { rpgNameCommand } from './rpg-name';
 import { rpgShopCommand } from './rpg-shop';
 import { rpgStatsCommand } from './rpg-stats';
+import { rpgTrainerCommand } from './rpg-trainer';
 import { worldCommand } from './rpg-world';
 
 function getSubCommands(): SubCommand[] {
@@ -123,6 +124,20 @@ function getSubCommands(): SubCommand[] {
             },
         },
         {
+            id: 'fbrpg:rpg-trainer',
+            usage: 'trainer [attribute]',
+            name: '!rpg trainer',
+            description:
+                'Players can improve their stats by visiting a trainer.',
+            active: true,
+            trigger: 'trainer',
+            arg: 'trainer',
+            cooldown: {
+                global: 0,
+                user: 60,
+            },
+        },
+        {
             id: 'fbrpg:rpg-shop',
             usage: 'shop',
             name: '!rpg shop',
@@ -220,6 +235,10 @@ export function registerCommands() {
                 }
                 case 'blacksmith': {
                     rpgBlacksmithCommand(userCommand);
+                    break;
+                }
+                case 'trainer': {
+                    rpgTrainerCommand(userCommand);
                     break;
                 }
                 case 'shop': {

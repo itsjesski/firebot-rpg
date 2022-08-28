@@ -5,7 +5,8 @@ export type WorldBuildingTypes =
     | 'enchanter'
     | 'tavern'
     | 'shipyard'
-    | 'guild';
+    | 'guild'
+    | 'trainer';
 
 export type WorldBuildings = {
     blacksmith: number;
@@ -13,6 +14,7 @@ export type WorldBuildings = {
     tavern: number;
     shipyard: number;
     guild: number;
+    trainer: number;
 };
 
 export type WorldStats = {
