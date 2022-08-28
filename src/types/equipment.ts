@@ -112,7 +112,6 @@ export type Title = {
         str: number;
         dex: number;
         int: number;
-        totalHP: number;
     };
     rarity: Rarity;
     itemType: 'title';
@@ -130,7 +129,6 @@ export type CharacterClass = {
         str: number;
         dex: number;
         int: number;
-        totalHP: number;
     };
     properties: string[];
     rarity: Rarity;

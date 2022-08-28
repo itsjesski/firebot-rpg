@@ -30,7 +30,7 @@ async function rangedAttack(
         mainWeapon.range >= distance &&
         (await didCharacterHitRanged(attacker, defender, 'mainHand'))
     ) {
-        damage += calculateDamage(attacker, defender, 'mainHand');
+        damage += await calculateDamage(attacker, defender, 'mainHand');
     }
 
     // Try the offhand.
@@ -46,7 +46,7 @@ async function rangedAttack(
                 offHandWeapon.range >= distance &&
                 (await didCharacterHitRanged(attacker, defender, 'offHand'))
             ) {
-                damage += calculateDamage(attacker, defender, 'offHand');
+                damage += await calculateDamage(attacker, defender, 'offHand');
             }
         }
     }

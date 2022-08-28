@@ -71,7 +71,7 @@ export async function didCharacterHitRanged(
     slot: EquippableSlots
 ) {
     const defenderAC = await getCharacterTotalAC(defender);
-    const hitBonus = getCharacterHitBonus(attacker, slot);
+    const hitBonus = await getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20`) + hitBonus;
 
     if (slot === 'offHand') {
@@ -108,7 +108,7 @@ export async function didCharacterHitMelee(
     slot: EquippableSlots
 ): Promise<boolean> {
     const defenderAC = await getCharacterTotalAC(defender);
-    const hitBonus = getCharacterHitBonus(attacker, slot);
+    const hitBonus = await getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20 +${hitBonus}`);
 
     const item = getItemByID(

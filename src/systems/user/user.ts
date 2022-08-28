@@ -154,7 +154,7 @@ export async function setUserCurrentHP(username: string, health: number) {
  */
 export async function setUserStat(
     username: string,
-    stat: CharacterStatNames,
+    stat: CharacterStatNames | 'totalHP',
     amount: number
 ) {
     const user = await getUserData(username);

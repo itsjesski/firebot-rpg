@@ -18,7 +18,7 @@ import {
 
 async function shopTrainStat(
     userCommand: UserCommand,
-    stat: CharacterStatNames
+    stat: CharacterStatNames | 'totalHP'
 ) {
     const username = userCommand.commandSender;
     const { upgrades } = await getWorldMeta();

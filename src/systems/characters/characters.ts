@@ -108,12 +108,14 @@ export async function getCharacterTotalAC(
  * @param slot
  * @returns
  */
-export function getCharacterHitBonus(
+export async function getCharacterHitBonus(
     attacker: Character | GeneratedMonster,
     slot: EquippableSlots
-): number {
+): Promise<number> {
     const toHitDivider = getHitBonusSettings() ? getHitBonusSettings() : 10;
     let item;
+    const str = await getAdjustedCharacterStat(attacker, 'str');
+    const dex = await getAdjustedCharacterStat(attacker, 'dex');
 
     // Get our item first.
     if (slot === 'mainHand') {
@@ -130,30 +132,25 @@ export function getCharacterHitBonus(
 
     // Now, adjust for item properties.
     if (item.properties.includes('versatile')) {
-        return (
-            Math.floor(Math.max(attacker.str, attacker.dex)) + item.refinements
-        );
+        return Math.floor(Math.max(str, dex)) + item.refinements;
     }
 
     if (
         item.properties.includes('heavy') ||
         item.damage_type === 'bludgeoning'
     ) {
-        return Math.floor(attacker.str / toHitDivider) + item.refinements;
+        return Math.floor(str / toHitDivider) + item.refinements;
     }
 
     if (
         item.properties.includes('finesse') ||
         item.damage_type === 'piercing'
     ) {
-        return Math.floor(attacker.dex / toHitDivider) + item.refinements;
+        return Math.floor(dex / toHitDivider) + item.refinements;
     }
 
     // If it's a regular weapon, then we go with str + dex / 2.
-    return (
-        Math.floor((attacker.str + attacker.dex / 2) / toHitDivider) +
-        item.refinements
-    );
+    return Math.floor((str + dex / 2) / toHitDivider) + item.refinements;
 }
 
 /**
@@ -162,14 +159,16 @@ export function getCharacterHitBonus(
  * @param slot
  * @returns
  */
-export function getCharacterDamageBonus(
+export async function getCharacterDamageBonus(
     attacker: Character | GeneratedMonster,
     slot: EquippableSlots
-): number {
+): Promise<number> {
     const damageBonusDivider = getDamageBonusSettings()
         ? getDamageBonusSettings()
         : 10;
     let item;
+    const str = await getAdjustedCharacterStat(attacker, 'str');
+    const dex = await getAdjustedCharacterStat(attacker, 'dex');
 
     // Get our item first.
     if (slot === 'mainHand') {
@@ -186,25 +185,23 @@ export function getCharacterDamageBonus(
 
     // Now, adjust for item properties.
     if (item.properties.includes('versatile')) {
-        return Math.floor(
-            Math.max(attacker.str, attacker.dex) / damageBonusDivider
-        );
+        return Math.floor(Math.max(str, dex) / damageBonusDivider);
     }
 
     if (
         item.properties.includes('heavy') ||
         item.damage_type === 'bludgeoning'
     ) {
-        return Math.floor(attacker.str / damageBonusDivider);
+        return Math.floor(str / damageBonusDivider);
     }
 
     if (
         item.properties.includes('finesse') ||
         item.damage_type === 'piercing'
     ) {
-        return Math.floor(attacker.dex / damageBonusDivider);
+        return Math.floor(dex / damageBonusDivider);
     }
 
     // If it's a regular weapon, then we go with str + dex / 2.
-    return Math.floor((attacker.str + attacker.dex / 2) / damageBonusDivider);
+    return Math.floor((str + dex / 2) / damageBonusDivider);
 }

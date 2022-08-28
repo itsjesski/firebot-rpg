@@ -55,7 +55,7 @@ export function initiative(
  * @param slot
  * @returns
  */
-export function calculateDamage(
+export async function calculateDamage(
     attacker: Character,
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
@@ -71,8 +71,12 @@ export function calculateDamage(
         ) as Weapon;
 
         roll = rollDice(mainWeapon.damage);
-        dmgBonus = getCharacterDamageBonus(attacker, 'mainHand');
-        elemental = getElementalDamageOfAttack(attacker, defender, 'mainHand');
+        dmgBonus = await getCharacterDamageBonus(attacker, 'mainHand');
+        elemental = await getElementalDamageOfAttack(
+            attacker,
+            defender,
+            'mainHand'
+        );
 
         logger(
             'debug',
@@ -91,8 +95,12 @@ export function calculateDamage(
         ) as Weapon;
 
         roll = rollDice(offHand.damage);
-        dmgBonus = getCharacterDamageBonus(attacker, 'offHand');
-        elemental = getElementalDamageOfAttack(attacker, defender, 'offHand');
+        dmgBonus = await getCharacterDamageBonus(attacker, 'offHand');
+        elemental = await getElementalDamageOfAttack(
+            attacker,
+            defender,
+            'offHand'
+        );
 
         logger(
             'debug',

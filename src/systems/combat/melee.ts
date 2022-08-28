@@ -23,7 +23,7 @@ async function attackCharacter(
 
     // Check to see if we did any damage with the main hand.
     if (await didCharacterHitMelee(attacker, defender, 'mainHand')) {
-        damage += calculateDamage(attacker, defender, 'mainHand');
+        damage += await calculateDamage(attacker, defender, 'mainHand');
     }
 
     // Offhand check
@@ -36,7 +36,7 @@ async function attackCharacter(
             offHand.itemType === 'weapon' &&
             (await didCharacterHitMelee(attacker, defender, 'offHand'))
         ) {
-            damage += calculateDamage(attacker, defender, 'offHand');
+            damage += await calculateDamage(attacker, defender, 'offHand');
         }
     }
 

@@ -15,6 +15,7 @@ import {
 } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character, EquippableSlots } from '../../types/user';
+import { getAdjustedCharacterStat } from '../characters/characters';
 import { getDamageBonusSettings } from '../settings';
 import { getUserData } from '../user/user';
 import {
@@ -157,20 +158,21 @@ export async function getUserArmorEnchantmentCount(
  * @param attacker
  * @param defender
  */
-export function getElementalDamageOfAttack(
+export async function getElementalDamageOfAttack(
     attacker: Character,
     defender: Character | GeneratedMonster,
     slot: EquippableSlots
-): number {
+): Promise<number> {
     let item;
     let armor;
     let shield;
     let damage = 0;
+    const int = await getAdjustedCharacterStat(attacker, 'int');
 
     const damageBonusDivider = getDamageBonusSettings()
         ? getDamageBonusSettings()
         : 10;
-    const intDmgBonus = Math.floor(attacker.int / damageBonusDivider);
+    const intDmgBonus = Math.floor(int / damageBonusDivider);
 
     if (slot === 'mainHand') {
         item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
