@@ -209,9 +209,9 @@ export function getFullItemTextWithStats(item: StorableItems | null) {
         case 'characterClass':
             message = `${fullName} | +${dbItem.bonuses.str}% STR, +${
                 dbItem.bonuses.dex
-            }% DEX, +${dbItem.bonuses.int}% INT | ${dbItem.properties.join(
-                ', '
-            )} | ${dbItem.rarity} ${getItemTypeDisplayName(dbItem)}`;
+            }% DEX, +${dbItem.bonuses.int}% INT | ${
+                dbItem.rarity
+            } ${getItemTypeDisplayName(dbItem)}`;
             break;
         default:
             logger(
