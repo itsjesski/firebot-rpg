@@ -130,7 +130,6 @@ export type CharacterClass = {
         dex: number;
         int: number;
     };
-    properties: string[];
     rarity: Rarity;
     itemType: 'characterClass';
 };

@@ -134,6 +134,7 @@ async function rpgJobMessageTemplateReplacement(
         worldName: getWorldName(),
         worldType: getWorldType(),
         citizenName: getWorldCitizens(),
+        currencyName: getCurrencyName(),
     };
 
     const result = message.replace(
