@@ -48,9 +48,11 @@ async function shopEnchantItem(
         currentEnchantments = item.enchantments[elementTypeToEnchant];
     }
 
-    const baseCost = currentEnchantments * getEnchantmentBaseCost();
-    const costToEnchant =
-        baseCost + baseCost * (getEnchantmentCostMultiplier() / 100);
+    const baseCost = getEnchantmentBaseCost();
+    const precentage =
+        currentEnchantments * (getEnchantmentCostMultiplier() / 100);
+    const costToEnchant = baseCost + baseCost * precentage;
+
     const totalCost = await calculateShopCost(costToEnchant);
 
     // See if they even have enough money.

@@ -46,9 +46,11 @@ async function shopReinforceItem(
         currentRefinements = item.refinements;
     }
 
-    const baseCost = currentRefinements * getRefinementBaseCost();
-    const costToReinforce =
-        baseCost + baseCost * (getRefinementCostMultiplier() / 100);
+    const baseCost = getRefinementBaseCost();
+    const precentage =
+        currentRefinements * (getRefinementCostMultiplier() / 100);
+    const costToReinforce = baseCost + baseCost * precentage;
+
     const totalCost = await calculateShopCost(costToReinforce);
 
     // See if they even have enough money.
