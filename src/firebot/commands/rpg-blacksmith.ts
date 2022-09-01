@@ -31,6 +31,7 @@ async function shopReinforceItem(
     const item = userdata[itemSlot] as StoredWeapon;
     const currencyName = getCurrencyName();
     const characterCurrencyTotal = await getUserCurrencyTotal(username);
+    let currentRefinements = 1;
 
     // Check to see if this item exists.
     if (item == null) {
@@ -40,7 +41,12 @@ async function shopReinforceItem(
         return;
     }
 
-    const baseCost = item.refinements * getRefinementBaseCost();
+    // This is for calculating base costs.
+    if (item.refinements !== 0) {
+        currentRefinements = item.refinements;
+    }
+
+    const baseCost = currentRefinements * getRefinementBaseCost();
     const costToReinforce =
         baseCost + baseCost * (getRefinementCostMultiplier() / 100);
     const totalCost = await calculateShopCost(costToReinforce);

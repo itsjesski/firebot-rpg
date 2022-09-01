@@ -1,5 +1,4 @@
 import { weaponList } from '../../data/weapons';
-import { logger } from '../../firebot/firebot';
 import { Rarity, StoredWeapon, Weapon } from '../../types/equipment';
 import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
 import {
@@ -45,8 +44,6 @@ export async function generateWeaponForUser(
         username
     );
     const userRefinementValues = await getUserHandItemRefinementCount(username);
-
-    logger('debug', `Got user enchantment and refinement base counts.`);
 
     const baseEnchantmentValue = Math.max(
         userEnchantmentValues.main_hand,

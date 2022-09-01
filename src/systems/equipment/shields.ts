@@ -1,5 +1,4 @@
 import { shieldList } from '../../data/shields';
-import { logger } from '../../firebot/firebot';
 import { Rarity, Shield, StoredShield } from '../../types/equipment';
 import { addOrSubtractRandomPercentage, filterArrayByProperty } from '../utils';
 import {
@@ -45,8 +44,6 @@ export async function generateShieldForUser(
         username
     );
     const userRefinementValues = await getUserHandItemRefinementCount(username);
-
-    logger('debug', `Got user enchantment and refinement base counts.`);
 
     const baseEnchantmentValue = Math.max(
         userEnchantmentValues.main_hand,

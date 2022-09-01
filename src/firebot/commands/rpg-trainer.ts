@@ -24,7 +24,7 @@ async function shopTrainStat(
     const { upgrades } = await getWorldMeta();
     const characterName = await getUserName(username);
     const { trainer } = upgrades;
-    const statLimit = trainer * getTrainingLevelLimit();
+    const statLimit = trainer + 1 * getTrainingLevelLimit(); // Players start at 10, so add one level to trainer for stat limit.
     const userdata = await getUserData(username);
     const currencyName = getCurrencyName();
     const characterCurrencyTotal = await getUserCurrencyTotal(username);

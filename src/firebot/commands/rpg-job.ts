@@ -14,6 +14,7 @@ import {
     getWorldName,
     getWorldType,
 } from '../../systems/settings';
+import { chargePlayerForHeal } from '../../systems/user/healer';
 import {
     equipItemOnUser,
     getUserData,
@@ -195,7 +196,8 @@ async function rpgJobMessageBuilder(
     messageTemplate: string,
     moneyReward: number,
     itemReward: StorableItems | null,
-    combatResults: { fought: GeneratedMonster; won: boolean } | null
+    combatResults: { fought: GeneratedMonster; won: boolean } | null,
+    healedMessage: string
 ): Promise<string> {
     const jobMessage = `@${username}: ${messageTemplate}`;
     const rewards = await rpgJobMessageLootTemplate(
@@ -207,7 +209,7 @@ async function rpgJobMessageBuilder(
 
     const message = await rpgJobMessageTemplateReplacement(
         username,
-        `${jobMessage} ${combat} ${rewards}`
+        `${jobMessage} ${combat} ${healedMessage} ${rewards}`
     );
 
     return message;
@@ -267,6 +269,16 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         logger('debug', `This job has an encounter: ${selectedJob.encounter}`);
         const monster = await generateMonster(username, selectedJob.encounter);
         const player = await getUserData(username);
+        const characterName = await getUserName(username);
+
+        if (player.currentHP === 0) {
+            sendChatMessage(
+                `@${username}, ${characterName} is dead and needs to be healed first.`
+            );
+            return;
+        }
+
+        // Time to start combat.
         const combat = await startCombat(player, monster);
 
         // Set character health to whatever was remaining after combat.
@@ -285,7 +297,8 @@ export async function rpgJobCommand(userCommand: UserCommand) {
                 selectedJob.template,
                 0,
                 null,
-                combatResults
+                combatResults,
+                await chargePlayerForHeal(username)
             );
 
             Object.keys(selectedJob.world_tendency).forEach((stat) => {
@@ -330,7 +343,8 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         selectedJob.template,
         currencyGiven,
         itemGiven,
-        combatResults
+        combatResults,
+        await chargePlayerForHeal(username)
     );
 
     // Send our message template for this job to chat.

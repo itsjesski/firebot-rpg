@@ -10,7 +10,7 @@ export async function rpgNameCommand(userCommand: UserCommand) {
 
     if (newName.length > 30 || newName.length === 0) {
         sendChatMessage(
-            `@${username} That name is too long. There is a character limit of 30 characters.`
+            `@${username} That name is either too short or too long. It must be between 1 and 30 characters.`
         );
         return;
     }

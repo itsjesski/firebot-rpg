@@ -10,7 +10,6 @@ export type Monster = {
         armor: boolean;
         title: boolean;
         characterClass: boolean;
-        potion: boolean;
     };
     bonuses: {
         str: number;

@@ -98,7 +98,6 @@ export async function verifyUser(userCommand: UserCommand) {
                     darkness: 0,
                 },
             },
-            potion: null,
             characterClass: {
                 id: 1,
                 itemType: 'characterClass',

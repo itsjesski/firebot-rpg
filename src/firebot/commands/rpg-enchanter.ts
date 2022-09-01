@@ -9,7 +9,7 @@ import { calculateShopCost } from '../../systems/shops/shops';
 import { getUserName, getUserData } from '../../systems/user/user';
 import { capitalize } from '../../systems/utils';
 import { EnchantmentTypes } from '../../types/equipment';
-import { EquippableSlots } from '../../types/user';
+import { EnchantableSlots } from '../../types/user';
 import {
     getWorldMeta,
     getCurrencyName,
@@ -21,7 +21,7 @@ import {
 
 async function shopEnchantItem(
     userCommand: UserCommand,
-    itemSlot: EquippableSlots
+    itemSlot: EnchantableSlots
 ) {
     const username = userCommand.commandSender;
     const { args } = userCommand;
@@ -34,6 +34,7 @@ async function shopEnchantItem(
     const item = userdata[itemSlot];
     const currencyName = getCurrencyName();
     const characterCurrencyTotal = await getUserCurrencyTotal(username);
+    let currentEnchantments = 1;
 
     // Check to see if this item exists.
     if (item == null) {
@@ -43,8 +44,11 @@ async function shopEnchantItem(
         return;
     }
 
-    const baseCost =
-        item.enchantments[elementTypeToEnchant] * getEnchantmentBaseCost();
+    if (item.enchantments[elementTypeToEnchant] !== 0) {
+        currentEnchantments = item.enchantments[elementTypeToEnchant];
+    }
+
+    const baseCost = currentEnchantments * getEnchantmentBaseCost();
     const costToEnchant =
         baseCost + baseCost * (getEnchantmentCostMultiplier() / 100);
     const totalCost = await calculateShopCost(costToEnchant);

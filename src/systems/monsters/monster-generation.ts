@@ -131,7 +131,6 @@ export async function generateMonster(
         armor: null,
         mainHand: null,
         offHand: null,
-        potion: null,
         characterClass: null,
         title: null,
     };

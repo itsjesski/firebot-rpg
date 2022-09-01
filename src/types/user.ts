@@ -12,9 +12,10 @@ export type EquippableSlots =
     | 'armor'
     | 'mainHand'
     | 'offHand'
-    | 'potion'
     | 'characterClass'
     | 'title';
+
+export type EnchantableSlots = 'armor' | 'mainHand' | 'offHand';
 
 export type CharacterStatNames = 'str' | 'dex' | 'int';
 
@@ -30,7 +31,6 @@ export type Character = {
     armor: StoredArmor | null;
     mainHand: StoredWeapon;
     offHand: StoredWeapon | StoredShield | null;
-    potion: any;
     characterClass: StoredCharacterClass;
     title: StoredTitle;
 };

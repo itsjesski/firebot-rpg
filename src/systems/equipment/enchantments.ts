@@ -125,7 +125,7 @@ export function getEnchantmentName(
         default:
     }
 
-    if (enchantmentName == null || enchantmentName === []) {
+    if (!enchantmentName?.length) {
         return 'Magic';
     }
 
@@ -167,6 +167,9 @@ export async function getElementalDamageOfAttack(
     let armor;
     let shield;
     let damage = 0;
+
+    logger('debug', `Getting elemental damage of attack...`);
+
     const int = await getAdjustedCharacterStat(attacker, 'int');
 
     const damageBonusDivider = getDamageBonusSettings()
@@ -191,7 +194,7 @@ export async function getElementalDamageOfAttack(
     }
 
     if (defender.offHand != null && defender.offHand?.itemType === 'shield') {
-        shield = getItemByID(defender.armor.id, 'shield') as Shield;
+        shield = getItemByID(defender.offHand.id, 'shield') as Shield;
     }
 
     // eslint-disable-next-line no-restricted-syntax

@@ -9,7 +9,6 @@ export const monsterList: Monster[] = [
             armor: false,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -30,7 +29,6 @@ export const monsterList: Monster[] = [
             armor: false,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -51,7 +49,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -72,7 +69,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -93,7 +89,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -114,7 +109,6 @@ export const monsterList: Monster[] = [
             armor: false,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -135,7 +129,6 @@ export const monsterList: Monster[] = [
             armor: false,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -156,7 +149,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -177,7 +169,6 @@ export const monsterList: Monster[] = [
             armor: false,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -198,7 +189,6 @@ export const monsterList: Monster[] = [
             armor: false,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -219,7 +209,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -240,7 +229,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -261,7 +249,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -282,7 +269,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -303,7 +289,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -324,7 +309,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -345,7 +329,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -366,7 +349,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 15,
@@ -387,7 +369,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -408,7 +389,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -429,7 +409,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 15,
@@ -450,7 +429,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -471,7 +449,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 20,
@@ -492,7 +469,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -513,7 +489,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -534,7 +509,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 20,
@@ -555,7 +529,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -576,7 +549,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -597,7 +569,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -618,7 +589,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -639,7 +609,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 10,
@@ -660,7 +629,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 20,
@@ -681,7 +649,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 20,
@@ -702,7 +669,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -723,7 +689,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 20,
@@ -744,7 +709,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 0,
@@ -765,7 +729,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: true,
             characterClass: true,
-            potion: false,
         },
         bonuses: {
             str: 5,
@@ -786,7 +749,6 @@ export const monsterList: Monster[] = [
             armor: true,
             title: false,
             characterClass: false,
-            potion: false,
         },
         bonuses: {
             str: 5,

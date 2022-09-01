@@ -8,10 +8,8 @@ import { logger, registerSystemCommand } from '../firebot';
 import { rpgBlacksmithCommand } from './rpg-blacksmith';
 import { rpgEnchanterCommand } from './rpg-enchanter';
 import { rpgEquipCommand } from './rpg-equip';
-import { rpgHealerCommand } from './rpg-healer';
 import { rpgJobCommand } from './rpg-job';
 import { rpgNameCommand } from './rpg-name';
-import { rpgShopCommand } from './rpg-shop';
 import { rpgStatsCommand } from './rpg-stats';
 import { rpgTrainerCommand } from './rpg-trainer';
 import { worldCommand } from './rpg-world';
@@ -84,19 +82,6 @@ function getSubCommands(): SubCommand[] {
             },
         },
         {
-            id: 'fbrpg:rpg-healer',
-            usage: 'healer',
-            name: '!rpg healer',
-            description: 'A healer will heal the player.',
-            active: true,
-            trigger: 'healer',
-            arg: 'healer',
-            cooldown: {
-                global: 0,
-                user: 60,
-            },
-        },
-        {
             id: 'fbrpg:rpg-enchanter',
             usage: 'enchanter [slot] [element]',
             name: '!rpg enchanter',
@@ -132,19 +117,6 @@ function getSubCommands(): SubCommand[] {
             active: true,
             trigger: 'trainer',
             arg: 'trainer',
-            cooldown: {
-                global: 0,
-                user: 60,
-            },
-        },
-        {
-            id: 'fbrpg:rpg-shop',
-            usage: 'shop',
-            name: '!rpg shop',
-            description: 'Players can shop for specific items.',
-            active: true,
-            trigger: 'shop',
-            arg: 'shop',
             cooldown: {
                 global: 0,
                 user: 60,
@@ -225,10 +197,6 @@ export function registerCommands() {
                     rpgNameCommand(userCommand);
                     break;
                 }
-                case 'healer': {
-                    rpgHealerCommand(userCommand);
-                    break;
-                }
                 case 'enchanter': {
                     rpgEnchanterCommand(userCommand);
                     break;
@@ -239,10 +207,6 @@ export function registerCommands() {
                 }
                 case 'trainer': {
                     rpgTrainerCommand(userCommand);
-                    break;
-                }
-                case 'shop': {
-                    rpgShopCommand(userCommand);
                     break;
                 }
                 // eslint-disable-next-line no-empty
