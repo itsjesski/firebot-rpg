@@ -2,6 +2,30 @@ import { EnchantmentName } from '../types/equipment';
 
 export const weaponEnchantmentNames: EnchantmentName[] = [
     {
+        name: 'Earth',
+        enchantments: ['earth'],
+    },
+    {
+        name: 'Fire',
+        enchantments: ['fire'],
+    },
+    {
+        name: 'Wind',
+        enchantments: ['wind'],
+    },
+    {
+        name: 'Water',
+        enchantments: ['water'],
+    },
+    {
+        name: 'Light',
+        enchantments: ['light'],
+    },
+    {
+        name: 'Darkness',
+        enchantments: ['darkness'],
+    },
+    {
         name: 'Lava',
         enchantments: ['earth', 'fire'],
     },
@@ -10,28 +34,44 @@ export const weaponEnchantmentNames: EnchantmentName[] = [
         enchantments: ['earth', 'wind'],
     },
     {
+        name: 'Erosion',
+        enchantments: ['earth', 'water'],
+    },
+    {
+        name: 'Life',
+        enchantments: ['earth', 'light'],
+    },
+    {
+        name: 'Decay',
+        enchantments: ['earth', 'darkness'],
+    },
+    {
         name: 'Scalding',
         enchantments: ['water', 'fire'],
+    },
+    {
+        name: 'Lightning',
+        enchantments: ['water', 'wind'],
     },
     {
         name: 'Good',
         enchantments: ['water', 'light'],
     },
     {
-        name: 'Clarity',
-        enchantments: ['water', 'light'],
-    },
-    {
-        name: 'Lightning',
-        enchantments: ['wind', 'water'],
+        name: 'Poison',
+        enchantments: ['water', 'darkness'],
     },
     {
         name: 'Scorching',
         enchantments: ['wind', 'fire'],
     },
     {
-        name: 'Chaos',
-        enchantments: ['light', 'darkness'],
+        name: 'Purging',
+        enchantments: ['wind', 'light'],
+    },
+    {
+        name: 'Terror',
+        enchantments: ['wind', 'darkness'],
     },
     {
         name: 'Sunlight',
@@ -41,39 +81,95 @@ export const weaponEnchantmentNames: EnchantmentName[] = [
         name: 'Evil',
         enchantments: ['fire', 'darkness'],
     },
-];
-
-export const armorEnchantmentNames: EnchantmentName[] = [
-    {
-        name: 'Stone',
-        enchantments: ['earth', 'fire'],
-    },
-    {
-        name: 'Dust',
-        enchantments: ['earth', 'wind'],
-    },
-    {
-        name: 'Grounding',
-        enchantments: ['wind', 'water'],
-    },
     {
         name: 'Chaos',
         enchantments: ['light', 'darkness'],
     },
+];
+
+export const armorEnchantmentNames: EnchantmentName[] = [
     {
-        name: 'Light',
-        enchantments: ['fire', 'light'],
+        name: 'Earth',
+        enchantments: ['earth'],
     },
     {
-        name: 'Evil',
-        enchantments: ['fire', 'darkness'],
+        name: 'Fire',
+        enchantments: ['fire'],
+    },
+    {
+        name: 'Wind',
+        enchantments: ['wind'],
+    },
+    {
+        name: 'Water',
+        enchantments: ['water'],
+    },
+    {
+        name: 'Light',
+        enchantments: ['light'],
+    },
+    {
+        name: 'Darkness',
+        enchantments: ['darkness'],
+    },
+    {
+        name: 'Discipline',
+        enchantments: ['earth', 'fire'],
+    },
+    {
+        name: 'Grace',
+        enchantments: ['earth', 'wind'],
+    },
+    {
+        name: 'Beasts',
+        enchantments: ['earth', 'water'],
+    },
+    {
+        name: 'Brilliance',
+        enchantments: ['earth', 'light'],
+    },
+    {
+        name: 'Dread',
+        enchantments: ['earth', 'darkness'],
+    },
+    {
+        name: 'Slaying',
+        enchantments: ['water', 'fire'],
+    },
+    {
+        name: 'Tenacity',
+        enchantments: ['water', 'wind'],
     },
     {
         name: 'Good',
         enchantments: ['water', 'light'],
     },
     {
-        name: 'Clarity',
-        enchantments: ['water', 'light'],
+        name: 'Corruption',
+        enchantments: ['water', 'darkness'],
+    },
+    {
+        name: 'Warding',
+        enchantments: ['wind', 'fire'],
+    },
+    {
+        name: 'Angels',
+        enchantments: ['wind', 'light'],
+    },
+    {
+        name: 'Twilight',
+        enchantments: ['wind', 'darkness'],
+    },
+    {
+        name: 'the Sun',
+        enchantments: ['fire', 'light'],
+    },
+    {
+        name: 'Terror',
+        enchantments: ['fire', 'darkness'],
+    },
+    {
+        name: 'Chaos',
+        enchantments: ['light', 'darkness'],
     },
 ];
