@@ -7,7 +7,12 @@ import {
 } from '../../systems/settings';
 import { calculateShopCost } from '../../systems/shops/shops';
 import { getUserName, getUserData } from '../../systems/user/user';
-import { StoredWeapon } from '../../types/equipment';
+import {
+    StoredArmor,
+    StoredShield,
+    StoredSpell,
+    StoredWeapon,
+} from '../../types/equipment';
 import { EquippableSlots } from '../../types/user';
 import {
     getWorldMeta,
@@ -28,7 +33,11 @@ async function shopReinforceItem(
     const { blacksmith } = upgrades;
     const statLimit = blacksmith * getRefinementLevelLimit();
     const userdata = await getUserData(username);
-    const item = userdata[itemSlot] as StoredWeapon;
+    const item = userdata[itemSlot] as
+        | StoredWeapon
+        | StoredArmor
+        | StoredShield
+        | StoredSpell;
     const currencyName = getCurrencyName();
     const characterCurrencyTotal = await getUserCurrencyTotal(username);
     let currentRefinements = 1;
@@ -79,9 +88,16 @@ async function shopReinforceItem(
 
     // Deduct currency from user.
     await adjustCurrencyForUser(-Math.abs(totalCost), username);
-    sendChatMessage(
-        `@${username}, ${characterName} refined their item. It cost ${totalCost} ${currencyName}.`
-    );
+
+    if (item.itemType === 'spell') {
+        sendChatMessage(
+            `@${username}, The runesmith improved ${characterName}'s spell. It cost ${totalCost} ${currencyName}.`
+        );
+    } else {
+        sendChatMessage(
+            `@${username}, The blacksmith improved ${characterName}'s item. It cost ${totalCost} ${currencyName}.`
+        );
+    }
 }
 
 /**

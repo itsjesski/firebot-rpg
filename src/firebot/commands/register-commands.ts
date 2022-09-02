@@ -4,8 +4,9 @@ import {
 } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
 import { verifyUser } from '../../systems/user/user';
-import { logger, registerSystemCommand } from '../firebot';
+import { registerSystemCommand } from '../firebot';
 import { rpgBlacksmithCommand } from './rpg-blacksmith';
+import { rpgDuelCommand } from './rpg-duel';
 import { rpgEnchanterCommand } from './rpg-enchanter';
 import { rpgEquipCommand } from './rpg-equip';
 import { rpgJobCommand } from './rpg-job';
@@ -122,6 +123,19 @@ function getSubCommands(): SubCommand[] {
                 user: 60,
             },
         },
+        {
+            id: 'fbrpg:rpg-duel',
+            usage: 'duel [challenge / accept]',
+            name: '!rpg duel',
+            description: 'Players can duel each other.',
+            active: true,
+            trigger: 'duel',
+            arg: 'duel',
+            cooldown: {
+                global: 0,
+                user: 60,
+            },
+        },
     ];
 }
 
@@ -171,10 +185,6 @@ export function registerCommands() {
 
             // Now, parse the subcommand.
             const commandUsed = args[0];
-            logger(
-                'debug',
-                `${userCommand.commandSender} tried to use the ${commandUsed} command.`
-            );
 
             switch (commandUsed) {
                 case 'world': {
@@ -207,6 +217,10 @@ export function registerCommands() {
                 }
                 case 'trainer': {
                     rpgTrainerCommand(userCommand);
+                    break;
+                }
+                case 'duel': {
+                    rpgDuelCommand(userCommand);
                     break;
                 }
                 // eslint-disable-next-line no-empty

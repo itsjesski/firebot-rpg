@@ -70,7 +70,7 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
             dex = await getAdjustedCharacterStat(character, 'dex');
             int = await getAdjustedCharacterStat(character, 'int');
             acTotal = await getCharacterTotalAC(character);
-            message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, ${acTotal} AC, and ${character.currentHP}/${character.totalHP} HP.`;
+            message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, ${acTotal} AC, and ${character.totalHP} HP.`;
     }
 
     if (message != null) {

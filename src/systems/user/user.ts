@@ -100,6 +100,10 @@ export async function verifyUser(userCommand: UserCommand) {
                 id: 1,
                 itemType: 'title',
             },
+            duel: {
+                challenger: null,
+                time: null,
+            },
         };
 
         await setUserMeta(userName, newCharacter);

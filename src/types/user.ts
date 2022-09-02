@@ -20,6 +20,11 @@ export type EnchantableSlots = 'armor' | 'mainHand' | 'offHand';
 
 export type CharacterStatNames = 'str' | 'dex' | 'int';
 
+export type Duel = {
+    challenger: string | null;
+    time: number | null;
+};
+
 export type Character = {
     resetId: string;
     name: string;
@@ -34,4 +39,5 @@ export type Character = {
     offHand: StoredWeapon | StoredShield | StoredSpell | null;
     characterClass: StoredCharacterClass;
     title: StoredTitle;
+    duel: Duel;
 };

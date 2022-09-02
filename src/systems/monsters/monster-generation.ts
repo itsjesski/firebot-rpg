@@ -133,6 +133,10 @@ export async function generateMonster(
         offHand: null,
         characterClass: null,
         title: null,
+        duel: {
+            challenger: null,
+            time: null,
+        },
     };
 
     // Generate a weapon for the main hand.
