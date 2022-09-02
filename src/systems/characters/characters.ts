@@ -104,6 +104,18 @@ export async function getCharacterTotalAC(
 }
 
 /**
+ * Gets a characters int bonus used in spellcasting and resisting.
+ * @param attacker
+ */
+export async function getCharacterIntBonus(
+    attacker: Character | GeneratedMonster
+) {
+    const toHitDivider = getHitBonusSettings() ? getHitBonusSettings() : 10;
+    const int = await getAdjustedCharacterStat(attacker, 'int');
+    return Math.floor(int / toHitDivider);
+}
+
+/**
  * Gets the to hit bonus based on weapon type.
  * @param attacker
  * @param slot

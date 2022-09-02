@@ -16,13 +16,17 @@ import {
 } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character, EquippableSlots } from '../../types/user';
-import { getAdjustedCharacterStat } from '../characters/characters';
+import {
+    getAdjustedCharacterStat,
+    getCharacterIntBonus,
+} from '../characters/characters';
 import { getDamageBonusSettings } from '../settings';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
     filterArrayByProperty,
     getTopValuesFromObject,
+    rollDice,
     sumOfObjectProperties,
 } from '../utils';
 import { getItemByID, mergeEnchantments } from './helpers';
@@ -233,20 +237,29 @@ export async function getElementalDamageOfAttack(
                 shield.enchantments[enchantment as keyof Enchantments];
         }
 
-        // Now, figure out how much damage we took from this element.
+        // Now, figure out how much damage we took from this element with armor resistances.
         const roundDamage = totalAttackerValue - totalDefenderValue;
-
-        logger(
-            'debug',
-            `${attacker.name} did ${roundDamage} ${enchantment} damage to ${defender.name}.`
-        );
 
         if (roundDamage > 0) {
             damage += roundDamage;
         }
     }
 
-    return damage + intDmgBonus;
+    // See if the defender resisted.
+    const defenderResistRoll =
+        rollDice('1d20') + (await getCharacterIntBonus(defender));
+    const attackerSpellRoll =
+        rollDice('1d20') + (await getCharacterIntBonus(attacker));
+    if (defenderResistRoll > attackerSpellRoll) {
+        logger(
+            'debug',
+            `${defender.name} resisted magic and takes half damage!`
+        );
+        return Math.floor((damage + intDmgBonus) / 2);
+    }
+
+    // The defender did not resist and takes full damage.
+    return Math.floor(damage + intDmgBonus);
 }
 
 /**

@@ -96,3 +96,21 @@ export async function generateArmorForUser(
         enchantments: enchantmentStats,
     };
 }
+
+/**
+ * Get arcane failure chance of armor.
+ * @param weight
+ * @returns
+ */
+export function getArcaneFailureChance(
+    weight: 'heavy' | 'medium' | 'light'
+): number {
+    switch (weight) {
+        case 'heavy':
+            return 50;
+        case 'medium':
+            return 30;
+        default:
+            return 0;
+    }
+}

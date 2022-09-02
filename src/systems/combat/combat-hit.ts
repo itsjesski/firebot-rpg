@@ -12,6 +12,7 @@ import {
     getRangedInMeleeChanceSettings,
 } from '../settings';
 import { rollDice } from '../utils';
+import { didCharacterCastSuccessfully } from './magic';
 
 /**
  * Checks to see if user passed the innate offhand fumble chance.
@@ -77,6 +78,24 @@ export async function didCharacterHitRanged(
     const hitBonus = await getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20`) + hitBonus;
 
+    const item = getItemByID(
+        attacker[slot as EquippableSlots].id,
+        attacker[slot as EquippableSlots].itemType
+    ) as Weapon | Spell;
+
+    if (item == null) {
+        logger(
+            'debug',
+            `Could not get item in ${slot}. Assuming character missed...`
+        );
+        return false;
+    }
+
+    // Spell arcane failure
+    if (item.itemType === 'spell' && !didCharacterCastSuccessfully(attacker)) {
+        return false;
+    }
+
     if (slot === 'offHand') {
         // If we're using an offhand weapon, see if we fumbled.
         if (offhandFumbled(attacker)) {
@@ -124,6 +143,11 @@ export async function didCharacterHitMelee(
             'debug',
             `Could not get item in ${slot}. Assuming character missed...`
         );
+        return false;
+    }
+
+    // Spell arcane failure
+    if (item.itemType === 'spell' && !didCharacterCastSuccessfully(attacker)) {
         return false;
     }
 

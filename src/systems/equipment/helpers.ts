@@ -19,6 +19,7 @@ import {
     Enchantments,
 } from '../../types/equipment';
 import { filterArrayByProperty } from '../utils';
+import { getArcaneFailureChance } from './armor';
 import { getEnchantmentName } from './enchantments';
 
 /**
@@ -221,6 +222,14 @@ export function getFullItemTextWithStats(item: StorableItems | null) {
             } range | ${dbItem.rarity} ${getItemTypeDisplayName(dbItem)}`;
             break;
         case 'armor':
+            message = `${fullName} | ${
+                dbItem.armorClass
+            } AC | arcane failure ${getArcaneFailureChance(
+                dbItem.properties[0]
+            )}% | ${dbItem.properties.join(', ')} | ${
+                dbItem.rarity
+            } ${getItemTypeDisplayName(dbItem)}`;
+            break;
         case 'shield':
             message = `${fullName} | ${
                 dbItem.armorClass
