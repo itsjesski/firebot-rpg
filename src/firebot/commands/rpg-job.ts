@@ -225,19 +225,19 @@ export async function selectJob(): Promise<Job> {
     let filteredJobs: Job[] = [];
 
     // Let's build a new job list user the jobs that are available for the current guild level.
-    if (guildLevel >= 9) {
+    if (guildLevel >= 6) {
         filteredJobs.concat(
             filterArrayByProperty(jobList, ['challenge'], 'legendary')
         );
     }
 
-    if (guildLevel >= 6) {
+    if (guildLevel >= 4) {
         filteredJobs.concat(
             filterArrayByProperty(jobList, ['challenge'], 'hard')
         );
     }
 
-    if (guildLevel >= 3) {
+    if (guildLevel >= 2) {
         filteredJobs.concat(
             filterArrayByProperty(jobList, ['challenge'], 'medium')
         );
