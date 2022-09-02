@@ -5,7 +5,8 @@ export type ItemTypes =
     | 'armor'
     | 'characterClass'
     | 'title'
-    | 'shield';
+    | 'shield'
+    | 'spell';
 
 export type WeaponProperties =
     | 'two-handed'
@@ -60,6 +61,28 @@ export type Weapon = {
 export type StoredWeapon = {
     id: number;
     itemType: 'weapon';
+    nickname: string | null;
+    refinements: number;
+    enchantments: Enchantments;
+};
+
+export type Spell = {
+    id: number;
+    name: string;
+    cost: number;
+    damage: string;
+    damage_type: WeaponDamageTypes;
+    properties: WeaponProperties[];
+    rarity: Rarity;
+    range: number;
+    itemType: 'spell';
+    refinements: number;
+    enchantments: Enchantments;
+};
+
+export type StoredSpell = {
+    id: number;
+    itemType: 'spell';
     nickname: string | null;
     refinements: number;
     enchantments: Enchantments;
@@ -144,11 +167,13 @@ export type EquippableItemsDetails =
     | Armor
     | Title
     | CharacterClass
-    | Shield;
+    | Shield
+    | Spell;
 
 export type StorableItems =
     | StoredArmor
     | StoredCharacterClass
     | StoredShield
     | StoredTitle
-    | StoredWeapon;
+    | StoredWeapon
+    | StoredSpell;

@@ -1,6 +1,7 @@
 import { armorList } from '../../data/armor';
 import { classList } from '../../data/classes';
 import { shieldList } from '../../data/shields';
+import { spellList } from '../../data/spells';
 import { titleList } from '../../data/titles';
 import { weaponList } from '../../data/weapons';
 import { logger } from '../../firebot/firebot';
@@ -14,6 +15,8 @@ import {
     CharacterClass,
     Shield,
     Title,
+    Spell,
+    Enchantments,
 } from '../../types/equipment';
 import { filterArrayByProperty } from '../utils';
 import { getEnchantmentName } from './enchantments';
@@ -109,6 +112,9 @@ export function getItemByID(
         case 'title':
             [item] = filterArrayByProperty(titleList, ['id'], id) as Title[];
             break;
+        case 'spell':
+            [item] = filterArrayByProperty(spellList, ['id'], id) as Spell[];
+            break;
         default:
     }
 
@@ -117,6 +123,18 @@ export function getItemByID(
     }
 
     return item;
+}
+
+export function mergeEnchantments(item: Enchantments, itemTwo: Enchantments) {
+    const mergedObj = {} as Enchantments;
+
+    Object.keys(item).forEach((key) => {
+        mergedObj[key as keyof Enchantments] =
+            item[key as keyof Enchantments] +
+            (itemTwo[key as keyof Enchantments] || 0);
+    });
+
+    return mergedObj;
 }
 
 /**
@@ -134,13 +152,24 @@ export function getFullItemName(item: StorableItems | null): string {
     let itemName = `${dbItem.name}`;
     let enchantments;
     let enchantmentName;
+    let dbDetails = null;
 
     // Here we want to only run extra checks if the item has enchantments or refinements.
     switch (item.itemType) {
         case 'weapon':
         case 'armor':
         case 'shield':
-            enchantments = item.enchantments;
+        case 'spell':
+            dbDetails = getItemByID(item.id, item.itemType) as
+                | Weapon
+                | Armor
+                | Shield
+                | Spell;
+
+            enchantments = mergeEnchantments(
+                item.enchantments,
+                dbDetails.enchantments
+            );
             enchantmentName = getEnchantmentName(enchantments, item.itemType);
 
             if (enchantmentName != null) {
@@ -212,6 +241,13 @@ export function getFullItemTextWithStats(item: StorableItems | null) {
             }% DEX, +${dbItem.bonuses.int}% INT | ${
                 dbItem.rarity
             } ${getItemTypeDisplayName(dbItem)}`;
+            break;
+        case 'spell':
+            message = `${fullName} | ${dbItem.damage} DMG | ${
+                dbItem.damage_type
+            } | ${dbItem.properties.join(', ')} | ${
+                dbItem.range > 0 ? dbItem.range : 'melee'
+            } range | ${dbItem.rarity} ${getItemTypeDisplayName(dbItem)}`;
             break;
         default:
             logger(

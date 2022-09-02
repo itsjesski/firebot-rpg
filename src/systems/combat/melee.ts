@@ -1,5 +1,5 @@
 import { logger } from '../../firebot/firebot';
-import { Weapon, Shield } from '../../types/equipment';
+import { Weapon, Shield, Spell } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
 import { getItemByID } from '../equipment/helpers';
@@ -31,9 +31,9 @@ async function attackCharacter(
         const offHand = getItemByID(
             attacker.offHand.id,
             attacker.offHand.itemType
-        ) as Weapon | Shield | null;
+        ) as Weapon | Spell | Shield | null;
         if (
-            offHand.itemType === 'weapon' &&
+            offHand.itemType !== 'shield' &&
             (await didCharacterHitMelee(attacker, defender, 'offHand'))
         ) {
             damage += await calculateDamage(attacker, defender, 'offHand');

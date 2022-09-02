@@ -2,6 +2,7 @@ import {
     Armor,
     CharacterClass,
     Shield,
+    Spell,
     Title,
     Weapon,
 } from '../../types/equipment';
@@ -116,18 +117,31 @@ export async function getCharacterHitBonus(
     let item;
     const str = await getAdjustedCharacterStat(attacker, 'str');
     const dex = await getAdjustedCharacterStat(attacker, 'dex');
+    const int = await getAdjustedCharacterStat(attacker, 'int');
 
     // Get our item first.
     if (slot === 'mainHand') {
-        item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
+        item = getItemByID(attacker.mainHand.id, attacker.mainHand.itemType) as
+            | Weapon
+            | Spell;
     }
 
-    if (slot === 'offHand' && attacker.offHand.itemType === 'weapon') {
-        item = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
+    if (
+        (slot === 'offHand' && attacker.offHand.itemType === 'weapon') ||
+        (slot === 'offHand' && attacker.offHand.itemType === 'spell')
+    ) {
+        item = getItemByID(attacker.offHand.id, attacker.mainHand.itemType) as
+            | Weapon
+            | Spell;
     }
 
     if (item == null) {
         return 0;
+    }
+
+    // Spell to hit.
+    if (item.itemType === 'spell') {
+        return Math.floor(int / toHitDivider) + item.refinements;
     }
 
     // Now, adjust for item properties.

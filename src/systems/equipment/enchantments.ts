@@ -8,6 +8,7 @@ import {
     Enchantments,
     EnchantmentTypes,
     Shield,
+    Spell,
     StoredArmor,
     StoredShield,
     StoredWeapon,
@@ -24,7 +25,7 @@ import {
     getTopValuesFromObject,
     sumOfObjectProperties,
 } from '../utils';
-import { getItemByID } from './helpers';
+import { getItemByID, mergeEnchantments } from './helpers';
 
 /**
  * Generates an enchantment list using the given number of enchantment points.
@@ -167,8 +168,9 @@ export async function getElementalDamageOfAttack(
     let armor;
     let shield;
     let damage = 0;
+    let mergedEnchantments = null;
 
-    logger('debug', `Getting elemental damage of attack...`);
+    logger('debug', `Getting elemental damage of attack with ${slot}...`);
 
     const int = await getAdjustedCharacterStat(attacker, 'int');
 
@@ -178,11 +180,25 @@ export async function getElementalDamageOfAttack(
     const intDmgBonus = Math.floor(int / damageBonusDivider);
 
     if (slot === 'mainHand') {
-        item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
+        item = getItemByID(attacker.mainHand.id, attacker.mainHand.itemType) as
+            | Weapon
+            | Spell;
+
+        mergedEnchantments = mergeEnchantments(
+            item.enchantments,
+            attacker.mainHand.enchantments
+        );
     }
 
-    if (slot === 'offHand' && attacker.offHand.itemType === 'weapon') {
-        item = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
+    if (slot === 'offHand' && attacker.offHand.itemType !== 'shield') {
+        item = getItemByID(attacker.offHand.id, attacker.offHand.itemType) as
+            | Weapon
+            | Spell;
+
+        mergedEnchantments = mergeEnchantments(
+            item.enchantments,
+            attacker.offHand.enchantments
+        );
     }
 
     if (item == null) {
@@ -198,13 +214,10 @@ export async function getElementalDamageOfAttack(
     }
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const [enchantment, enchantmentValue] of Object.entries(
-        item.enchantments
-    )) {
+    for (const [enchantment] of Object.entries(mergedEnchantments)) {
         // Get attacker offenses.
         const totalAttackerValue =
-            enchantmentValue +
-            item.enchantments[enchantment as keyof Enchantments];
+            mergedEnchantments[enchantment as keyof Enchantments];
 
         // Figure out opponent defenses.
         let totalDefenderValue = 0;

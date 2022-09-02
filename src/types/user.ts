@@ -3,6 +3,7 @@ import {
     StoredArmor,
     StoredCharacterClass,
     StoredShield,
+    StoredSpell,
     StoredTitle,
     StoredWeapon,
 } from './equipment';
@@ -29,8 +30,8 @@ export type Character = {
     int: number;
     backpack: StorableItems | null;
     armor: StoredArmor | null;
-    mainHand: StoredWeapon;
-    offHand: StoredWeapon | StoredShield | null;
+    mainHand: StoredWeapon | StoredSpell;
+    offHand: StoredWeapon | StoredShield | StoredSpell | null;
     characterClass: StoredCharacterClass;
     title: StoredTitle;
 };

@@ -1,5 +1,5 @@
 import { logger } from '../../firebot/firebot';
-import { Armor, Weapon } from '../../types/equipment';
+import { Armor, Spell, Weapon } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character } from '../../types/user';
 import { getCharacterWeaponRange } from '../characters/characters';
@@ -22,8 +22,8 @@ async function rangedAttack(
     // Get all of our weapons
     const mainWeapon = (await getItemByID(
         attacker.mainHand.id,
-        'weapon'
-    )) as Weapon;
+        attacker.mainHand.itemType
+    )) as Weapon | Spell;
 
     // See if we need to attack with our main weapon.
     if (
@@ -35,11 +35,14 @@ async function rangedAttack(
 
     // Try the offhand.
     if (attacker.offHand != null) {
-        if (attacker.offHand.itemType === 'weapon') {
+        if (
+            attacker.offHand.itemType === 'weapon' ||
+            attacker.offHand.itemType === 'spell'
+        ) {
             const offHandWeapon = (await getItemByID(
                 attacker.offHand.id,
-                'weapon'
-            )) as Weapon;
+                attacker.mainHand.itemType
+            )) as Weapon | Spell;
 
             // Check if we're attacking with offhand.
             if (

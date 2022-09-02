@@ -88,7 +88,7 @@ export async function calculateDamage(
         return roll + dmgBonus + elemental;
     }
 
-    if (attacker.offHand != null && attacker.offHand.itemType === 'weapon') {
+    if (attacker.offHand != null && attacker.offHand.itemType !== 'shield') {
         const offHand = getItemByID(
             attacker.offHand.id,
             attacker.offHand.itemType

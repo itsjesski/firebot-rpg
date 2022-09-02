@@ -2,6 +2,7 @@ import { ItemTypes, Rarity, StorableItems } from '../../types/equipment';
 import { generateArmorForUser } from './armor';
 import { generateClass } from './character-class';
 import { generateShieldForUser } from './shields';
+import { generateSpellForUser } from './spells';
 import { generateTitleByRarity } from './title';
 import { generateWeaponForUser } from './weapons';
 
@@ -27,6 +28,9 @@ export async function rpgLootGenerator(
             break;
         case 'shield':
             loot = await generateShieldForUser(username, lootRarity);
+            break;
+        case 'spell':
+            loot = await generateSpellForUser(username, lootRarity);
             break;
         default:
     }

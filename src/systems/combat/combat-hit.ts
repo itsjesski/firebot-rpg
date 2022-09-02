@@ -1,5 +1,5 @@
 import { logger } from '../../firebot/firebot';
-import { Weapon } from '../../types/equipment';
+import { Spell, Weapon } from '../../types/equipment';
 import { GeneratedMonster } from '../../types/monsters';
 import { Character, EquippableSlots } from '../../types/user';
 import {
@@ -19,7 +19,10 @@ import { rollDice } from '../utils';
  * @returns
  */
 function offhandFumbled(attacker: Character): boolean {
-    const offhand = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
+    const offhand = getItemByID(
+        attacker.offHand.id,
+        attacker.offHand.itemType
+    ) as Weapon | Spell;
 
     if (offhand == null) {
         logger(
@@ -113,8 +116,8 @@ export async function didCharacterHitMelee(
 
     const item = getItemByID(
         attacker[slot as EquippableSlots].id,
-        'weapon'
-    ) as Weapon;
+        attacker[slot as EquippableSlots].itemType
+    ) as Weapon | Spell;
 
     if (item == null) {
         logger(

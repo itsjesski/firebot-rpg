@@ -1,7 +1,7 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
-import { getItemByID } from '../../systems/equipment/helpers';
+import { getFullItemName, getItemByID } from '../../systems/equipment/helpers';
 import { getUserData, getUserName } from '../../systems/user/user';
-import { Shield, Weapon } from '../../types/equipment';
+import { Shield, Spell, Weapon } from '../../types/equipment';
 import { logger, sendChatMessage, setCharacterMeta } from '../firebot';
 
 async function isBackpackEmpty(username: string) {
@@ -28,7 +28,7 @@ async function equipMainHand(username: string) {
     logger('debug', `${username} is equipping a main hand item.`);
 
     // If it's not a weapon, throw an error.
-    if (backpack.itemType !== 'weapon') {
+    if (backpack.itemType !== 'weapon' && backpack.itemType !== 'spell') {
         sendChatMessage(
             `@${username}, ${characterName} can't equip that item in their main hand.`
         );
@@ -36,10 +36,11 @@ async function equipMainHand(username: string) {
     }
 
     // Get details of the item in the backpack, we confirmed above that it should be a weapon.
-    const backpackDetails = getItemByID(
-        backpack.id,
-        backpack.itemType
-    ) as Weapon;
+    const backpackDetails = getItemByID(backpack.id, backpack.itemType) as
+        | Weapon
+        | Spell;
+
+    const fullItemName = await getFullItemName(backpack);
 
     // Un-equip off hand item if main hand item is two handed.
     if (backpackDetails.properties.includes('two-handed')) {
@@ -51,7 +52,7 @@ async function equipMainHand(username: string) {
         await setCharacterMeta(username, null, 'offHand');
         await setCharacterMeta(username, null, 'backpack');
         sendChatMessage(
-            `@${username}, ${characterName} equipped the ${backpackDetails.name} in their main hand. It was two handed and takes both the main and off hand slots.`
+            `@${username}, ${characterName} equipped the ${fullItemName} in their main hand. It was two handed and takes both the main and off hand slots.`
         );
         return;
     }
@@ -60,7 +61,7 @@ async function equipMainHand(username: string) {
     await setCharacterMeta(username, backpack, 'mainHand');
     await setCharacterMeta(username, null, 'backpack');
     sendChatMessage(
-        `@${username}, ${characterName} equipped the ${backpackDetails.name} in their main hand.`
+        `@${username}, ${characterName} equipped the ${fullItemName} in their main hand.`
     );
 }
 
@@ -78,7 +79,11 @@ async function equipOffHand(username: string) {
     }
 
     // Can we even equip the item in the backpack in the off hand?
-    if (backpack.itemType !== 'weapon' && backpack.itemType !== 'shield') {
+    if (
+        backpack.itemType !== 'weapon' &&
+        backpack.itemType !== 'shield' &&
+        backpack.itemType !== 'spell'
+    ) {
         sendChatMessage(
             `@${username}, ${characterName} can't equip that item in their off hand.`
         );
@@ -99,30 +104,40 @@ async function equipOffHand(username: string) {
         return;
     }
 
+    // Check to see if we have a two hander in the main hand
+    if (mainHandItemDetails.properties.includes('two-handed')) {
+        sendChatMessage(
+            `@${username}, ${characterName} can't equip that item because they are using a two handed weapon.`
+        );
+        return;
+    }
+
     // Okay, now we're going to get details for the item in the backpack and try to equip it.
     const backpackDetails = getItemByID(backpack.id, backpack.itemType) as
         | Weapon
-        | Shield;
+        | Shield
+        | Spell;
+    const fullItemName = await getFullItemName(backpack);
     logger('debug', `${username} is trying to equip an off hand item.`);
 
     // Don't let them equip in offhand if it's not a weapon or if there is a two handed item in the main hand.
-    if (backpackDetails.itemType === 'weapon') {
-        if (
-            backpackDetails.properties.includes('two-handed') ||
-            mainHandItemDetails.properties.includes('two-handed')
-        ) {
-            sendChatMessage(
-                `@${username}, ${characterName} can't equip that item because they are using a two handed weapon.`
-            );
-            return;
-        }
+    if (
+        (backpackDetails.itemType === 'weapon' &&
+            backpackDetails.properties.includes('two-handed')) ||
+        (backpackDetails.itemType === 'spell' &&
+            backpackDetails.properties.includes('two-handed'))
+    ) {
+        sendChatMessage(
+            `@${username}, ${characterName} can't equip a two-handed item in their off hand.`
+        );
+        return;
     }
 
     // Equip to off hand.
     await setCharacterMeta(username, backpack, 'offHand');
     await setCharacterMeta(username, null, 'backpack');
     sendChatMessage(
-        `@${username}, ${characterName} equipped the ${backpackDetails.name} in their off hand.`
+        `@${username}, ${characterName} equipped the ${fullItemName} in their off hand.`
     );
 }
 
