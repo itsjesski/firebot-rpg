@@ -6,6 +6,7 @@ import {
     StoredArmor,
 } from '../../types/equipment';
 import {
+    getArmorArcaneFailure,
     getArmorDexBonusSettings,
     getArmorMovementSpeedSettings,
 } from '../settings';
@@ -37,7 +38,7 @@ export function getArmorFilteredByRarity(rarity: Rarity[]): Armor {
  * @param armorType
  * @returns
  */
-export function getArmorDexBonus(armorType: ArmorProperties) {
+export function getArmorDexBonus(armorType: ArmorProperties): number {
     return getArmorDexBonusSettings(armorType) / 100;
 }
 
@@ -102,15 +103,6 @@ export async function generateArmorForUser(
  * @param weight
  * @returns
  */
-export function getArcaneFailureChance(
-    weight: 'heavy' | 'medium' | 'light'
-): number {
-    switch (weight) {
-        case 'heavy':
-            return 50;
-        case 'medium':
-            return 30;
-        default:
-            return 0;
-    }
+export function getArcaneFailureChance(weight: ArmorProperties): number {
+    return getArmorArcaneFailure(weight);
 }

@@ -27,6 +27,7 @@ export type GameSettings = {
         trainingsPerLevel: number;
     };
     combatSettings: {
+        duelTimeout: number;
         offHandMissChance: number;
         rangedInMeleePenalty: number;
         hitBonus: number;
@@ -39,5 +40,9 @@ export type GameSettings = {
         mediumDexBonus: number;
         lightDexBonus: number;
         nakedDexBonus: number;
+        heavyArcaneFailure: number;
+        mediumArcaneFailure: number;
+        lightArcaneFailure: number;
+        nakedArcaneFailure: number;
     };
 };

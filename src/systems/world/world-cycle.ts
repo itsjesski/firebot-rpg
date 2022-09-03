@@ -4,10 +4,19 @@ import {
     WorldTendency,
     WorldTendencyTypes,
 } from '../../types/world';
+import { getWorldCitizens, getWorldName, getWorldType } from '../settings';
 import { capitalize } from '../utils';
-import { setWorldStat, setWorldUpgrade } from './world-stats';
+import {
+    getWorldBuildings,
+    setWorldStat,
+    setWorldUpgrade,
+} from './world-stats';
 import { clearWorldTendency, worldTendencyPools } from './world-tendency';
 
+/**
+ * Checks to see which building to upgrade, and then upgrades it.
+ * @returns
+ */
 async function upgradeBuilding() {
     const { research } = await getWorldMeta();
 
@@ -15,17 +24,17 @@ async function upgradeBuilding() {
         return;
     }
 
-    const buildings = [
-        'blacksmith',
-        'enchanter',
-        'tavern',
-        'shipyard',
-        'guild',
-        'trainer',
-    ] as WorldBuildingTypes[];
+    // Here we're picking the lowest upgraded building to upgrade.
+    const buildings = await getWorldBuildings();
+    const selectedBuilding = Object.keys(buildings).reduce(
+        (key: WorldBuildingTypes, v: WorldBuildingTypes) =>
+            buildings[v] < buildings[key] ? v : key
+    ) as WorldBuildingTypes;
 
-    const selectedBuilding =
-        buildings[Math.floor(Math.random() * buildings.length)];
+    // Flavor
+    const worldName = getWorldName();
+    const worldType = getWorldType();
+    const citizenName = getWorldCitizens();
 
     // Upgrade the building by 1.
     await setWorldUpgrade(selectedBuilding, 1);
@@ -36,21 +45,21 @@ async function upgradeBuilding() {
             sendChatMessage(
                 `Research complete! The ${capitalize(
                     selectedBuilding
-                )} has been upgraded! Refinement limit increased.`
+                )} has been upgraded! The new technology allows the ${citizenName} of ${worldName} to improve their items further!`
             );
             break;
         case 'enchanter':
             sendChatMessage(
                 `Research complete! The ${capitalize(
                     selectedBuilding
-                )} has been upgraded! Enchantment limit increased.`
+                )} has been upgraded! The ${worldType} celebrates as new arcane potential is unlocked for their items.`
             );
             break;
         case 'guild':
             sendChatMessage(
                 `Research complete! The ${capitalize(
                     selectedBuilding
-                )} has been upgraded! Job payment and options increased.`
+                )} has been upgraded! The ${worldType} of ${worldName} has come under greater threat and bigger jobs are being offered for more money.`
             );
             break;
         case 'shipyard':
@@ -58,7 +67,7 @@ async function upgradeBuilding() {
             sendChatMessage(
                 `Research complete! The ${capitalize(
                     selectedBuilding
-                )} has been upgraded! World resources increased.`
+                )} has been upgraded! The ${worldType} has more room to harbor traders from other lands.`
             );
             break;
         case 'tavern':
@@ -66,14 +75,14 @@ async function upgradeBuilding() {
             sendChatMessage(
                 `Research complete! The ${capitalize(
                     selectedBuilding
-                )} has been upgraded! World happiness increased.`
+                )} has been upgraded! The ${citizenName} of ${worldName} celebrate the occasion with a great feast!`
             );
             break;
         case 'trainer':
             sendChatMessage(
                 `Research complete! The ${capitalize(
                     selectedBuilding
-                )} has been upgraded! Stat training limit increased.`
+                )} has been upgraded! With threats growing, the ${citizenName} of ${worldName} have to keep pushing themselves to get stronger.`
             );
             break;
         default:

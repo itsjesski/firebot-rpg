@@ -4,10 +4,8 @@ import {
 } from '../../data/enchantments';
 import { logger, setCharacterMeta } from '../../firebot/firebot';
 import {
-    Armor,
     Enchantments,
     EnchantmentTypes,
-    Shield,
     Spell,
     StoredArmor,
     StoredShield,
@@ -17,10 +15,10 @@ import {
 import { GeneratedMonster } from '../../types/monsters';
 import { Character, EquippableSlots } from '../../types/user';
 import {
-    getAdjustedCharacterStat,
+    getCharacterDamageBonus,
+    getCharacterElementalDefense,
     getCharacterIntBonus,
 } from '../characters/characters';
-import { getDamageBonusSettings } from '../settings';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -159,36 +157,49 @@ export async function getUserArmorEnchantmentCount(
 }
 
 /**
- * Calculates the total elemental damage done to a defender.
+ * Calculates if the defender resisted a magic spell.
  * @param attacker
  * @param defender
  */
-export async function getElementalDamageOfAttack(
+async function didDefenderResistMagic(
     attacker: Character,
-    defender: Character | GeneratedMonster,
+    defender: Character
+) {
+    const defenderResistRoll =
+        rollDice('1d20') + (await getCharacterIntBonus(defender));
+    const attackerSpellRoll =
+        rollDice('1d20') + (await getCharacterIntBonus(attacker));
+
+    if (defenderResistRoll > attackerSpellRoll) {
+        logger('debug', `${defender.name} resisted the spell!`);
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Takes a character and item slot name, and returns a list of enchants, merging base and character enchantments together.
+ * @param attacker
+ * @param slot
+ * @returns
+ */
+function getMergedEnchantmentsOfItem(
+    attacker: Character,
     slot: EquippableSlots
-): Promise<number> {
+) {
     let item;
-    let armor;
-    let shield;
-    let damage = 0;
-    let mergedEnchantments = null;
-
-    logger('debug', `Getting elemental damage of attack with ${slot}...`);
-
-    const int = await getAdjustedCharacterStat(attacker, 'int');
-
-    const damageBonusDivider = getDamageBonusSettings()
-        ? getDamageBonusSettings()
-        : 10;
-    const intDmgBonus = Math.floor(int / damageBonusDivider);
 
     if (slot === 'mainHand') {
         item = getItemByID(attacker.mainHand.id, attacker.mainHand.itemType) as
             | Weapon
             | Spell;
 
-        mergedEnchantments = mergeEnchantments(
+        if (item == null) {
+            return null;
+        }
+
+        return mergeEnchantments(
             item.enchantments,
             attacker.mainHand.enchantments
         );
@@ -199,22 +210,35 @@ export async function getElementalDamageOfAttack(
             | Weapon
             | Spell;
 
-        mergedEnchantments = mergeEnchantments(
+        if (item == null) {
+            return null;
+        }
+
+        return mergeEnchantments(
             item.enchantments,
             attacker.offHand.enchantments
         );
     }
 
-    if (item == null) {
+    return null;
+}
+
+/**
+ * Calculates the total elemental damage done to a defender.
+ * @param attacker
+ * @param defender
+ */
+export async function getElementalDamageOfAttack(
+    attacker: Character,
+    defender: Character | GeneratedMonster,
+    slot: EquippableSlots
+): Promise<number> {
+    let damage = 0;
+    const mergedEnchantments = getMergedEnchantmentsOfItem(attacker, slot);
+    const intDmgBonus = await getCharacterDamageBonus(attacker, slot);
+
+    if (mergedEnchantments == null) {
         return 0;
-    }
-
-    if (defender.armor != null) {
-        armor = getItemByID(defender.armor.id, 'armor') as Armor;
-    }
-
-    if (defender.offHand != null && defender.offHand?.itemType === 'shield') {
-        shield = getItemByID(defender.offHand.id, 'shield') as Shield;
     }
 
     // eslint-disable-next-line no-restricted-syntax
@@ -223,21 +247,11 @@ export async function getElementalDamageOfAttack(
         const totalAttackerValue =
             mergedEnchantments[enchantment as keyof Enchantments];
 
-        // Figure out opponent defenses.
-        let totalDefenderValue = 0;
+        const totalDefenderValue = getCharacterElementalDefense(
+            defender,
+            enchantment as keyof Enchantments
+        );
 
-        if (armor != null) {
-            totalDefenderValue +=
-                defender.armor.enchantments[enchantment as keyof Enchantments] +
-                armor.enchantments[enchantment as keyof Enchantments];
-        }
-
-        if (shield != null) {
-            totalDefenderValue +=
-                shield.enchantments[enchantment as keyof Enchantments];
-        }
-
-        // Now, figure out how much damage we took from this element with armor resistances.
         const roundDamage = totalAttackerValue - totalDefenderValue;
 
         if (roundDamage > 0) {
@@ -245,16 +259,14 @@ export async function getElementalDamageOfAttack(
         }
     }
 
+    // No int bonus for zero damage.
+    if (damage === 0) {
+        return 0;
+    }
+
     // See if the defender resisted.
-    const defenderResistRoll =
-        rollDice('1d20') + (await getCharacterIntBonus(defender));
-    const attackerSpellRoll =
-        rollDice('1d20') + (await getCharacterIntBonus(attacker));
-    if (defenderResistRoll > attackerSpellRoll) {
-        logger(
-            'debug',
-            `${defender.name} resisted magic and takes half damage!`
-        );
+    const defenderDidResist = await didDefenderResistMagic(attacker, defender);
+    if (defenderDidResist) {
         return Math.floor((damage + intDmgBonus) / 2);
     }
 

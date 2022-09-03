@@ -1,4 +1,5 @@
 import { startCombat } from '../combat/combat';
+import { getDuelTimeout } from '../settings';
 import { getUserData } from '../user/user';
 
 export function isDuelExpired(date: number | null) {
@@ -6,7 +7,8 @@ export function isDuelExpired(date: number | null) {
         return true;
     }
 
-    const timer = 1000 * 60 * 2; // 2 minutes
+    const duelTimeout = getDuelTimeout() ? getDuelTimeout() : 2;
+    const timer = 1000 * 60 * duelTimeout;
     const checked = Date.now() - timer;
 
     return date > checked;

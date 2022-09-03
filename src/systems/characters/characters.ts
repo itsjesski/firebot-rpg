@@ -1,6 +1,8 @@
 import {
     Armor,
     CharacterClass,
+    Enchantments,
+    EnchantmentTypes,
     Shield,
     Spell,
     Title,
@@ -104,6 +106,42 @@ export async function getCharacterTotalAC(
 }
 
 /**
+ * Returns defenders defenses against a specific element.
+ * @param defender
+ * @param enchantment
+ * @returns
+ */
+export function getCharacterElementalDefense(
+    defender: Character | GeneratedMonster,
+    enchantment: EnchantmentTypes
+) {
+    let totalDefenderValue = 0;
+    let armor = null;
+    let shield = null;
+
+    if (defender.armor != null) {
+        armor = getItemByID(defender.armor.id, 'armor') as Armor;
+    }
+
+    if (defender.offHand != null && defender.offHand?.itemType === 'shield') {
+        shield = getItemByID(defender.offHand.id, 'shield') as Shield;
+    }
+
+    if (armor != null) {
+        totalDefenderValue +=
+            defender.armor.enchantments[enchantment as keyof Enchantments] +
+            armor.enchantments[enchantment as keyof Enchantments];
+    }
+
+    if (shield != null) {
+        totalDefenderValue +=
+            shield.enchantments[enchantment as keyof Enchantments];
+    }
+
+    return totalDefenderValue;
+}
+
+/**
  * Gets a characters int bonus used in spellcasting and resisting.
  * @param attacker
  */
@@ -195,18 +233,24 @@ export async function getCharacterDamageBonus(
     let item;
     const str = await getAdjustedCharacterStat(attacker, 'str');
     const dex = await getAdjustedCharacterStat(attacker, 'dex');
+    const int = await getAdjustedCharacterStat(attacker, 'int');
 
     // Get our item first.
     if (slot === 'mainHand') {
-        item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon;
+        item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon | Spell;
     }
 
-    if (slot === 'offHand' && attacker.offHand.itemType === 'weapon') {
-        item = getItemByID(attacker.offHand.id, 'weapon') as Weapon;
+    if (slot === 'offHand' && attacker.offHand.itemType !== 'shield') {
+        item = getItemByID(attacker.offHand.id, 'weapon') as Weapon | Spell;
     }
 
     if (item == null) {
         return 0;
+    }
+
+    // Item is a spell, use int.
+    if (item.itemType === 'spell') {
+        return Math.floor(int / damageBonusDivider);
     }
 
     // Now, adjust for item properties.
@@ -214,17 +258,11 @@ export async function getCharacterDamageBonus(
         return Math.floor(Math.max(str, dex) / damageBonusDivider);
     }
 
-    if (
-        item.properties.includes('heavy') ||
-        item.damage_type === 'bludgeoning'
-    ) {
+    if (item.properties.includes('heavy')) {
         return Math.floor(str / damageBonusDivider);
     }
 
-    if (
-        item.properties.includes('finesse') ||
-        item.damage_type === 'piercing'
-    ) {
+    if (item.properties.includes('finesse')) {
         return Math.floor(dex / damageBonusDivider);
     }
 

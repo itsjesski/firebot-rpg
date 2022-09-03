@@ -154,6 +154,27 @@ export function getArmorDexBonusSettings(
 }
 
 /**
+ * Returns arcane failure of armor type.
+ * @param armorType
+ */
+export function getArmorArcaneFailure(
+    armorType: ArmorProperties | null
+): number {
+    const gameSettings = getCombatSettings();
+
+    switch (armorType) {
+        case 'heavy':
+            return gameSettings.heavyArcaneFailure;
+        case 'light':
+            return gameSettings.lightArcaneFailure;
+        case 'medium':
+            return gameSettings.mediumArcaneFailure;
+        default:
+            return gameSettings.nakedArcaneFailure;
+    }
+}
+
+/**
  * Returns minimum hp for a creature difficulty.
  * @param difficulty
  */
@@ -254,4 +275,9 @@ export function getTrainingLevelLimit() {
 export function getResetID() {
     const settings = getGameSettings();
     return settings.generalSettings.resetId;
+}
+
+export function getDuelTimeout() {
+    const gameSettings = getCombatSettings();
+    return gameSettings.duelTimeout;
 }

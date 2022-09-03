@@ -283,14 +283,27 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
         description: 'Settings related to combat.',
         sortRank: 5,
         settings: {
+            duelTimeout: {
+                type: 'number',
+                title: 'Duel Timeout',
+                description:
+                    'This is the number of minutes that must pass before a duel request times out.',
+                tip: 'New duels can not be issued to someone until the previous duel times out.',
+                default: 2,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
             offHandMissChance: {
                 type: 'number',
                 title: 'Off hand fumble chance',
                 description:
-                    'If a weapon in the off hand is not "light", this is the fumble chance (skipped turn).',
+                    'If a weapon or spell is in the off hand and is not "light", this is the fumble chance (skipped turn).',
                 tip: 'Setting this lower makes off hand weapons stronger in melee.',
                 default: 25,
-                sortRank: 1,
+                sortRank: 2,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -303,7 +316,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'If a ranged weapon is used in melee, this is the fumble chance (skipped turn).',
                 tip: 'Setting this lower makes ranged weapons stronger in melee.',
                 default: 25,
-                sortRank: 1,
+                sortRank: 3,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -316,7 +329,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Divide character stats by this number to determine hit bonus',
                 tip: 'The lower this number, the higher the hit bonus. This will make characters hit more often.',
                 default: 10,
-                sortRank: 2,
+                sortRank: 4,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -329,7 +342,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Divide character stats by this number to determine damage bonus',
                 tip: 'The lower this number, the higher the damage bonus. This will make characters deal more damage.',
                 default: 10,
-                sortRank: 2,
+                sortRank: 5,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -342,7 +355,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'This is how fast a character moves in heavy armor.',
                 tip: 'The higher this number, the faster heavy armor characters will approach in the ranged phase of combat.',
                 default: 30,
-                sortRank: 2,
+                sortRank: 6,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -355,7 +368,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'This is how fast a character moves in medium armor.',
                 tip: 'The higher this number, the faster medium armor characters will approach in the ranged phase of combat.',
                 default: 40,
-                sortRank: 2,
+                sortRank: 7,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -368,7 +381,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'This is how fast a character moves in light armor.',
                 tip: 'The higher this number, the faster light armor characters+ will approach in the ranged phase of combat.',
                 default: 50,
-                sortRank: 2,
+                sortRank: 8,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -381,7 +394,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'This is how fast a character moves with no armor.',
                 tip: 'The higher this number, the faster unarmored characters will approach in the ranged phase of combat.',
                 default: 50,
-                sortRank: 2,
+                sortRank: 9,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -394,7 +407,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent of dex used when calculating bonus AC for this armor type.',
                 tip: 'The higher this number, the better this armor type becomes.',
                 default: 25,
-                sortRank: 2,
+                sortRank: 10,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -407,7 +420,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent of dex used when calculating bonus AC for this armor type.',
                 tip: 'The higher this number, the better this armor type becomes.',
                 default: 50,
-                sortRank: 2,
+                sortRank: 11,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -420,7 +433,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent of dex used when calculating bonus AC for this armor type.',
                 tip: 'The higher this number, the better this armor type becomes.',
                 default: 75,
-                sortRank: 2,
+                sortRank: 12,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -433,7 +446,59 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent of dex used when calculating bonus AC for this armor type.',
                 tip: 'The higher this number, the better this armor type becomes.',
                 default: 100,
-                sortRank: 2,
+                sortRank: 13,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            heavyArcaneFailure: {
+                type: 'number',
+                title: 'Heavy Arcane Failure',
+                description:
+                    'Percent chance a spell will fail to cast when wearing this type of armor.',
+                tip: 'Lower numbers makes this armor better for spell users.',
+                default: 50,
+                sortRank: 10,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            mediumArcaneFailure: {
+                type: 'number',
+                title: 'Medium Arcane Failure',
+                description:
+                    'Percent chance a spell will fail to cast when wearing this type of armor.',
+                tip: 'Lower numbers makes this armor better for spell users.',
+                default: 30,
+                sortRank: 10,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            lightArcaneFailure: {
+                type: 'number',
+                title: 'Light Arcane Failure',
+                description:
+                    'Percent chance a spell will fail to cast when wearing this type of armor.',
+                tip: 'Lower numbers makes this armor better for spell users.',
+                default: 0,
+                sortRank: 10,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            nakedArcaneFailure: {
+                type: 'number',
+                title: 'Unarmored Arcane Failure',
+                description:
+                    'Percent chance a spell will fail to cast when wearing this type of armor.',
+                tip: 'Lower numbers makes this armor better for spell users.',
+                default: 0,
+                sortRank: 10,
                 showBottomHr: false,
                 validation: {
                     required: true,

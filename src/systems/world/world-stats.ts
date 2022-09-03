@@ -114,3 +114,12 @@ export async function verifyWorld() {
         await updateWorldMeta(newWorld);
     }
 }
+
+/**
+ * Returns the worlds current building levels.
+ * @returns
+ */
+export async function getWorldBuildings() {
+    const worldStats = await getWorldMeta();
+    return worldStats.upgrades;
+}
