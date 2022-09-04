@@ -13,11 +13,8 @@ export async function rpgDuelCommand(userCommand: UserCommand) {
     let challenged = args[2] as string;
 
     // If user includes @ in username, strip the at symbol.
-    if (challenged != null) {
-        challenged =
-            challenged.length && challenged[0] === '@'
-                ? challenged.slice(1)
-                : challenged;
+    if (challenged != null && challenged.charAt(0) === '@') {
+        challenged = challenged.substring(1);
     }
 
     const duel = {
@@ -35,7 +32,7 @@ export async function rpgDuelCommand(userCommand: UserCommand) {
             // Make sure they gave a name.
             if (challenged == null) {
                 sendChatMessage(
-                    `@${username}, specify who you want to challenge. EX: !rpg challenge NAME`
+                    `@${username}, specify who you want to challenge. EX: !rpg duel challenge NAME`
                 );
                 return;
             }
