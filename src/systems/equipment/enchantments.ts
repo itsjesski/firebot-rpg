@@ -111,6 +111,7 @@ export function getEnchantmentName(
 
     switch (itemType) {
         case 'weapon':
+        case 'spell':
             enchantmentName = filterArrayByProperty(
                 weaponEnchantmentNames,
                 ['enchantments'],

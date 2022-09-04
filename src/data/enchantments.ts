@@ -2,30 +2,6 @@ import { EnchantmentName } from '../types/equipment';
 
 export const weaponEnchantmentNames: EnchantmentName[] = [
     {
-        name: 'Earth',
-        enchantments: ['earth'],
-    },
-    {
-        name: 'Fire',
-        enchantments: ['fire'],
-    },
-    {
-        name: 'Wind',
-        enchantments: ['wind'],
-    },
-    {
-        name: 'Water',
-        enchantments: ['water'],
-    },
-    {
-        name: 'Light',
-        enchantments: ['light'],
-    },
-    {
-        name: 'Darkness',
-        enchantments: ['darkness'],
-    },
-    {
         name: 'Lava',
         enchantments: ['earth', 'fire'],
     },
@@ -88,30 +64,6 @@ export const weaponEnchantmentNames: EnchantmentName[] = [
 ];
 
 export const armorEnchantmentNames: EnchantmentName[] = [
-    {
-        name: 'Earth',
-        enchantments: ['earth'],
-    },
-    {
-        name: 'Fire',
-        enchantments: ['fire'],
-    },
-    {
-        name: 'Wind',
-        enchantments: ['wind'],
-    },
-    {
-        name: 'Water',
-        enchantments: ['water'],
-    },
-    {
-        name: 'Light',
-        enchantments: ['light'],
-    },
-    {
-        name: 'Darkness',
-        enchantments: ['darkness'],
-    },
     {
         name: 'Discipline',
         enchantments: ['earth', 'fire'],

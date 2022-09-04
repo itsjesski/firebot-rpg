@@ -10,7 +10,16 @@ export async function rpgDuelCommand(userCommand: UserCommand) {
     const username = userCommand.commandSender;
     const { args } = userCommand;
     const commandUsed = args[1] as string;
-    const challenged = args[3] as string;
+    let challenged = args[2] as string;
+
+    // If user includes @ in username, strip the at symbol.
+    if (challenged != null) {
+        challenged =
+            challenged.length && challenged[0] === '@'
+                ? challenged.slice(1)
+                : challenged;
+    }
+
     const duel = {
         challenger: null,
         time: null,
