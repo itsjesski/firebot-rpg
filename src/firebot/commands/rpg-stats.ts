@@ -60,7 +60,8 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
             item = getFullItemTextWithStats(characterClass);
             message = `@${username} ${characterName}'s class is: ${item}`;
             break;
-        default:
+        case 'character':
+        case 'profile':
             storedCharacterClass = getItemByID(
                 character.characterClass.id,
                 'characterClass'
@@ -71,6 +72,9 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
             int = await getAdjustedCharacterStat(character, 'int');
             acTotal = await getCharacterTotalAC(character);
             message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, ${acTotal} AC, and ${character.totalHP} HP.`;
+            break;
+        default:
+            message = `@${username}, please choose which slot to view stats on. Options: backpack, main, off, armor, title, class, or character. Example: !rpg stats character`;
     }
 
     if (message != null) {

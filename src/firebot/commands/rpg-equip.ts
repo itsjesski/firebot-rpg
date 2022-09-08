@@ -273,7 +273,7 @@ export async function rpgEquipCommand(userCommand: UserCommand) {
             break;
         default:
             sendChatMessage(
-                `@${username}, specify a slot to equip the item to. Slots: main, off, armor`
+                `@${username}, specify a slot to equip the item to. Slots: main, off, armor, title, or class.`
             );
     }
 }

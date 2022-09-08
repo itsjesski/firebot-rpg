@@ -11,7 +11,8 @@ export function isDuelExpired(date: number | null) {
     const timer = 1000 * 60 * duelTimeout;
     const checked = Date.now() - timer;
 
-    return date > checked;
+    // If duel challenge time is less than current time -2 minutes, duel is expired.
+    return date < checked;
 }
 
 export async function startDuel(attacker: string, defender: string) {
