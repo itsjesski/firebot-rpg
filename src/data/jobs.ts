@@ -16,7 +16,7 @@ export const jobList: Job[] = [
         world_tendency: {
             happiness: 1,
             resources: 0,
-            research: 0,
+            research: 1,
         },
     },
     {
@@ -34,7 +34,7 @@ export const jobList: Job[] = [
         world_tendency: {
             happiness: 0,
             resources: 1,
-            research: 0,
+            research: 1,
         },
     },
     {
@@ -124,7 +124,7 @@ export const jobList: Job[] = [
         world_tendency: {
             happiness: 1,
             resources: 2,
-            research: 0,
+            research: 1,
         },
     },
     {
@@ -250,7 +250,7 @@ export const jobList: Job[] = [
         world_tendency: {
             happiness: 1,
             resources: 1,
-            research: 0,
+            research: 1,
         },
     },
     {
