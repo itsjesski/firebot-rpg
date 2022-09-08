@@ -32,7 +32,7 @@ export async function rpgDuelCommand(userCommand: UserCommand) {
             // Make sure they gave a name.
             if (challenged == null) {
                 sendChatMessage(
-                    `@${username}, specify who you want to challenge. EX: !rpg duel challenge NAME`
+                    `@${username}, specify who you want to challenge. EX: !rpg duel challenge @Twitch_Username`
                 );
                 return;
             }
@@ -112,7 +112,7 @@ export async function rpgDuelCommand(userCommand: UserCommand) {
             break;
         default:
             sendChatMessage(
-                `@${username}, specify if you want to challenge or accept. EX: !rpg challenge NAME, !rpg accept`
+                `@${username}, specify if you want to challenge or accept. EX: !rpg duel challenge @Twitch_Username, !rpg duel accept`
             );
     }
 }

@@ -184,7 +184,7 @@ export const jobList: Job[] = [
     {
         id: 9,
         challenge: 'easy',
-        template: `A guarded elven lady seeks soldiers to escort The Demonic Articles of Phantesocr safely to the #citizenName #worldType of #worldName`,
+        template: `A guarded elven lady seeks soldiers to escort The Demonic Articles of Phantesocr safely to the #worldType of #worldName`,
         encounter: 'easy',
         loot: {
             item: {
