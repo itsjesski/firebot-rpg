@@ -18,9 +18,13 @@ import {
     Spell,
     Enchantments,
 } from '../../types/equipment';
+import { CompleteCharacter, EquippableSlots } from '../../types/user';
 import { getItemFromItemListById } from '../utils';
 import { getArcaneFailureChance } from './armor';
-import { getEnchantmentName } from './enchantments';
+import {
+    getEnchantmentName,
+    getMergedEnchantmentsOfItem,
+} from './enchantments';
 
 /**
  * Let's us translate our db item types to better display names.
@@ -140,46 +144,39 @@ export function mergeEnchantments(item: Enchantments, itemTwo: Enchantments) {
  * This takes a stored item, and assembles its full name using it's refinements and enchantments.
  * @param item
  */
-export function getFullItemName(item: StorableItems | null): string {
+export function getFullItemName(
+    character: CompleteCharacter,
+    slot: EquippableSlots
+): string {
     logger('debug', 'Compiling full item name.');
-    const dbItem = getItemByID(item.id, item.itemType);
+
+    const key = `${slot}Data`;
+    const dbItem = character[
+        key as keyof CompleteCharacter
+    ] as EquippableItemsDetails;
+    const item = character[slot as keyof CompleteCharacter] as StorableItems;
 
     if (dbItem == null) {
         return 'Nothing';
     }
 
     let itemName = `${dbItem.name}`;
-    let enchantments;
-    let enchantmentName;
-    let dbDetails = null;
+
+    // These two items dont have enchantments or refinements, so stop here.
+    if (item.itemType === 'characterClass' || item.itemType === 'title') {
+        return itemName;
+    }
 
     // Here we want to only run extra checks if the item has enchantments or refinements.
-    switch (item.itemType) {
-        case 'weapon':
-        case 'armor':
-        case 'shield':
-        case 'spell':
-            dbDetails = getItemByID(item.id, item.itemType) as
-                | Weapon
-                | Armor
-                | Shield
-                | Spell;
+    const enchantments = getMergedEnchantmentsOfItem(character, slot);
+    const enchantmentName = getEnchantmentName(enchantments, item.itemType);
 
-            enchantments = mergeEnchantments(
-                item.enchantments,
-                dbDetails.enchantments
-            );
-            enchantmentName = getEnchantmentName(enchantments, item.itemType);
+    if (enchantmentName != null) {
+        itemName = `${itemName} of ${enchantmentName}`;
+    }
 
-            if (enchantmentName != null) {
-                itemName = `${itemName} of ${enchantmentName}`;
-            }
-
-            if (item.refinements !== 0) {
-                itemName = `${itemName} +${item.refinements}`;
-            }
-            break;
-        default:
+    if (item.refinements !== 0) {
+        itemName = `${itemName} +${item.refinements}`;
     }
 
     return itemName;
@@ -190,50 +187,71 @@ export function getFullItemName(item: StorableItems | null): string {
  * @param item
  * @returns
  */
-export function getFullItemTextWithStats(item: StorableItems | null) {
+export function getFullItemTextWithStats(
+    character: CompleteCharacter,
+    slot: EquippableSlots
+) {
     logger('debug', 'Compiling full item name with stats.');
 
-    if (item == null) {
-        logger('debug', 'Null item passed to getFullItemTextWithStats');
+    const storedItem = character[slot];
+    if (storedItem == null) {
         return 'Nothing';
     }
 
-    const dbItem = getItemByID(item.id, item.itemType);
+    const key = `${slot}Data`;
+    const dbItem = character[
+        key as keyof CompleteCharacter
+    ] as EquippableItemsDetails;
+
     let message;
 
-    if (dbItem == null) {
-        logger('debug', 'Could not find weapon in database.');
-        return 'Nothing';
-    }
-
-    const fullName = getFullItemName(item);
+    const fullName = getFullItemName(character, slot);
     if (fullName == null) {
         return 'Nothing';
     }
 
+    let enchantments = null;
+
     switch (dbItem.itemType) {
         case 'weapon':
+            enchantments = getMergedEnchantmentsOfItem(character, slot);
             message = `${fullName} | ${dbItem.damage} DMG | ${
                 dbItem.damage_type
             } | ${dbItem.properties.join(', ')} | ${
                 dbItem.range > 0 ? dbItem.range : 'melee'
-            } range | ${dbItem.rarity} ${getItemTypeDisplayName(dbItem)}`;
+            } range | ${dbItem.rarity} ${getItemTypeDisplayName(
+                dbItem
+            )} | Earth: ${enchantments.earth}, Wind: ${
+                enchantments.wind
+            }, Fire: ${enchantments.fire}, Water: ${
+                enchantments.water
+            }, Light: ${enchantments.light}, Dark: ${enchantments.darkness}`;
             break;
         case 'armor':
+            enchantments = getMergedEnchantmentsOfItem(character, slot);
             message = `${fullName} | ${
                 dbItem.armorClass
             } AC | arcane failure ${getArcaneFailureChance(
                 dbItem.properties[0]
             )}% | ${dbItem.properties.join(', ')} | ${
                 dbItem.rarity
-            } ${getItemTypeDisplayName(dbItem)}`;
+            } ${getItemTypeDisplayName(dbItem)} | Earth: ${
+                enchantments.earth
+            }, Wind: ${enchantments.wind}, Fire: ${enchantments.fire}, Water: ${
+                enchantments.water
+            }, Light: ${enchantments.light}, Dark: ${enchantments.darkness}`;
             break;
         case 'shield':
+            enchantments = getMergedEnchantmentsOfItem(character, slot);
             message = `${fullName} | ${
                 dbItem.armorClass
             } AC | ${dbItem.properties.join(', ')} | ${
                 dbItem.rarity
-            } ${getItemTypeDisplayName(dbItem)}`;
+            } ${getItemTypeDisplayName(dbItem)} | Earth: ${
+                enchantments.earth
+            }, Wind: ${enchantments.wind}, Fire: ${enchantments.fire}, Water: ${
+                enchantments.water
+            }, Light: ${enchantments.light}, Dark: ${enchantments.darkness}`;
             break;
         case 'title':
             message = `${fullName} | +${dbItem.bonuses.str}% STR, +${
@@ -250,11 +268,18 @@ export function getFullItemTextWithStats(item: StorableItems | null) {
             } ${getItemTypeDisplayName(dbItem)}`;
             break;
         case 'spell':
+            enchantments = getMergedEnchantmentsOfItem(character, slot);
             message = `${fullName} | ${dbItem.damage} DMG | ${
                 dbItem.damage_type
             } | ${dbItem.properties.join(', ')} | ${
                 dbItem.range > 0 ? dbItem.range : 'melee'
-            } range | ${dbItem.rarity} ${getItemTypeDisplayName(dbItem)}`;
+            } range | ${dbItem.rarity} ${getItemTypeDisplayName(
+                dbItem
+            )} | Earth: ${enchantments.earth}, Wind: ${
+                enchantments.wind
+            }, Fire: ${enchantments.fire}, Water: ${
+                enchantments.water
+            }, Light: ${enchantments.light}, Dark: ${enchantments.darkness}`;
             break;
         default:
             logger(

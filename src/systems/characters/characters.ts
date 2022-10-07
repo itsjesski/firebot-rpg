@@ -4,6 +4,7 @@ import {
     CharacterClass,
     Enchantments,
     EnchantmentTypes,
+    EquippableItemsDetails,
     Shield,
     Spell,
     Title,
@@ -357,6 +358,16 @@ export async function getCompleteCharacterData(
         ) as Title;
     } else {
         characterData.titleData = null;
+    }
+
+    // Backpack
+    if (characterData.backpack != null) {
+        characterData.backpackData = getItemByID(
+            characterData.backpack.id,
+            characterData.backpack.itemType
+        ) as EquippableItemsDetails;
+    } else {
+        characterData.backpack = null;
     }
 
     return characterData;

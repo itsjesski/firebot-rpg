@@ -6,11 +6,10 @@ import { logger, setCharacterMeta } from '../../firebot/firebot';
 import {
     Enchantments,
     EnchantmentTypes,
-    Spell,
+    EquippableItemsDetails,
     StoredArmor,
     StoredShield,
     StoredWeapon,
-    Weapon,
 } from '../../types/equipment';
 import { CompleteCharacter, EquippableSlots } from '../../types/user';
 import {
@@ -184,39 +183,30 @@ export async function didDefenderResistMagic(
  * @param slot
  * @returns
  */
-function getMergedEnchantmentsOfItem(
+export function getMergedEnchantmentsOfItem(
     attacker: CompleteCharacter,
     slot: EquippableSlots
-) {
-    let item;
+): Enchantments {
+    const key = `${slot}Data`;
+    const item = attacker[
+        key as keyof CompleteCharacter
+    ] as EquippableItemsDetails;
 
-    if (slot === 'mainHand') {
-        item = attacker.mainHandData as Weapon | Spell;
-
-        if (item == null) {
-            return null;
-        }
-
-        return mergeEnchantments(
-            item.enchantments,
-            attacker.mainHand.enchantments
-        );
+    if (item == null) {
+        return null;
     }
 
-    if (slot === 'offHand' && attacker.offHand.itemType !== 'shield') {
-        item = attacker.offHandData as Weapon | Spell;
-
-        if (item == null) {
-            return null;
-        }
-
-        return mergeEnchantments(
-            item.enchantments,
-            attacker.offHand.enchantments
-        );
+    // Check to make sure the item can actually have enchantments.
+    if (
+        item.itemType !== 'armor' &&
+        item.itemType !== 'shield' &&
+        item.itemType !== 'spell' &&
+        item.itemType !== 'weapon'
+    ) {
+        return null;
     }
 
-    return null;
+    return mergeEnchantments(item.enchantments, attacker.mainHand.enchantments);
 }
 
 /**

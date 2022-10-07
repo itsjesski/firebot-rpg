@@ -29,32 +29,35 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
 
     switch (commandUsed) {
         case 'backpack':
-            item = getFullItemTextWithStats(completeCharacter.backpack);
+            item = getFullItemTextWithStats(completeCharacter, 'backpack');
             message = `@${username} ${characterName}'s backpack contains: ${item}`;
             break;
         case 'main':
         case 'main-hand':
         case 'main_hand':
-            item = getFullItemTextWithStats(completeCharacter.mainHand);
+            item = getFullItemTextWithStats(completeCharacter, 'mainHand');
             message = `@${username} ${characterName}'s main hand holds: ${item}`;
             break;
         case 'off':
         case 'off-hand':
         case 'off_hand':
-            item = getFullItemTextWithStats(completeCharacter.offHand);
+            item = getFullItemTextWithStats(completeCharacter, 'offHand');
             message = `@${username} ${characterName}'s off hand holds: ${item}`;
             break;
         case 'armor':
-            item = getFullItemTextWithStats(completeCharacter.armor);
+            item = getFullItemTextWithStats(completeCharacter, 'armor');
             message = `@${username} ${characterName}'s equipped armor: ${item}`;
             break;
         case 'title':
-            item = getFullItemTextWithStats(completeCharacter.title);
+            item = getFullItemTextWithStats(completeCharacter, 'title');
             message = `@${username} ${characterName}'s title is: ${item}`;
             break;
         case 'class':
         case 'characterClass':
-            item = getFullItemTextWithStats(completeCharacter.characterClass);
+            item = getFullItemTextWithStats(
+                completeCharacter,
+                'characterClass'
+            );
             message = `@${username} ${characterName}'s class is: ${item}`;
             break;
         case 'character':

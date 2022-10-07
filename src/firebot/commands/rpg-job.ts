@@ -32,6 +32,7 @@ import { updateWorldTendency } from '../../systems/world/world-tendency';
 import { StorableItems } from '../../types/equipment';
 import { Job, JobTemplateReplacements } from '../../types/jobs';
 import { GeneratedMonster } from '../../types/monsters';
+import { CompleteCharacter } from '../../types/user';
 import { WorldTendencyTypes } from '../../types/world';
 import {
     getCurrencyName,
@@ -93,6 +94,7 @@ async function giveJobCurrencyReward(
  */
 async function rpgJobMessageLootTemplate(
     username: string,
+    character: CompleteCharacter,
     moneyReward: number,
     itemReward: StorableItems | null
 ): Promise<string> {
@@ -112,7 +114,7 @@ async function rpgJobMessageLootTemplate(
 
     // If they got a reward item, add that to the reward message.
     if (itemReward != null) {
-        const itemName = getFullItemName(itemReward);
+        const itemName = getFullItemName(character, 'backpack');
         const dbItem = await getItemByID(itemReward.id, itemReward.itemType);
         rewards.push(
             `${itemName} (${dbItem.rarity} ${getItemTypeDisplayName(dbItem)})`
@@ -207,11 +209,13 @@ async function rpgJobMessageBuilder(
         won: boolean;
         rounds: number;
     } | null,
-    healedMessage: string
+    healedMessage: string,
+    character: CompleteCharacter
 ): Promise<string> {
     const jobMessage = `@${username}: ${messageTemplate}`;
     const rewards = await rpgJobMessageLootTemplate(
         username,
+        character,
         moneyReward,
         itemReward
     );
@@ -272,13 +276,15 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     let combatResults = null;
     let jobMessage = '';
 
+    const player = await getUserData(username);
+    const completePlayer = await getCompleteCharacterData(player);
+
     logger('debug', `JOB STARTED: ${username}`);
 
     // Combat time.
     if (selectedJob.encounter != null) {
         logger('debug', `This job has an encounter: ${selectedJob.encounter}`);
         const monster = await generateMonster(username, selectedJob.encounter);
-        const player = await getUserData(username);
         const characterName = await getUserName(username);
 
         if (player.currentHP === 0) {
@@ -289,7 +295,6 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         }
 
         // Time to start combat.
-        const completePlayer = await getCompleteCharacterData(player);
         const completeMonster = await getCompleteCharacterData(monster);
         const combat = await startCombat(completePlayer, completeMonster);
 
@@ -311,7 +316,8 @@ export async function rpgJobCommand(userCommand: UserCommand) {
                 0,
                 null,
                 combatResults,
-                await chargePlayerForHeal(username)
+                await chargePlayerForHeal(username),
+                completePlayer
             );
 
             Object.keys(selectedJob.world_tendency).forEach((stat) => {
@@ -357,7 +363,8 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         currencyGiven,
         itemGiven,
         combatResults,
-        await chargePlayerForHeal(username)
+        await chargePlayerForHeal(username),
+        completePlayer
     );
 
     // Send our message template for this job to chat.

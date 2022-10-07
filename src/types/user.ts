@@ -1,6 +1,7 @@
 import {
     Armor,
     CharacterClass,
+    EquippableItemsDetails,
     Shield,
     Spell,
     StorableItems,
@@ -54,4 +55,5 @@ export interface CompleteCharacter extends Character {
     offHandData: Weapon | Spell | Shield | null;
     characterClassData: CharacterClass;
     titleData: Title;
+    backpackData: EquippableItemsDetails;
 }
