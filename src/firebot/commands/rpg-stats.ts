@@ -2,11 +2,9 @@ import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/mo
 import {
     getAdjustedCharacterStat,
     getCharacterTotalAC,
+    getCompleteCharacterData,
 } from '../../systems/characters/characters';
-import {
-    getFullItemTextWithStats,
-    getItemByID,
-} from '../../systems/equipment/helpers';
+import { getFullItemTextWithStats } from '../../systems/equipment/helpers';
 
 import { getUserData, getUserName } from '../../systems/user/user';
 import { logger, sendChatMessage } from '../firebot';
@@ -16,6 +14,7 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
 
     const username = userCommand.commandSender;
     const character = await getUserData(username);
+    const completeCharacter = await getCompleteCharacterData(character);
     const { args } = userCommand;
     const commandUsed = args[1] as string;
     let message = null;
@@ -27,50 +26,45 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
     let int;
     let acTotal;
     const characterName = await getUserName(username);
-    const { backpack, mainHand, offHand, armor, title, characterClass } =
-        await getUserData(username);
 
     switch (commandUsed) {
         case 'backpack':
-            item = getFullItemTextWithStats(backpack);
+            item = getFullItemTextWithStats(completeCharacter.backpack);
             message = `@${username} ${characterName}'s backpack contains: ${item}`;
             break;
         case 'main':
         case 'main-hand':
         case 'main_hand':
-            item = getFullItemTextWithStats(mainHand);
+            item = getFullItemTextWithStats(completeCharacter.mainHand);
             message = `@${username} ${characterName}'s main hand holds: ${item}`;
             break;
         case 'off':
         case 'off-hand':
         case 'off_hand':
-            item = getFullItemTextWithStats(offHand);
+            item = getFullItemTextWithStats(completeCharacter.offHand);
             message = `@${username} ${characterName}'s off hand holds: ${item}`;
             break;
         case 'armor':
-            item = getFullItemTextWithStats(armor);
+            item = getFullItemTextWithStats(completeCharacter.armor);
             message = `@${username} ${characterName}'s equipped armor: ${item}`;
             break;
         case 'title':
-            item = getFullItemTextWithStats(title);
+            item = getFullItemTextWithStats(completeCharacter.title);
             message = `@${username} ${characterName}'s title is: ${item}`;
             break;
         case 'class':
         case 'characterClass':
-            item = getFullItemTextWithStats(characterClass);
+            item = getFullItemTextWithStats(completeCharacter.characterClass);
             message = `@${username} ${characterName}'s class is: ${item}`;
             break;
         case 'character':
         case 'profile':
-            storedCharacterClass = getItemByID(
-                character.characterClass.id,
-                'characterClass'
-            );
-            storedTitle = getItemByID(character.title.id, 'title');
-            str = await getAdjustedCharacterStat(character, 'str');
-            dex = await getAdjustedCharacterStat(character, 'dex');
-            int = await getAdjustedCharacterStat(character, 'int');
-            acTotal = await getCharacterTotalAC(character);
+            storedCharacterClass = completeCharacter.characterClassData;
+            storedTitle = completeCharacter.titleData;
+            str = await getAdjustedCharacterStat(completeCharacter, 'str');
+            dex = await getAdjustedCharacterStat(completeCharacter, 'dex');
+            int = await getAdjustedCharacterStat(completeCharacter, 'int');
+            acTotal = await getCharacterTotalAC(completeCharacter);
             message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, ${acTotal} AC, and ${character.totalHP} HP.`;
             break;
         default:

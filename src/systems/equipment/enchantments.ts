@@ -12,8 +12,7 @@ import {
     StoredWeapon,
     Weapon,
 } from '../../types/equipment';
-import { GeneratedMonster } from '../../types/monsters';
-import { Character, EquippableSlots } from '../../types/user';
+import { CompleteCharacter, EquippableSlots } from '../../types/user';
 import {
     getCharacterDamageBonus,
     getCharacterElementalDefense,
@@ -27,7 +26,7 @@ import {
     rollDice,
     sumOfObjectProperties,
 } from '../utils';
-import { getItemByID, mergeEnchantments } from './helpers';
+import { mergeEnchantments } from './helpers';
 
 /**
  * Generates an enchantment list using the given number of enchantment points.
@@ -163,8 +162,8 @@ export async function getUserArmorEnchantmentCount(
  * @param defender
  */
 async function didDefenderResistMagic(
-    attacker: Character,
-    defender: Character
+    attacker: CompleteCharacter,
+    defender: CompleteCharacter
 ) {
     const defenderResistRoll =
         rollDice('1d20') + (await getCharacterIntBonus(defender));
@@ -186,15 +185,13 @@ async function didDefenderResistMagic(
  * @returns
  */
 function getMergedEnchantmentsOfItem(
-    attacker: Character,
+    attacker: CompleteCharacter,
     slot: EquippableSlots
 ) {
     let item;
 
     if (slot === 'mainHand') {
-        item = getItemByID(attacker.mainHand.id, attacker.mainHand.itemType) as
-            | Weapon
-            | Spell;
+        item = attacker.mainHandData as Weapon | Spell;
 
         if (item == null) {
             return null;
@@ -207,9 +204,7 @@ function getMergedEnchantmentsOfItem(
     }
 
     if (slot === 'offHand' && attacker.offHand.itemType !== 'shield') {
-        item = getItemByID(attacker.offHand.id, attacker.offHand.itemType) as
-            | Weapon
-            | Spell;
+        item = attacker.offHandData as Weapon | Spell;
 
         if (item == null) {
             return null;
@@ -230,8 +225,8 @@ function getMergedEnchantmentsOfItem(
  * @param defender
  */
 export async function getElementalDamageOfAttack(
-    attacker: Character,
-    defender: Character | GeneratedMonster,
+    attacker: CompleteCharacter,
+    defender: CompleteCharacter,
     slot: EquippableSlots
 ): Promise<number> {
     let damage = 0;

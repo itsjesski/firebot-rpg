@@ -168,12 +168,15 @@ export async function generateMonster(
             'characterClass'
         ) as CharacterClass;
 
-        generatedMonster.str +=
-            generatedMonster.str * (characterClass.bonuses.str / 100);
-        generatedMonster.dex +=
-            generatedMonster.dex * (characterClass.bonuses.dex / 100);
-        generatedMonster.int +=
-            generatedMonster.int * (characterClass.bonuses.int / 100);
+        generatedMonster.str += Math.floor(
+            generatedMonster.str * (characterClass.bonuses.str / 100)
+        );
+        generatedMonster.dex += Math.floor(
+            generatedMonster.dex * (characterClass.bonuses.dex / 100)
+        );
+        generatedMonster.int += Math.floor(
+            generatedMonster.int * (characterClass.bonuses.int / 100)
+        );
     }
 
     // Generate a title for our monster.
@@ -189,12 +192,15 @@ export async function generateMonster(
             'title'
         ) as Title;
 
-        generatedMonster.str +=
-            generatedMonster.str * (characterTitle.bonuses.str / 100);
-        generatedMonster.dex +=
-            generatedMonster.dex * (characterTitle.bonuses.dex / 100);
-        generatedMonster.int +=
-            generatedMonster.int * (characterTitle.bonuses.int / 100);
+        generatedMonster.str += Math.floor(
+            generatedMonster.str * (characterTitle.bonuses.str / 100)
+        );
+        generatedMonster.dex += Math.floor(
+            generatedMonster.dex * (characterTitle.bonuses.dex / 100)
+        );
+        generatedMonster.int += Math.floor(
+            generatedMonster.int * (characterTitle.bonuses.int / 100)
+        );
     }
 
     // Generated our off hand if we need one.

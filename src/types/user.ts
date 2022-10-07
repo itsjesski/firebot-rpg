@@ -1,4 +1,8 @@
 import {
+    Armor,
+    CharacterClass,
+    Shield,
+    Spell,
     StorableItems,
     StoredArmor,
     StoredCharacterClass,
@@ -6,6 +10,8 @@ import {
     StoredSpell,
     StoredTitle,
     StoredWeapon,
+    Title,
+    Weapon,
 } from './equipment';
 
 export type EquippableSlots =
@@ -41,3 +47,11 @@ export type Character = {
     title: StoredTitle;
     duel: Duel;
 };
+
+export interface CompleteCharacter extends Character {
+    armorData: Armor | null;
+    mainHandData: Weapon | Spell | null;
+    offHandData: Weapon | Spell | Shield | null;
+    characterClassData: CharacterClass;
+    titleData: Title;
+}

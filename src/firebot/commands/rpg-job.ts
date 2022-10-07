@@ -1,5 +1,6 @@
 import { UserCommand } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 import { jobList } from '../../data/jobs';
+import { getCompleteCharacterData } from '../../systems/characters/characters';
 import { startCombat } from '../../systems/combat/combat';
 import {
     getItemTypeDisplayName,
@@ -279,7 +280,9 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         }
 
         // Time to start combat.
-        const combat = await startCombat(player, monster);
+        const completePlayer = await getCompleteCharacterData(player);
+        const completeMonster = await getCompleteCharacterData(monster);
+        const combat = await startCombat(completePlayer, completeMonster);
 
         // Set character health to whatever was remaining after combat.
         await setUserCurrentHP(username, combat.one);

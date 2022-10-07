@@ -18,7 +18,7 @@ import {
     Spell,
     Enchantments,
 } from '../../types/equipment';
-import { filterArrayByProperty } from '../utils';
+import { getItemFromItemListById } from '../utils';
 import { getArcaneFailureChance } from './armor';
 import { getEnchantmentName } from './enchantments';
 
@@ -93,28 +93,26 @@ export function getItemByID(
 
     let item = null;
 
+    logger('debug', `Getting item by id. ID: ${id}, TYPE: ${type}`);
+
     switch (type) {
         case 'weapon':
-            [item] = filterArrayByProperty(weaponList, ['id'], id) as Weapon[];
+            [item] = getItemFromItemListById(weaponList, id) as Weapon[];
             break;
         case 'armor':
-            [item] = filterArrayByProperty(armorList, ['id'], id) as Armor[];
+            [item] = getItemFromItemListById(armorList, id) as Armor[];
             break;
         case 'characterClass':
-            [item] = filterArrayByProperty(
-                classList,
-                ['id'],
-                id
-            ) as CharacterClass[];
+            [item] = getItemFromItemListById(classList, id) as CharacterClass[];
             break;
         case 'shield':
-            [item] = filterArrayByProperty(shieldList, ['id'], id) as Shield[];
+            [item] = getItemFromItemListById(shieldList, id) as Shield[];
             break;
         case 'title':
-            [item] = filterArrayByProperty(titleList, ['id'], id) as Title[];
+            [item] = getItemFromItemListById(titleList, id) as Title[];
             break;
         case 'spell':
-            [item] = filterArrayByProperty(spellList, ['id'], id) as Spell[];
+            [item] = getItemFromItemListById(spellList, id) as Spell[];
             break;
         default:
     }

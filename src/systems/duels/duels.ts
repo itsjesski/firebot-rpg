@@ -1,3 +1,4 @@
+import { getCompleteCharacterData } from '../characters/characters';
 import { startCombat } from '../combat/combat';
 import { getDuelTimeout } from '../settings';
 import { getUserData } from '../user/user';
@@ -18,6 +19,12 @@ export function isDuelExpired(date: number | null) {
 export async function startDuel(attacker: string, defender: string) {
     const attackingCharacter = await getUserData(attacker);
     const defendingCharacter = await getUserData(defender);
-    const results = await startCombat(attackingCharacter, defendingCharacter);
+
+    const completePlayer = await getCompleteCharacterData(attackingCharacter);
+    const completePlayerTwo = await getCompleteCharacterData(
+        defendingCharacter
+    );
+
+    const results = await startCombat(completePlayer, completePlayerTwo);
     return results;
 }

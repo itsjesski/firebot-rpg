@@ -33,6 +33,27 @@ export function addOrSubtractRandomPercentage(num: number) {
     return Math.floor(total);
 }
 
+/**
+ * This is a method used specifically for getting items from their lists.
+ * @param array
+ * @param key
+ * @param value
+ */
+export function getItemFromItemListById(array: any[], itemId: number) {
+    const results = array.filter((x) => {
+        return x.id === itemId;
+    });
+
+    return results;
+}
+
+/**
+ * A filter for getting a list of matching items from an array.
+ * @param array
+ * @param keys
+ * @param value
+ * @returns
+ */
 export function filterArrayByProperty(
     array: any[],
     keys: string[],

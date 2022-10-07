@@ -1,7 +1,6 @@
 import { logger } from '../../firebot/firebot';
 import { Armor, Spell, Weapon } from '../../types/equipment';
-import { GeneratedMonster } from '../../types/monsters';
-import { Character } from '../../types/user';
+import { CompleteCharacter } from '../../types/user';
 import { getCharacterWeaponRange } from '../characters/characters';
 import { getArmorMovementSpeed } from '../equipment/armor';
 import { getItemByID } from '../equipment/helpers';
@@ -9,8 +8,8 @@ import { calculateDamage, initiative } from './combat';
 import { didCharacterHitRanged } from './combat-hit';
 
 async function rangedAttack(
-    attacker: Character,
-    defender: Character | GeneratedMonster,
+    attacker: CompleteCharacter,
+    defender: CompleteCharacter,
     distance: number
 ): Promise<number> {
     logger(
@@ -20,10 +19,7 @@ async function rangedAttack(
     let damage = 0;
 
     // Get all of our weapons
-    const mainWeapon = (await getItemByID(
-        attacker.mainHand.id,
-        attacker.mainHand.itemType
-    )) as Weapon | Spell;
+    const mainWeapon = attacker.mainHandData as Weapon | Spell;
 
     // See if we need to attack with our main weapon.
     if (
@@ -39,10 +35,7 @@ async function rangedAttack(
             attacker.offHand.itemType === 'weapon' ||
             attacker.offHand.itemType === 'spell'
         ) {
-            const offHandWeapon = (await getItemByID(
-                attacker.offHand.id,
-                attacker.mainHand.itemType
-            )) as Weapon | Spell;
+            const offHandWeapon = attacker.offHandData as Weapon | Spell;
 
             // Check if we're attacking with offhand.
             if (
@@ -77,8 +70,8 @@ async function rangedAttack(
  * @returns
  */
 async function rangedCombatRound(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster,
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter,
     distance: number
 ): Promise<{ one: number; two: number }> {
     logger('debug', `Ranged combat round starting.`);
@@ -123,11 +116,8 @@ async function rangedCombatRound(
     return healthResults;
 }
 
-async function isUsingAmmunitionWeapon(character: Character) {
-    const weapon = (await getItemByID(
-        character.mainHand.id,
-        'weapon'
-    )) as Weapon;
+async function isUsingAmmunitionWeapon(character: CompleteCharacter) {
+    const weapon = character.mainHandData;
     if (weapon.properties.includes('ammunition')) {
         return true;
     }
@@ -140,7 +130,7 @@ async function isUsingAmmunitionWeapon(character: Character) {
  * @returns
  */
 async function getMaxRangeOfCharacter(
-    character: Character | GeneratedMonster
+    character: CompleteCharacter
 ): Promise<number> {
     const ranges = [];
 
@@ -157,8 +147,8 @@ async function getMaxRangeOfCharacter(
  * @returns
  */
 async function getMaxRangeOfEncounter(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter
 ): Promise<number> {
     const ranges = [];
 
@@ -177,9 +167,10 @@ async function getMaxRangeOfEncounter(
  * @returns
  */
 async function getEngagementDistance(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter
 ): Promise<number> {
+    logger('debug', 'Getting engagement distances...');
     const maxRange = await getMaxRangeOfEncounter(characterOne, characterTwo);
 
     if (maxRange === 0) {
@@ -197,9 +188,10 @@ async function getEngagementDistance(
  * @returns
  */
 async function getDistanceMoved(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter
 ): Promise<number> {
+    logger('debug', 'Getting move distance...');
     const characterOneMaxRange = await getMaxRangeOfCharacter(characterOne);
     const characterTwoMaxRange = await getMaxRangeOfCharacter(characterTwo);
     let approacherArmor = null;
@@ -227,8 +219,8 @@ async function getDistanceMoved(
  * @returns
  */
 async function shootoutCombat(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter
 ): Promise<{ one: number; two: number }> {
     logger(
         'debug',
@@ -270,8 +262,8 @@ async function shootoutCombat(
  * @returns
  */
 async function approachCombat(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster,
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter,
     engagementDistance: number
 ): Promise<{ one: number; two: number }> {
     logger(
@@ -327,8 +319,8 @@ async function approachCombat(
  * The approach phase consists of characters approaching each other for melee. This is the ranged combat round.
  */
 export async function approachPhase(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter
 ): Promise<{ one: number; two: number }> {
     logger(
         'debug',

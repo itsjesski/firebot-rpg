@@ -1,8 +1,6 @@
 import { logger } from '../../firebot/firebot';
 import { Weapon, Shield, Spell } from '../../types/equipment';
-import { GeneratedMonster } from '../../types/monsters';
-import { Character } from '../../types/user';
-import { getItemByID } from '../equipment/helpers';
+import { CompleteCharacter } from '../../types/user';
 import { calculateDamage, initiative } from './combat';
 import { didCharacterHitMelee } from './combat-hit';
 
@@ -12,8 +10,8 @@ import { didCharacterHitMelee } from './combat-hit';
  * @param characterTwo
  */
 async function attackCharacter(
-    attacker: Character,
-    defender: Character | GeneratedMonster
+    attacker: CompleteCharacter,
+    defender: CompleteCharacter
 ): Promise<number> {
     logger(
         'debug',
@@ -28,10 +26,7 @@ async function attackCharacter(
 
     // Offhand check
     if (attacker.offHand != null) {
-        const offHand = getItemByID(
-            attacker.offHand.id,
-            attacker.offHand.itemType
-        ) as Weapon | Spell | Shield | null;
+        const offHand = attacker.offHandData as Weapon | Spell | Shield | null;
         if (
             offHand.itemType !== 'shield' &&
             (await didCharacterHitMelee(attacker, defender, 'offHand'))
@@ -55,8 +50,8 @@ async function attackCharacter(
  * @returns
  */
 async function combatRound(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter
 ): Promise<{ one: number; two: number }> {
     const healthResults = {
         one: 0,
@@ -111,8 +106,8 @@ async function combatRound(
  * @param characterTwo
  */
 export async function meleePhase(
-    characterOne: Character,
-    characterTwo: Character | GeneratedMonster
+    characterOne: CompleteCharacter,
+    characterTwo: CompleteCharacter
 ): Promise<{ one: number; two: number }> {
     logger(
         'debug',

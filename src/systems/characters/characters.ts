@@ -1,3 +1,4 @@
+import { logger } from '../../firebot/firebot';
 import {
     Armor,
     CharacterClass,
@@ -12,6 +13,7 @@ import { GeneratedMonster } from '../../types/monsters';
 import {
     Character,
     CharacterStatNames,
+    CompleteCharacter,
     EquippableSlots,
 } from '../../types/user';
 import { getArmorDexBonus } from '../equipment/armor';
@@ -19,23 +21,21 @@ import { getItemByID } from '../equipment/helpers';
 import { getDamageBonusSettings, getHitBonusSettings } from '../settings';
 
 export async function getAdjustedCharacterStat(
-    character: Character | GeneratedMonster,
+    character: CompleteCharacter,
     stat: CharacterStatNames
 ): Promise<number> {
+    logger('debug', `Getting adjusted character stats for ${character.name}.`);
     const baseStat = character[stat as CharacterStatNames];
     let bonus = 0;
 
     if (character.title != null) {
-        const title = getItemByID(character.title.id, 'title') as Title;
+        const title = character.titleData as Title;
         const titleBonus = title.bonuses[stat as CharacterStatNames];
         bonus += titleBonus;
     }
 
     if (character.characterClass != null) {
-        const characterClass = getItemByID(
-            character.characterClass.id,
-            'characterClass'
-        ) as CharacterClass;
+        const characterClass = character.characterClassData as CharacterClass;
         const characterClassBonus =
             characterClass.bonuses[stat as CharacterStatNames];
         bonus += characterClassBonus;
@@ -54,15 +54,15 @@ export async function getAdjustedCharacterStat(
  * @returns
  */
 export async function getCharacterWeaponRange(
-    character: Character | GeneratedMonster,
+    character: CompleteCharacter,
     slot: 'mainHand' | 'offHand'
 ): Promise<number> {
     if (slot === 'offHand' && character.offHand?.itemType === 'weapon') {
-        const weapon = getItemByID(character.offHand.id, 'weapon') as Weapon;
+        const weapon = character.offHandData as Weapon;
         return weapon.range;
     }
 
-    const weapon = getItemByID(character.mainHand.id, 'weapon') as Weapon;
+    const weapon = character.mainHandData as Weapon;
     return weapon.range;
 }
 
@@ -71,13 +71,13 @@ export async function getCharacterWeaponRange(
  * @param username
  */
 export async function getCharacterTotalAC(
-    defender: Character | GeneratedMonster
+    defender: CompleteCharacter
 ): Promise<number> {
     let defenderAC = 0;
 
     // Calculate armor AC.
     if (defender.armor !== null) {
-        const defenderArmor = getItemByID(defender.armor.id, 'armor') as Armor;
+        const defenderArmor = defender.armorData as Armor;
         const armorDexBonus =
             ((await getAdjustedCharacterStat(defender, 'dex')) *
                 getArmorDexBonus(defenderArmor.properties[0])) /
@@ -95,10 +95,7 @@ export async function getCharacterTotalAC(
 
     // Get shield AC value.
     if (defender.offHand !== null && defender.offHand?.itemType === 'shield') {
-        const defenderShield = getItemByID(
-            defender.offHand.id,
-            'shield'
-        ) as Shield;
+        const defenderShield = defender.offHandData as Shield;
         defenderAC += defenderShield.armorClass + defender.offHand.refinements;
     }
 
@@ -145,9 +142,7 @@ export function getCharacterElementalDefense(
  * Gets a characters int bonus used in spellcasting and resisting.
  * @param attacker
  */
-export async function getCharacterIntBonus(
-    attacker: Character | GeneratedMonster
-) {
+export async function getCharacterIntBonus(attacker: CompleteCharacter) {
     const toHitDivider = getHitBonusSettings() ? getHitBonusSettings() : 10;
     const int = await getAdjustedCharacterStat(attacker, 'int');
     return Math.floor(int / toHitDivider);
@@ -160,7 +155,7 @@ export async function getCharacterIntBonus(
  * @returns
  */
 export async function getCharacterHitBonus(
-    attacker: Character | GeneratedMonster,
+    attacker: CompleteCharacter,
     slot: EquippableSlots
 ): Promise<number> {
     const toHitDivider = getHitBonusSettings() ? getHitBonusSettings() : 10;
@@ -224,7 +219,7 @@ export async function getCharacterHitBonus(
  * @returns
  */
 export async function getCharacterDamageBonus(
-    attacker: Character | GeneratedMonster,
+    attacker: CompleteCharacter,
     slot: EquippableSlots
 ): Promise<number> {
     const damageBonusDivider = getDamageBonusSettings()
@@ -268,4 +263,67 @@ export async function getCharacterDamageBonus(
 
     // If it's a regular weapon, then we go with str + dex / 2.
     return Math.floor((str + dex / 2) / damageBonusDivider);
+}
+
+/**
+ * Pulls all of the data needed for a player, including all items.
+ * @param character
+ */
+export async function getCompleteCharacterData(
+    character: Character
+): Promise<CompleteCharacter> {
+    const characterData = character as CompleteCharacter;
+
+    logger(
+        'debug',
+        `Getting complete character details for ${character.name}.`
+    );
+
+    // Main Hand
+    characterData.mainHandData = getItemByID(
+        characterData.mainHand.id,
+        characterData.mainHand.itemType
+    ) as Weapon | Spell;
+
+    // Off Hand
+    if (characterData.offHand != null) {
+        characterData.offHandData = getItemByID(
+            characterData.offHand.id,
+            characterData.offHand.itemType
+        ) as Weapon | Spell | Shield;
+    } else {
+        characterData.offHandData = null;
+    }
+
+    // Armor
+    if (characterData.armor != null) {
+        characterData.armorData = getItemByID(
+            characterData.armor.id,
+            characterData.armor.itemType
+        ) as Armor;
+    } else {
+        characterData.armorData = null;
+    }
+
+    // Class
+    if (characterData.characterClass != null) {
+        characterData.characterClassData = getItemByID(
+            characterData.characterClass.id,
+            characterData.characterClass.itemType
+        ) as CharacterClass;
+    } else {
+        characterData.characterClassData = null;
+    }
+
+    // Title
+    if (characterData.title != null) {
+        characterData.titleData = getItemByID(
+            characterData.title.id,
+            characterData.title.itemType
+        ) as Title;
+    } else {
+        characterData.titleData = null;
+    }
+
+    return characterData;
 }

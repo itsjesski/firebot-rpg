@@ -1,7 +1,6 @@
 import { logger } from '../../firebot/firebot';
 import { Spell, Weapon } from '../../types/equipment';
-import { GeneratedMonster } from '../../types/monsters';
-import { Character, EquippableSlots } from '../../types/user';
+import { CompleteCharacter, EquippableSlots } from '../../types/user';
 import {
     getCharacterHitBonus,
     getCharacterTotalAC,
@@ -19,11 +18,8 @@ import { didCharacterCastSuccessfully } from './magic';
  * @param attacker
  * @returns
  */
-function offhandFumbled(attacker: Character): boolean {
-    const offhand = getItemByID(
-        attacker.offHand.id,
-        attacker.offHand.itemType
-    ) as Weapon | Spell;
+function offhandFumbled(attacker: CompleteCharacter): boolean {
+    const offhand = attacker.offHandData as Weapon | Spell;
 
     if (offhand == null) {
         logger(
@@ -56,7 +52,7 @@ function offhandFumbled(attacker: Character): boolean {
  * @param attacker
  * @returns
  */
-function rangedFumbled(attacker: Character): boolean {
+function rangedFumbled(attacker: CompleteCharacter): boolean {
     const missChance = getRangedInMeleeChanceSettings()
         ? getRangedInMeleeChanceSettings()
         : 25;
@@ -70,19 +66,28 @@ function rangedFumbled(attacker: Character): boolean {
 }
 
 export async function didCharacterHitRanged(
-    attacker: Character,
-    defender: Character | GeneratedMonster,
+    attacker: CompleteCharacter,
+    defender: CompleteCharacter,
     slot: EquippableSlots
 ) {
     const defenderAC = await getCharacterTotalAC(defender);
     const hitBonus = await getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20`) + hitBonus;
 
-    const item = getItemByID(
-        attacker[slot as EquippableSlots].id,
-        attacker[slot as EquippableSlots].itemType
-    ) as Weapon | Spell;
+    // You can only attack with these two slots, so check for that.
+    if (slot !== 'mainHand' && slot !== 'offHand') {
+        logger(
+            'debug',
+            `Could not get item in ${slot}. Assuming character missed...`
+        );
+        return false;
+    }
 
+    // Get our weapon data using the given slot.
+    const key = `${slot}Data`;
+    const item = attacker[key as keyof CompleteCharacter] as Weapon | Spell;
+
+    // Make sure item exists.
     if (item == null) {
         logger(
             'debug',
@@ -125,8 +130,8 @@ export async function didCharacterHitRanged(
  * @param defender
  */
 export async function didCharacterHitMelee(
-    attacker: Character,
-    defender: Character | GeneratedMonster,
+    attacker: CompleteCharacter,
+    defender: CompleteCharacter,
     slot: EquippableSlots
 ): Promise<boolean> {
     const defenderAC = await getCharacterTotalAC(defender);
