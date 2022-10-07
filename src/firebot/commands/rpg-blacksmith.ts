@@ -45,7 +45,7 @@ async function shopReinforceItem(
     // Check to see if this item exists.
     if (item == null) {
         sendChatMessage(
-            `@${username}, ${characterName} doesn't have an item to enchant!`
+            `@${username}, ${characterName} doesn't have an item to refine!`
         );
         return;
     }
