@@ -16,14 +16,12 @@ import { CompleteCharacter, EquippableSlots } from '../../types/user';
 import {
     getCharacterDamageBonus,
     getCharacterElementalDefense,
-    getCharacterIntBonus,
 } from '../characters/characters';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
     filterArrayByProperty,
     getTopValuesFromObject,
-    rollDice,
     sumOfObjectProperties,
 } from '../utils';
 import { mergeEnchantments } from './helpers';
@@ -156,27 +154,27 @@ export async function getUserArmorEnchantmentCount(
     return values;
 }
 
-/**
- * Calculates if the defender resisted a magic spell.
- * @param attacker
- * @param defender
- */
-async function didDefenderResistMagic(
-    attacker: CompleteCharacter,
-    defender: CompleteCharacter
-) {
-    const defenderResistRoll =
-        rollDice('1d20') + (await getCharacterIntBonus(defender));
-    const attackerSpellRoll =
-        rollDice('1d20') + (await getCharacterIntBonus(attacker));
+// /**
+//  * Calculates if the defender resisted a magic spell.
+//  * @param attacker
+//  * @param defender
+//  */
+// async function didDefenderResistMagic(
+//     attacker: CompleteCharacter,
+//     defender: CompleteCharacter
+// ) {
+//     const defenderResistRoll =
+//         rollDice('1d20') + (await getCharacterIntBonus(defender));
+//     const attackerSpellRoll =
+//         rollDice('1d20') + (await getCharacterIntBonus(attacker));
 
-    if (defenderResistRoll > attackerSpellRoll) {
-        logger('debug', `${defender.name} resisted the spell!`);
-        return true;
-    }
+//     if (defenderResistRoll > attackerSpellRoll) {
+//         logger('debug', `${defender.name} resisted the spell!`);
+//         return true;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
 /**
  * Takes a character and item slot name, and returns a list of enchants, merging base and character enchantments together.
@@ -227,7 +225,8 @@ function getMergedEnchantmentsOfItem(
 export async function getElementalDamageOfAttack(
     attacker: CompleteCharacter,
     defender: CompleteCharacter,
-    slot: EquippableSlots
+    slot: EquippableSlots,
+    roundCounter: number
 ): Promise<number> {
     let damage = 0;
     const mergedEnchantments = getMergedEnchantmentsOfItem(attacker, slot);
@@ -245,7 +244,8 @@ export async function getElementalDamageOfAttack(
 
         const totalDefenderValue = getCharacterElementalDefense(
             defender,
-            enchantment as keyof Enchantments
+            enchantment as keyof Enchantments,
+            roundCounter
         );
 
         const roundDamage = totalAttackerValue - totalDefenderValue;
@@ -261,10 +261,10 @@ export async function getElementalDamageOfAttack(
     }
 
     // See if the defender resisted.
-    const defenderDidResist = await didDefenderResistMagic(attacker, defender);
-    if (defenderDidResist) {
-        return Math.floor((damage + intDmgBonus) / 2);
-    }
+    // const defenderDidResist = await didDefenderResistMagic(attacker, defender);
+    // if (defenderDidResist) {
+    //     return Math.floor((damage + intDmgBonus) / 2);
+    // }
 
     // The defender did not resist and takes full damage.
     return Math.floor(damage + intDmgBonus);

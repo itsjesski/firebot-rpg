@@ -91,7 +91,9 @@ export async function rpgDuelCommand(userCommand: UserCommand) {
                         character.duel.challenger
                     }, ${await getUserName(
                         character.duel.challenger
-                    )} has beaten ${await getUserName(username)} in a duel!`
+                    )} has beaten ${await getUserName(
+                        username
+                    )} in a duel! It took ${duelResults.rounds} rounds.`
                 );
             } else {
                 sendChatMessage(
@@ -101,7 +103,7 @@ export async function rpgDuelCommand(userCommand: UserCommand) {
                         username
                     )} has beaten ${await getUserName(
                         character.duel.challenger
-                    )} in a duel!`
+                    )} in a duel! It took ${duelResults.rounds} rounds.`
                 );
             }
 

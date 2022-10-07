@@ -68,9 +68,10 @@ function rangedFumbled(attacker: CompleteCharacter): boolean {
 export async function didCharacterHitRanged(
     attacker: CompleteCharacter,
     defender: CompleteCharacter,
-    slot: EquippableSlots
+    slot: EquippableSlots,
+    roundCounter: number
 ) {
-    const defenderAC = await getCharacterTotalAC(defender);
+    const defenderAC = await getCharacterTotalAC(defender, roundCounter);
     const hitBonus = await getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20`) + hitBonus;
 
@@ -132,9 +133,10 @@ export async function didCharacterHitRanged(
 export async function didCharacterHitMelee(
     attacker: CompleteCharacter,
     defender: CompleteCharacter,
-    slot: EquippableSlots
+    slot: EquippableSlots,
+    roundCounter: number
 ): Promise<boolean> {
-    const defenderAC = await getCharacterTotalAC(defender);
+    const defenderAC = await getCharacterTotalAC(defender, roundCounter);
     const hitBonus = await getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20 +${hitBonus}`);
 

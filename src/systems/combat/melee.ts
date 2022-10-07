@@ -11,7 +11,8 @@ import { didCharacterHitMelee } from './combat-hit';
  */
 async function attackCharacter(
     attacker: CompleteCharacter,
-    defender: CompleteCharacter
+    defender: CompleteCharacter,
+    roundCounter: number
 ): Promise<number> {
     logger(
         'debug',
@@ -20,8 +21,15 @@ async function attackCharacter(
     let damage = 0;
 
     // Check to see if we did any damage with the main hand.
-    if (await didCharacterHitMelee(attacker, defender, 'mainHand')) {
-        damage += await calculateDamage(attacker, defender, 'mainHand');
+    if (
+        await didCharacterHitMelee(attacker, defender, 'mainHand', roundCounter)
+    ) {
+        damage += await calculateDamage(
+            attacker,
+            defender,
+            'mainHand',
+            roundCounter
+        );
     }
 
     // Offhand check
@@ -29,9 +37,19 @@ async function attackCharacter(
         const offHand = attacker.offHandData as Weapon | Spell | Shield | null;
         if (
             offHand.itemType !== 'shield' &&
-            (await didCharacterHitMelee(attacker, defender, 'offHand'))
+            (await didCharacterHitMelee(
+                attacker,
+                defender,
+                'offHand',
+                roundCounter
+            ))
         ) {
-            damage += await calculateDamage(attacker, defender, 'offHand');
+            damage += await calculateDamage(
+                attacker,
+                defender,
+                'offHand',
+                roundCounter
+            );
         }
     }
 
@@ -51,7 +69,8 @@ async function attackCharacter(
  */
 async function combatRound(
     characterOne: CompleteCharacter,
-    characterTwo: CompleteCharacter
+    characterTwo: CompleteCharacter,
+    roundCounter: number
 ): Promise<{ one: number; two: number }> {
     const healthResults = {
         one: 0,
@@ -60,7 +79,7 @@ async function combatRound(
 
     logger(
         'debug',
-        `Combat round started. ${characterOne.name} has ${characterOne.currentHP}/${characterOne.totalHP} hp vs ${characterTwo.currentHP}/${characterTwo.totalHP} hp.`
+        `Combat round ${roundCounter} started. ${characterOne.name} has ${characterOne.currentHP}/${characterOne.totalHP} hp vs ${characterTwo.currentHP}/${characterTwo.totalHP} hp.`
     );
 
     // Determine which character goes first.
@@ -74,7 +93,8 @@ async function combatRound(
             // eslint-disable-next-line no-await-in-loop
             healthResults.two = await attackCharacter(
                 characterOne,
-                characterTwo
+                characterTwo,
+                roundCounter
             );
 
             // If this would kill a character, immediately return results.
@@ -87,7 +107,8 @@ async function combatRound(
             // eslint-disable-next-line no-await-in-loop
             healthResults.one = await attackCharacter(
                 characterTwo,
-                characterOne
+                characterOne,
+                roundCounter
             );
 
             // If this would kill a character, immediately return results.
@@ -107,31 +128,41 @@ async function combatRound(
  */
 export async function meleePhase(
     characterOne: CompleteCharacter,
-    characterTwo: CompleteCharacter
-): Promise<{ one: number; two: number }> {
+    characterTwo: CompleteCharacter,
+    rounds: number
+): Promise<{ one: number; two: number; rounds: number }> {
     logger(
         'debug',
-        `Starting melee combat between ${characterOne.name} and ${characterTwo.name}.`
+        `Starting melee combat between ${characterOne.name} and ${characterTwo.name}. Round: ${rounds}`
     );
     const characterOneTemp = characterOne;
     const characterTwoTemp = characterTwo;
     let roundStats = null;
+    let roundCounter = rounds;
 
     // Here we're doing combat rounds until the death.
     while (characterOneTemp.currentHP > 0 && characterTwoTemp.currentHP > 0) {
         // eslint-disable-next-line no-await-in-loop
-        roundStats = await combatRound(characterOneTemp, characterTwoTemp);
+        roundStats = await combatRound(
+            characterOneTemp,
+            characterTwoTemp,
+            roundCounter
+        );
         characterOneTemp.currentHP += roundStats.one;
         characterTwoTemp.currentHP += roundStats.two;
         logger(
             'debug',
             `Current health: ${characterOne.name}: ${characterOneTemp.currentHP} and ${characterTwo.name}: ${characterTwoTemp.currentHP}.`
         );
+
+        // Add a round.
+        roundCounter += 1;
     }
 
     const results = {
         one: characterOneTemp.currentHP,
         two: characterTwoTemp.currentHP,
+        rounds: roundCounter,
     };
 
     return results;

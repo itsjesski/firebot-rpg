@@ -150,7 +150,11 @@ async function rpgJobMessageTemplateReplacement(
 
 async function rpgJobMessageCombatTemplate(
     username: string,
-    combatResults: { fought: GeneratedMonster; won: boolean } | null
+    combatResults: {
+        fought: GeneratedMonster;
+        won: boolean;
+        rounds: number;
+    } | null
 ): Promise<string> {
     if (combatResults == null) {
         return '';
@@ -178,10 +182,10 @@ async function rpgJobMessageCombatTemplate(
     }
 
     if (amount != null) {
-        return `${characterName} fought a ${amount} and ${playerWon}.`;
+        return `${characterName} fought a ${amount} and ${playerWon} in ${combatResults.rounds} rounds.`;
     }
 
-    return `${characterName} fought a ${monster.name} and ${playerWon}.`;
+    return `${characterName} fought a ${monster.name} and ${playerWon} in ${combatResults.rounds} rounds.`;
 }
 
 /**
@@ -197,7 +201,11 @@ async function rpgJobMessageBuilder(
     messageTemplate: string,
     moneyReward: number,
     itemReward: StorableItems | null,
-    combatResults: { fought: GeneratedMonster; won: boolean } | null,
+    combatResults: {
+        fought: GeneratedMonster;
+        won: boolean;
+        rounds: number;
+    } | null,
     healedMessage: string
 ): Promise<string> {
     const jobMessage = `@${username}: ${messageTemplate}`;
@@ -291,6 +299,7 @@ export async function rpgJobCommand(userCommand: UserCommand) {
         combatResults = {
             fought: monster,
             won: combat.one > 0,
+            rounds: combat.rounds,
         };
 
         // Player lost, stop here.

@@ -64,7 +64,7 @@ export async function rpgStatsCommand(userCommand: UserCommand) {
             str = await getAdjustedCharacterStat(completeCharacter, 'str');
             dex = await getAdjustedCharacterStat(completeCharacter, 'dex');
             int = await getAdjustedCharacterStat(completeCharacter, 'int');
-            acTotal = await getCharacterTotalAC(completeCharacter);
+            acTotal = await getCharacterTotalAC(completeCharacter, 0);
             message = `@${username} ${storedTitle.name} ${characterName} the ${storedCharacterClass.name} has: ${str} STR, ${dex} DEX, ${int} INT, ${acTotal} AC, and ${character.totalHP} HP.`;
             break;
         default:

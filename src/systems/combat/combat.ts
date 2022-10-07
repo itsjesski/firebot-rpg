@@ -8,7 +8,6 @@ import {
 } from '../../types/user';
 import { getCharacterDamageBonus } from '../characters/characters';
 import { getElementalDamageOfAttack } from '../equipment/enchantments';
-import { getItemByID } from '../equipment/helpers';
 import { rollDice } from '../utils';
 import { approachPhase } from './approach';
 import { meleePhase } from './melee';
@@ -62,7 +61,8 @@ export function initiative(
 export async function calculateDamage(
     attacker: CompleteCharacter,
     defender: CompleteCharacter,
-    slot: EquippableSlots
+    slot: EquippableSlots,
+    roundCounter: number
 ) {
     let roll = 0;
     let dmgBonus = 0;
@@ -76,7 +76,8 @@ export async function calculateDamage(
         elemental = await getElementalDamageOfAttack(
             attacker,
             defender,
-            'mainHand'
+            'mainHand',
+            roundCounter
         );
 
         logger(
@@ -90,17 +91,15 @@ export async function calculateDamage(
     }
 
     if (attacker.offHand != null && attacker.offHand.itemType !== 'shield') {
-        const offHand = getItemByID(
-            attacker.offHand.id,
-            attacker.offHand.itemType
-        ) as Weapon;
+        const offHand = attacker.offHandData as Weapon;
 
         roll = rollDice(offHand.damage);
         dmgBonus = await getCharacterDamageBonus(attacker, 'offHand');
         elemental = await getElementalDamageOfAttack(
             attacker,
             defender,
-            'offHand'
+            'offHand',
+            roundCounter
         );
 
         logger(
@@ -126,7 +125,7 @@ export async function calculateDamage(
 export async function startCombat(
     characterOne: CompleteCharacter,
     characterTwo: CompleteCharacter
-): Promise<{ one: number; two: number }> {
+): Promise<{ one: number; two: number; rounds: number }> {
     logger(
         'debug',
         `Starting combat between ${characterOne.name} and ${characterTwo.name}.`
@@ -149,6 +148,7 @@ export async function startCombat(
                 characterOneTemp.currentHP < 0 ? 0 : characterOneTemp.currentHP,
             two:
                 characterTwoTemp.currentHP < 0 ? 0 : characterTwoTemp.currentHP,
+            rounds: phaseOne.rounds,
         };
 
         logger(
@@ -163,7 +163,11 @@ export async function startCombat(
     // After the melee combat, someone WILL be defeated.
     // Make sure to pass temp characters through here so the health from phase one is carried over.
     logger('debug', 'Attempting to start the melee phase...');
-    const phaseTwo = await meleePhase(characterOneTemp, characterTwoTemp);
+    const phaseTwo = await meleePhase(
+        characterOneTemp,
+        characterTwoTemp,
+        phaseOne.rounds
+    );
     characterOneTemp.currentHP = phaseTwo.one;
     characterTwoTemp.currentHP = phaseTwo.two;
 
@@ -171,11 +175,12 @@ export async function startCombat(
     const results = {
         one: characterOneTemp.currentHP < 0 ? 0 : characterOneTemp.currentHP,
         two: characterTwoTemp.currentHP < 0 ? 0 : characterTwoTemp.currentHP,
+        rounds: phaseTwo.rounds,
     };
 
     logger(
         'debug',
-        `Final combat results: ${characterOne.name}: ${characterOneTemp.currentHP} and ${characterTwo.name}: ${characterTwoTemp.currentHP}.`
+        `Final combat results: ${characterOne.name}: ${characterOneTemp.currentHP} and ${characterTwo.name}: ${characterTwoTemp.currentHP}. Total Rounds: ${phaseTwo.rounds}`
     );
 
     return results;

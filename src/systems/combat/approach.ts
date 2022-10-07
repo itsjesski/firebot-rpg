@@ -10,7 +10,8 @@ import { didCharacterHitRanged } from './combat-hit';
 async function rangedAttack(
     attacker: CompleteCharacter,
     defender: CompleteCharacter,
-    distance: number
+    distance: number,
+    roundCounter: number
 ): Promise<number> {
     logger(
         'debug',
@@ -24,9 +25,19 @@ async function rangedAttack(
     // See if we need to attack with our main weapon.
     if (
         mainWeapon.range >= distance &&
-        (await didCharacterHitRanged(attacker, defender, 'mainHand'))
+        (await didCharacterHitRanged(
+            attacker,
+            defender,
+            'mainHand',
+            roundCounter
+        ))
     ) {
-        damage += await calculateDamage(attacker, defender, 'mainHand');
+        damage += await calculateDamage(
+            attacker,
+            defender,
+            'mainHand',
+            roundCounter
+        );
     }
 
     // Try the offhand.
@@ -40,9 +51,19 @@ async function rangedAttack(
             // Check if we're attacking with offhand.
             if (
                 offHandWeapon.range >= distance &&
-                (await didCharacterHitRanged(attacker, defender, 'offHand'))
+                (await didCharacterHitRanged(
+                    attacker,
+                    defender,
+                    'offHand',
+                    roundCounter
+                ))
             ) {
-                damage += await calculateDamage(attacker, defender, 'offHand');
+                damage += await calculateDamage(
+                    attacker,
+                    defender,
+                    'offHand',
+                    roundCounter
+                );
             }
         }
     }
@@ -72,7 +93,8 @@ async function rangedAttack(
 async function rangedCombatRound(
     characterOne: CompleteCharacter,
     characterTwo: CompleteCharacter,
-    distance: number
+    distance: number,
+    roundCounter: number
 ): Promise<{ one: number; two: number }> {
     logger('debug', `Ranged combat round starting.`);
     const healthResults = {
@@ -82,7 +104,10 @@ async function rangedCombatRound(
 
     // Determine which character goes first.
     const turnOrder = initiative(characterOne, characterTwo);
-    logger('debug', `Turn order: ${turnOrder[0].name}, ${turnOrder[1].name}.`);
+    logger(
+        'debug',
+        `Turn order: ${turnOrder[0].name}, ${turnOrder[1].name}. Round: ${roundCounter}.`
+    );
 
     // eslint-disable-next-line no-restricted-syntax
     for (const character of turnOrder) {
@@ -91,7 +116,8 @@ async function rangedCombatRound(
             healthResults.two = await rangedAttack(
                 characterOne,
                 characterTwo,
-                distance
+                distance,
+                roundCounter
             );
 
             // If this would kill a character, immediately return results.
@@ -103,7 +129,8 @@ async function rangedCombatRound(
             healthResults.one = await rangedAttack(
                 characterTwo,
                 characterOne,
-                distance
+                distance,
+                roundCounter
             );
 
             // If this would kill a character, immediately return results.
@@ -221,7 +248,7 @@ async function getDistanceMoved(
 async function shootoutCombat(
     characterOne: CompleteCharacter,
     characterTwo: CompleteCharacter
-): Promise<{ one: number; two: number }> {
+): Promise<{ one: number; two: number; rounds: number }> {
     logger(
         'debug',
         `Both characters are using ammunition weapons. Let the shootout begin.`
@@ -230,13 +257,15 @@ async function shootoutCombat(
     const characterOneTemp = characterOne;
     const characterTwoTemp = characterTwo;
     let roundStats = null;
+    let roundCounter = 1;
     while (characterOneTemp.currentHP > 0 && characterTwoTemp.currentHP > 0) {
         // Start shootout. Always pass distance of 1 and never change it. All ammunition weapons have this range.
         // eslint-disable-next-line no-await-in-loop
         roundStats = await rangedCombatRound(
             characterOneTemp,
             characterTwoTemp,
-            1
+            1,
+            roundCounter
         );
         characterOneTemp.currentHP += roundStats.one;
         characterTwoTemp.currentHP += roundStats.two;
@@ -244,11 +273,15 @@ async function shootoutCombat(
             'debug',
             `Current health: ${characterOne.name}: ${characterOneTemp.currentHP} and ${characterTwo.name}: ${characterTwoTemp.currentHP}.`
         );
+
+        // Up round by one.
+        roundCounter += 1;
     }
 
     const results = {
         one: characterOneTemp.currentHP,
         two: characterTwoTemp.currentHP,
+        rounds: roundCounter,
     };
 
     return results;
@@ -265,7 +298,7 @@ async function approachCombat(
     characterOne: CompleteCharacter,
     characterTwo: CompleteCharacter,
     engagementDistance: number
-): Promise<{ one: number; two: number }> {
+): Promise<{ one: number; two: number; rounds: number }> {
     logger(
         'debug',
         `Approach phase has started. Engagement distance is: ${engagementDistance}.`
@@ -277,6 +310,7 @@ async function approachCombat(
     logger('debug', `Characters will be moving ${distanceMoved} per round.`);
 
     let roundStats = null;
+    let roundCounter = 1;
     let currentDistance = engagementDistance;
 
     while (
@@ -288,13 +322,17 @@ async function approachCombat(
         roundStats = await rangedCombatRound(
             characterOneTemp,
             characterTwoTemp,
-            currentDistance
+            currentDistance,
+            roundCounter
         );
         characterOneTemp.currentHP += roundStats.one;
         characterTwoTemp.currentHP += roundStats.two;
 
         // Move characters together.
         currentDistance -= distanceMoved;
+
+        // Count round up
+        roundCounter += 1;
 
         logger(
             'debug',
@@ -305,11 +343,12 @@ async function approachCombat(
     const results = {
         one: characterOneTemp.currentHP,
         two: characterTwoTemp.currentHP,
+        rounds: roundCounter,
     };
 
     logger(
         'debug',
-        `Approach phase complete: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}.`
+        `Approach phase complete: ${characterOne.name}: ${results.one} and ${characterTwo.name}: ${results.two}. Took ${roundCounter} rounds.`
     );
 
     return results;
@@ -321,7 +360,7 @@ async function approachCombat(
 export async function approachPhase(
     characterOne: CompleteCharacter,
     characterTwo: CompleteCharacter
-): Promise<{ one: number; two: number }> {
+): Promise<{ one: number; two: number; rounds: number }> {
     logger(
         'debug',
         `Starting approach phase between ${characterOne.name} and ${characterTwo.name}.`
@@ -337,6 +376,7 @@ export async function approachPhase(
         const results = {
             one: characterOne.currentHP,
             two: characterTwo.currentHP,
+            rounds: 1,
         };
 
         logger(

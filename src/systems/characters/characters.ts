@@ -9,7 +9,6 @@ import {
     Title,
     Weapon,
 } from '../../types/equipment';
-import { GeneratedMonster } from '../../types/monsters';
 import {
     Character,
     CharacterStatNames,
@@ -71,7 +70,8 @@ export async function getCharacterWeaponRange(
  * @param username
  */
 export async function getCharacterTotalAC(
-    defender: CompleteCharacter
+    defender: CompleteCharacter,
+    roundCounter: number
 ): Promise<number> {
     let defenderAC = 0;
 
@@ -99,6 +99,21 @@ export async function getCharacterTotalAC(
         defenderAC += defenderShield.armorClass + defender.offHand.refinements;
     }
 
+    const preDefenseDown = defenderAC;
+
+    // After 10 rounds, armor starts to wear down.
+    let defenseDown = roundCounter - 10;
+    let defenderACMod = 0;
+    if (defenseDown > 0) {
+        defenseDown /= 10; // convert to percentage
+        defenderACMod = Math.floor(defenderAC * defenseDown);
+        defenderAC = Math.max(Math.floor(defenderAC - defenderACMod), 0);
+        logger(
+            'debug',
+            `We're on round ${roundCounter}. So ${defender.name} AC was lowered by ${defenderACMod}. It is now ${defenderAC} / ${preDefenseDown}.`
+        );
+    }
+
     return Math.floor(defenderAC);
 }
 
@@ -109,19 +124,20 @@ export async function getCharacterTotalAC(
  * @returns
  */
 export function getCharacterElementalDefense(
-    defender: Character | GeneratedMonster,
-    enchantment: EnchantmentTypes
+    defender: CompleteCharacter,
+    enchantment: EnchantmentTypes,
+    roundCounter: number
 ) {
     let totalDefenderValue = 0;
     let armor = null;
     let shield = null;
 
     if (defender.armor != null) {
-        armor = getItemByID(defender.armor.id, 'armor') as Armor;
+        armor = defender.armorData as Armor;
     }
 
     if (defender.offHand != null && defender.offHand?.itemType === 'shield') {
-        shield = getItemByID(defender.offHand.id, 'shield') as Shield;
+        shield = defender.offHandData as Shield;
     }
 
     if (armor != null) {
@@ -135,7 +151,25 @@ export function getCharacterElementalDefense(
             shield.enchantments[enchantment as keyof Enchantments];
     }
 
-    return totalDefenderValue;
+    const preDefenseDown = totalDefenderValue;
+
+    // After 10 rounds, defenses starts to wear down.
+    let defenseDown = roundCounter - 10;
+    let defenderResistMod = 0;
+    if (defenseDown > 0) {
+        defenseDown /= 10; // convert to percentage
+        defenderResistMod = Math.floor(totalDefenderValue * defenseDown);
+        totalDefenderValue = Math.max(
+            Math.floor(totalDefenderValue - defenderResistMod),
+            0
+        );
+        logger(
+            'debug',
+            `We're on round ${roundCounter}. So ${defender.name} ${enchantment} resist was lowered by ${defenderResistMod}. It is now ${totalDefenderValue} / ${preDefenseDown}.`
+        );
+    }
+
+    return Math.floor(totalDefenderValue);
 }
 
 /**
