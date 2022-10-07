@@ -14,6 +14,9 @@ export type GameSettings = {
         mediumMinHP: number;
         hardMinHP: number;
         legendaryMinHP: number;
+        mediumGuildLevel: number;
+        hardGuildLevel: number;
+        legendaryGuildLevel: number;
     };
     shops: {
         refinementBaseCost: number;

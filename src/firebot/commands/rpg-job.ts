@@ -11,6 +11,7 @@ import { rpgLootGenerator } from '../../systems/equipment/loot-generation';
 import { generateMonster } from '../../systems/monsters/monster-generation';
 import { getMonsterByID } from '../../systems/monsters/monsters';
 import {
+    getGuildDifficultyLevel,
     getWorldCitizens,
     getWorldName,
     getWorldType,
@@ -234,19 +235,19 @@ export async function selectJob(): Promise<Job> {
     let filteredJobs: Job[] = [];
 
     // Let's build a new job list user the jobs that are available for the current guild level.
-    if (guildLevel >= 6) {
+    if (guildLevel >= getGuildDifficultyLevel('legendary')) {
         filteredJobs.concat(
             filterArrayByProperty(jobList, ['challenge'], 'legendary')
         );
     }
 
-    if (guildLevel >= 4) {
+    if (guildLevel >= getGuildDifficultyLevel('hard')) {
         filteredJobs.concat(
             filterArrayByProperty(jobList, ['challenge'], 'hard')
         );
     }
 
-    if (guildLevel >= 2) {
+    if (guildLevel >= getGuildDifficultyLevel('medium')) {
         filteredJobs.concat(
             filterArrayByProperty(jobList, ['challenge'], 'medium')
         );

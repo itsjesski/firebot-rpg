@@ -277,7 +277,39 @@ export function getResetID() {
     return settings.generalSettings.resetId;
 }
 
+/**
+ * Get duel timeout time.
+ * @returns
+ */
 export function getDuelTimeout() {
     const gameSettings = getCombatSettings();
     return gameSettings.duelTimeout;
+}
+
+/**
+ * Returns guild level needed for specific difficulties.
+ * @param difficulty
+ * @returns
+ */
+export function getGuildDifficultyLevel(
+    difficulty: 'medium' | 'hard' | 'legendary'
+) {
+    const creatureSettings = getCreatureSettings();
+
+    switch (difficulty) {
+        case 'medium':
+            return creatureSettings.mediumGuildLevel != null
+                ? creatureSettings.mediumGuildLevel
+                : 2;
+        case 'hard':
+            return creatureSettings.hardGuildLevel != null
+                ? creatureSettings.hardGuildLevel
+                : 4;
+        case 'legendary':
+            return creatureSettings.legendaryGuildLevel != null
+                ? creatureSettings.legendaryGuildLevel
+                : 6;
+        default:
+            return 1;
+    }
 }

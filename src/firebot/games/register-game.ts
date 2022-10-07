@@ -152,6 +152,45 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     required: true,
                 },
             },
+            mediumGuildLevel: {
+                type: 'number',
+                title: 'Guild Level - Medium Difficulty',
+                description:
+                    'This is the guild level needed to get medium difficulty missions.',
+                tip: '',
+                default: 2,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            hardGuildLevel: {
+                type: 'number',
+                title: 'Guild Level - Hard Difficulty',
+                description:
+                    'This is the guild level needed to get hard difficulty missions.',
+                tip: '',
+                default: 4,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            legendaryGuildLevel: {
+                type: 'number',
+                title: 'Guild Level - Legendary Difficulty',
+                description:
+                    'This is the guild level needed to get legendary difficulty missions.',
+                tip: '',
+                default: 6,
+                sortRank: 1,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
         },
     },
     shops: {
@@ -270,7 +309,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'This is the number of trainings someone can have per trainer level.',
                 tip: 'The lower this is, the slower the power creep in the game.',
                 default: 5,
-                sortRank: 2,
+                sortRank: 6,
                 showBottomHr: false,
                 validation: {
                     required: true,
