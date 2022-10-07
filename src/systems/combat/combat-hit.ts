@@ -5,6 +5,7 @@ import {
     getCharacterHitBonus,
     getCharacterTotalAC,
 } from '../characters/characters';
+import { didDefenderResistMagic } from '../equipment/enchantments';
 import { getItemByID } from '../equipment/helpers';
 import {
     getOffHandMissChanceSettings,
@@ -97,16 +98,24 @@ export async function didCharacterHitRanged(
         return false;
     }
 
+    // If we're using an offhand weapon, see if we fumbled.
+    if (slot === 'offHand') {
+        if (offhandFumbled(attacker)) {
+            return false;
+        }
+    }
+
     // Spell arcane failure
     if (item.itemType === 'spell' && !didCharacterCastSuccessfully(attacker)) {
         return false;
     }
 
-    if (slot === 'offHand') {
-        // If we're using an offhand weapon, see if we fumbled.
-        if (offhandFumbled(attacker)) {
-            return false;
-        }
+    // Spells don't go against AC, but the opponent does have a chance to resist.
+    if (
+        item.itemType === 'spell' &&
+        !didDefenderResistMagic(attacker, defender)
+    ) {
+        return true;
     }
 
     // Check to see if our roll beats or hits the defender AC.
@@ -153,11 +162,6 @@ export async function didCharacterHitMelee(
         return false;
     }
 
-    // Spell arcane failure
-    if (item.itemType === 'spell' && !didCharacterCastSuccessfully(attacker)) {
-        return false;
-    }
-
     // If we're using a ranged weapon in melee, see if we fumbled.
     if (item.properties.includes('ammunition') && rangedFumbled(attacker)) {
         return false;
@@ -168,6 +172,19 @@ export async function didCharacterHitMelee(
         if (offhandFumbled(attacker)) {
             return false;
         }
+    }
+
+    // Spell arcane failure
+    if (item.itemType === 'spell' && !didCharacterCastSuccessfully(attacker)) {
+        return false;
+    }
+
+    // Spells don't go against AC, but the opponent does have a chance to resist.
+    if (
+        item.itemType === 'spell' &&
+        !didDefenderResistMagic(attacker, defender)
+    ) {
+        return true;
     }
 
     // Check to see if our roll beats or hits the defender AC.
