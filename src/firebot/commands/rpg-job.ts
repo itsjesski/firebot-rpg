@@ -5,7 +5,6 @@ import { startCombat } from '../../systems/combat/combat';
 import {
     getItemTypeDisplayName,
     getFullItemName,
-    getItemByID,
 } from '../../systems/equipment/helpers';
 import { rpgLootGenerator } from '../../systems/equipment/loot-generation';
 import { generateMonster } from '../../systems/monsters/monster-generation';
@@ -102,6 +101,10 @@ async function rpgJobMessageLootTemplate(
     const characterName = await getUserName(username);
     const rewards: string[] = [];
 
+    // Update our complete player with our newest stuff.
+    const player = await getUserData(username);
+    const completePlayer = await getCompleteCharacterData(player);
+
     // They didn't get anything.
     if (moneyReward === 0 && itemReward == null) {
         return '';
@@ -114,8 +117,8 @@ async function rpgJobMessageLootTemplate(
 
     // If they got a reward item, add that to the reward message.
     if (itemReward != null) {
-        const itemName = getFullItemName(character, 'backpack');
-        const dbItem = await getItemByID(itemReward.id, itemReward.itemType);
+        const itemName = getFullItemName(completePlayer, 'backpack');
+        const dbItem = completePlayer.backpackData;
         rewards.push(
             `${itemName} (${dbItem.rarity} ${getItemTypeDisplayName(dbItem)})`
         );
@@ -276,8 +279,8 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     let combatResults = null;
     let jobMessage = '';
 
-    const player = await getUserData(username);
-    const completePlayer = await getCompleteCharacterData(player);
+    let player = await getUserData(username);
+    let completePlayer = await getCompleteCharacterData(player);
 
     logger('debug', `JOB STARTED: ${username}`);
 
@@ -344,6 +347,7 @@ export async function rpgJobCommand(userCommand: UserCommand) {
             selectedJob.loot.item.itemType,
             selectedJob.loot.item.rarity
         );
+
         await equipItemOnUser(username, itemGiven, 'backpack');
     }
 
@@ -355,6 +359,10 @@ export async function rpgJobCommand(userCommand: UserCommand) {
             updateWorldTendency(key, statValue);
         }
     });
+
+    // Update our complete player with our newest stuff.
+    player = await getUserData(username);
+    completePlayer = await getCompleteCharacterData(player);
 
     // Create our response message.
     jobMessage = await rpgJobMessageBuilder(

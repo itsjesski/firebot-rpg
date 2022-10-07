@@ -127,6 +127,7 @@ export async function equipItemOnUser(
     item: StorableItems,
     slot: EquippableSlots
 ) {
+    logger('debug', `Equipping: ${JSON.stringify(item)}`);
     setUserMeta(username, item, slot);
 }
 

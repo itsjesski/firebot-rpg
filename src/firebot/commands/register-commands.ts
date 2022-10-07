@@ -13,6 +13,7 @@ import { rpgJobCommand } from './rpg-job';
 import { rpgNameCommand } from './rpg-name';
 import { rpgStatsCommand } from './rpg-stats';
 import { rpgTrainerCommand } from './rpg-trainer';
+import { rpgUnequipCommand } from './rpg-unequip';
 import { worldCommand } from './rpg-world';
 
 function getSubCommands(): SubCommand[] {
@@ -64,6 +65,19 @@ function getSubCommands(): SubCommand[] {
             active: true,
             trigger: 'equip',
             arg: 'equip',
+            cooldown: {
+                global: 0,
+                user: 30,
+            },
+        },
+        {
+            id: 'fbrpg:rpg-unequip',
+            usage: 'unequip [slot]',
+            name: '!rpg unequip',
+            description: 'Removes the specified item.',
+            active: true,
+            trigger: 'unequip',
+            arg: 'unequip',
             cooldown: {
                 global: 0,
                 user: 30,
@@ -197,6 +211,10 @@ export function registerCommands() {
                 }
                 case 'equip': {
                     rpgEquipCommand(userCommand);
+                    break;
+                }
+                case 'unequip': {
+                    rpgUnequipCommand(userCommand);
                     break;
                 }
                 case 'job': {
