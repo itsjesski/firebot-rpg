@@ -24,7 +24,6 @@ export async function getAdjustedCharacterStat(
     character: CompleteCharacter,
     stat: CharacterStatNames
 ): Promise<number> {
-    logger('debug', `Getting adjusted character stats for ${character.name}.`);
     const baseStat = character[stat as CharacterStatNames];
     let bonus = 0;
 
@@ -201,18 +200,14 @@ export async function getCharacterHitBonus(
 
     // Get our item first.
     if (slot === 'mainHand') {
-        item = getItemByID(attacker.mainHand.id, attacker.mainHand.itemType) as
-            | Weapon
-            | Spell;
+        item = attacker.mainHandData as Weapon | Spell;
     }
 
     if (
         (slot === 'offHand' && attacker.offHand.itemType === 'weapon') ||
         (slot === 'offHand' && attacker.offHand.itemType === 'spell')
     ) {
-        item = getItemByID(attacker.offHand.id, attacker.mainHand.itemType) as
-            | Weapon
-            | Spell;
+        item = attacker.offHandData as Weapon | Spell;
     }
 
     if (item == null) {

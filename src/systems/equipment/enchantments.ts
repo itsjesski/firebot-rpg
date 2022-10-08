@@ -17,6 +17,7 @@ import {
     getCharacterElementalDefense,
     getCharacterIntBonus,
 } from '../characters/characters';
+import { getBaseSpellDC } from '../settings';
 import { getUserData } from '../user/user';
 import {
     addOrSubtractRandomPercentage,
@@ -164,16 +165,20 @@ export async function didDefenderResistMagic(
     attacker: CompleteCharacter,
     defender: CompleteCharacter
 ) {
+    const spellDC = getBaseSpellDC();
     const defenderResistRoll =
         rollDice('1d20') + (await getCharacterIntBonus(defender));
-    const attackerSpellRoll =
-        rollDice('1d20') + (await getCharacterIntBonus(attacker));
+    const attackerSpellRoll = spellDC + (await getCharacterIntBonus(attacker));
 
     if (defenderResistRoll > attackerSpellRoll) {
-        logger('debug', `${defender.name} resisted the spell!`);
+        logger(
+            'debug',
+            `${defender.name} resisted the spell! Defender: ${defenderResistRoll} Attacker: ${attackerSpellRoll}`
+        );
         return true;
     }
 
+    logger('debug', `${defender.name} couldn't resist! The spell hit.`);
     return false;
 }
 

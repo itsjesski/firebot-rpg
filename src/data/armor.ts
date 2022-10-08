@@ -4,7 +4,7 @@ export const armorList: Armor[] = [
     {
         id: 1,
         rarity: 'basic',
-        name: 'Shirt',
+        name: 'Cloth',
         cost: 1,
         armorClass: 5,
         properties: ['light'],

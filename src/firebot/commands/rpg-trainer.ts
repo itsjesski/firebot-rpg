@@ -64,8 +64,17 @@ async function shopTrainStat(
 
     // Deduct currency from user.
     await adjustCurrencyForUser(-Math.abs(totalCost), username);
+
+    // Friendly name...
+    let statName = '';
+    if (stat === 'totalHP') {
+        statName = 'hp';
+    } else {
+        statName = stat;
+    }
+
     sendChatMessage(
-        `@${username}, ${characterName} increased their ${stat}. It cost ${totalCost} ${currencyName}.`
+        `@${username}, ${characterName} increased their ${statName}. It cost ${totalCost} ${currencyName}.`
     );
 }
 

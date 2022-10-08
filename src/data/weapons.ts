@@ -709,7 +709,7 @@ export const weaponList: Weapon[] = [
         damage: '1d8',
         damage_type: 'piercing',
         properties: ['ammunition', 'heavy', 'two-handed'],
-        range: 600,
+        range: 400,
         itemType: 'weapon',
         refinements: 0,
         enchantments: {
@@ -1449,7 +1449,7 @@ export const weaponList: Weapon[] = [
         damage: '1d8',
         damage_type: 'piercing',
         properties: ['ammunition', 'heavy', 'two-handed'],
-        range: 600,
+        range: 400,
         itemType: 'weapon',
         refinements: 1,
         enchantments: {

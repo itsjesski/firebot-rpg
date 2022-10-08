@@ -171,6 +171,10 @@ export function getFullItemName(
     const enchantments = getMergedEnchantmentsOfItem(character, slot);
     const enchantmentName = getEnchantmentName(enchantments, item.itemType);
 
+    if (item.itemType === 'armor') {
+        itemName = `${itemName} Armor`;
+    }
+
     if (enchantmentName != null) {
         itemName = `${itemName} of ${enchantmentName}`;
     }

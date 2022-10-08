@@ -313,3 +313,11 @@ export function getGuildDifficultyLevel(
             return 1;
     }
 }
+
+/**
+ * Returns base spell DC.
+ */
+export function getBaseSpellDC() {
+    const combatSettings = getCombatSettings();
+    return combatSettings.spellDC;
+}

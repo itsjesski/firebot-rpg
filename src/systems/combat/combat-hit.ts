@@ -105,32 +105,35 @@ export async function didCharacterHitRanged(
         }
     }
 
-    // Spell arcane failure
-    if (item.itemType === 'spell' && !didCharacterCastSuccessfully(attacker)) {
-        return false;
+    // Spell related
+    if (item.itemType === 'spell') {
+        // Spell arcane failure, if we failed because of armor then stop here.
+        if (!(await didCharacterCastSuccessfully(attacker))) {
+            return false;
+        }
+
+        // Next, see if defender resists. If they don't then the spell hits.
+        if (!(await didDefenderResistMagic(attacker, defender))) {
+            return true;
+        }
     }
 
-    // Spells don't go against AC, but the opponent does have a chance to resist.
-    if (
-        item.itemType === 'spell' &&
-        !didDefenderResistMagic(attacker, defender)
-    ) {
-        return true;
-    }
+    // Weapon related.
+    if (item.itemType === 'weapon') {
+        if (roll >= defenderAC) {
+            logger(
+                'debug',
+                `${attacker.name} hit! Hit: ${roll} (+${hitBonus}) vs AC: ${defenderAC}.`
+            );
+            return true;
+        }
 
-    // Check to see if our roll beats or hits the defender AC.
-    if (roll >= defenderAC) {
         logger(
             'debug',
-            `${attacker.name} hit! Hit: ${roll} (+${hitBonus}) vs AC: ${defenderAC}.`
+            `${attacker.name} missed! Hit: ${roll} (+${hitBonus}) vs AC: ${defenderAC}.`
         );
-        return true;
     }
 
-    logger(
-        'debug',
-        `${attacker.name} missed! Hit: ${roll} (+${hitBonus}) vs AC: ${defenderAC}.`
-    );
     return false;
 }
 
@@ -174,31 +177,34 @@ export async function didCharacterHitMelee(
         }
     }
 
-    // Spell arcane failure
-    if (item.itemType === 'spell' && !didCharacterCastSuccessfully(attacker)) {
-        return false;
+    // Spell related
+    if (item.itemType === 'spell') {
+        // Spell arcane failure, if we failed because of armor then stop here.
+        if (!(await didCharacterCastSuccessfully(attacker))) {
+            return false;
+        }
+
+        // Next, see if defender resists. If they don't then the spell hits.
+        if (!(await didDefenderResistMagic(attacker, defender))) {
+            return true;
+        }
     }
 
-    // Spells don't go against AC, but the opponent does have a chance to resist.
-    if (
-        item.itemType === 'spell' &&
-        !didDefenderResistMagic(attacker, defender)
-    ) {
-        return true;
-    }
+    // Weapon related.
+    if (item.itemType === 'weapon') {
+        if (roll >= defenderAC) {
+            logger(
+                'debug',
+                `${attacker.name} hit! Hit: ${roll} vs AC: ${defenderAC}.`
+            );
+            return true;
+        }
 
-    // Check to see if our roll beats or hits the defender AC.
-    if (roll >= defenderAC) {
         logger(
             'debug',
-            `${attacker.name} hit! Hit: ${roll} vs AC: ${defenderAC}.`
+            `${attacker.name} missed! Hit: ${roll} vs AC: ${defenderAC}.`
         );
-        return true;
     }
 
-    logger(
-        'debug',
-        `${attacker.name} missed! Hit: ${roll} vs AC: ${defenderAC}.`
-    );
     return false;
 }

@@ -4,7 +4,7 @@ import {
 } from '@crowbartools/firebot-custom-scripts-types/types/modules/command-manager';
 
 import { verifyUser } from '../../systems/user/user';
-import { registerSystemCommand } from '../firebot';
+import { registerSystemCommand, sendChatMessage } from '../firebot';
 import { rpgBlacksmithCommand } from './rpg-blacksmith';
 import { rpgDuelCommand } from './rpg-duel';
 import { rpgEnchanterCommand } from './rpg-enchanter';
@@ -166,15 +166,7 @@ export function registerCommands() {
             trigger: '!rpg',
             sortTags: ['rpg'],
             effects: {
-                list: [
-                    {
-                        chatter: 'Bot',
-                        message: `Try these rpg commands: ${subCommandUsages.join(
-                            ', '
-                        )}.`,
-                        type: 'firebot:chat',
-                    },
-                ],
+                list: [],
             },
             restrictionData: {
                 mode: 'any',
@@ -191,6 +183,9 @@ export function registerCommands() {
 
             // Base !rpg command was used.
             if (args.length === 0) {
+                sendChatMessage(
+                    `Try these rpg commands: ${subCommandUsages.join(', ')}.`
+                );
                 return;
             }
 

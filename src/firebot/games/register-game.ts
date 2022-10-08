@@ -498,7 +498,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent chance a spell will fail to cast when wearing this type of armor.',
                 tip: 'Lower numbers makes this armor better for spell users.',
                 default: 50,
-                sortRank: 10,
+                sortRank: 14,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -511,7 +511,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent chance a spell will fail to cast when wearing this type of armor.',
                 tip: 'Lower numbers makes this armor better for spell users.',
                 default: 30,
-                sortRank: 10,
+                sortRank: 15,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -524,7 +524,7 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent chance a spell will fail to cast when wearing this type of armor.',
                 tip: 'Lower numbers makes this armor better for spell users.',
                 default: 0,
-                sortRank: 10,
+                sortRank: 16,
                 showBottomHr: false,
                 validation: {
                     required: true,
@@ -537,7 +537,19 @@ const gameSettings: Record<string, SettingCategoryDefinition> = {
                     'Percent chance a spell will fail to cast when wearing this type of armor.',
                 tip: 'Lower numbers makes this armor better for spell users.',
                 default: 0,
-                sortRank: 10,
+                sortRank: 17,
+                showBottomHr: false,
+                validation: {
+                    required: true,
+                },
+            },
+            spellDC: {
+                type: 'number',
+                title: 'Spell Difficulty Check',
+                description: 'This is the base difficulty check of all spells.',
+                tip: 'Lower numbers make spells easier to resist.',
+                default: 8,
+                sortRank: 18,
                 showBottomHr: false,
                 validation: {
                     required: true,

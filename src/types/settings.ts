@@ -47,5 +47,6 @@ export type GameSettings = {
         mediumArcaneFailure: number;
         lightArcaneFailure: number;
         nakedArcaneFailure: number;
+        spellDC: number;
     };
 };

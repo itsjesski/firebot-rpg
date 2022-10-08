@@ -68,12 +68,7 @@ async function rangedAttack(
         }
     }
 
-    if (damage === 0) {
-        logger(
-            'debug',
-            `${attacker.name} missed ${defender.name} or was not in range.`
-        );
-    } else {
+    if (damage > 0) {
         logger(
             'debug',
             `${attacker.name} hit ${defender.name} for ${damage} dmg total.`
