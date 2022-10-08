@@ -9,6 +9,7 @@ import { rpgBlacksmithCommand } from './rpg-blacksmith';
 import { rpgDuelCommand } from './rpg-duel';
 import { rpgEnchanterCommand } from './rpg-enchanter';
 import { rpgEquipCommand } from './rpg-equip';
+import { rpgGuideCommand } from './rpg-guide';
 import { rpgJobCommand } from './rpg-job';
 import { rpgNameCommand } from './rpg-name';
 import { rpgStatsCommand } from './rpg-stats';
@@ -150,6 +151,19 @@ function getSubCommands(): SubCommand[] {
                 user: 60,
             },
         },
+        {
+            id: 'fbrpg:rpg-guide',
+            usage: 'guide',
+            name: '!rpg guide',
+            description: 'Outputs a link to an in-depth guide.',
+            active: true,
+            trigger: 'guide',
+            arg: 'guide',
+            cooldown: {
+                global: 0,
+                user: 60,
+            },
+        },
     ];
 }
 
@@ -234,6 +248,10 @@ export function registerCommands() {
                 }
                 case 'duel': {
                     rpgDuelCommand(userCommand);
+                    break;
+                }
+                case 'guide': {
+                    rpgGuideCommand(userCommand);
                     break;
                 }
                 // eslint-disable-next-line no-empty
