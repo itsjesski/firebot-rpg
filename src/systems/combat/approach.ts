@@ -219,17 +219,22 @@ async function getDistanceMoved(
     let approacherArmor = null;
 
     if (characterOneMaxRange >= characterTwoMaxRange) {
-        approacherArmor = (await getItemByID(
-            characterTwo.armor?.id,
-            'armor'
-        )) as Armor;
+        if (characterTwo.armor != null) {
+            approacherArmor = (await getItemByID(
+                characterTwo.armor.id,
+                'armor'
+            )) as Armor;
+        }
+
         return getArmorMovementSpeed(approacherArmor);
     }
 
-    approacherArmor = (await getItemByID(
-        characterOne.armor?.id,
-        'armor'
-    )) as Armor;
+    if (characterOne.armor != null) {
+        approacherArmor = (await getItemByID(
+            characterOne.armor.id,
+            'armor'
+        )) as Armor;
+    }
 
     return getArmorMovementSpeed(approacherArmor);
 }

@@ -261,11 +261,15 @@ export async function getCharacterDamageBonus(
     const int = await getAdjustedCharacterStat(attacker, 'int');
 
     // Get our item first.
-    if (slot === 'mainHand') {
+    if (slot === 'mainHand' && attacker.mainHand != null) {
         item = getItemByID(attacker.mainHand.id, 'weapon') as Weapon | Spell;
     }
 
-    if (slot === 'offHand' && attacker.offHand.itemType !== 'shield') {
+    if (
+        slot === 'offHand' &&
+        attacker.offHand.itemType !== 'shield' &&
+        attacker.offHand != null
+    ) {
         item = getItemByID(attacker.offHand.id, 'weapon') as Weapon | Spell;
     }
 

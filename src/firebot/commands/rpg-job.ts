@@ -283,6 +283,7 @@ export async function rpgJobCommand(userCommand: UserCommand) {
     let completePlayer = await getCompleteCharacterData(player);
 
     logger('debug', `JOB STARTED: ${username}`);
+    logger('debug', `PLAYER: ${JSON.stringify(completePlayer)}`);
 
     // Combat time.
     if (selectedJob.encounter != null) {

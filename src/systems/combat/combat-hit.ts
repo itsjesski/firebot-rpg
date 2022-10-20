@@ -151,11 +151,14 @@ export async function didCharacterHitMelee(
     const defenderAC = await getCharacterTotalAC(defender, roundCounter);
     const hitBonus = await getCharacterHitBonus(attacker, slot);
     const roll = rollDice(`1d20 +${hitBonus}`);
+    let item = null;
 
-    const item = getItemByID(
-        attacker[slot as EquippableSlots].id,
-        attacker[slot as EquippableSlots].itemType
-    ) as Weapon | Spell;
+    if (attacker[slot as EquippableSlots] != null) {
+        item = getItemByID(
+            attacker[slot as EquippableSlots].id,
+            attacker[slot as EquippableSlots].itemType
+        ) as Weapon | Spell;
+    }
 
     if (item == null) {
         logger(
