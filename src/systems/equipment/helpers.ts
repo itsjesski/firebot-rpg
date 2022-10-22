@@ -137,6 +137,8 @@ export function mergeEnchantments(item: Enchantments, itemTwo: Enchantments) {
             (itemTwo[key as keyof Enchantments] || 0);
     });
 
+    logger('debug', JSON.stringify(mergedObj));
+
     return mergedObj;
 }
 
@@ -206,6 +208,10 @@ export function getFullItemTextWithStats(
     const dbItem = character[
         key as keyof CompleteCharacter
     ] as EquippableItemsDetails;
+
+    if (dbItem == null) {
+        return 'Nothing';
+    }
 
     let message;
 

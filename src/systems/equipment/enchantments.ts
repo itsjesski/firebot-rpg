@@ -11,7 +11,11 @@ import {
     StoredShield,
     StoredWeapon,
 } from '../../types/equipment';
-import { CompleteCharacter, EquippableSlots } from '../../types/user';
+import {
+    CompleteCharacter,
+    EnchantableSlots,
+    EquippableSlots,
+} from '../../types/user';
 import {
     getCharacterDamageBonus,
     getCharacterElementalDefense,
@@ -192,26 +196,38 @@ export function getMergedEnchantmentsOfItem(
     attacker: CompleteCharacter,
     slot: EquippableSlots
 ): Enchantments {
+    logger('debug', 'Getting merged enchantment values.');
     const key = `${slot}Data`;
-    const item = attacker[
+    const dbItem = attacker[
         key as keyof CompleteCharacter
     ] as EquippableItemsDetails;
 
-    if (item == null) {
+    if (dbItem == null) {
         return null;
     }
 
     // Check to make sure the item can actually have enchantments.
     if (
-        item.itemType !== 'armor' &&
-        item.itemType !== 'shield' &&
-        item.itemType !== 'spell' &&
-        item.itemType !== 'weapon'
+        dbItem.itemType !== 'armor' &&
+        dbItem.itemType !== 'shield' &&
+        dbItem.itemType !== 'spell' &&
+        dbItem.itemType !== 'weapon'
     ) {
         return null;
     }
 
-    return mergeEnchantments(item.enchantments, attacker.mainHand.enchantments);
+    logger('debug', `ITEM ONE: ${JSON.stringify(dbItem.enchantments)}`);
+    logger(
+        'debug',
+        `ITEM TWO: ${JSON.stringify(
+            attacker[slot as EnchantableSlots].enchantments
+        )}`
+    );
+
+    return mergeEnchantments(
+        dbItem.enchantments,
+        attacker[slot as EnchantableSlots].enchantments
+    );
 }
 
 /**
@@ -279,8 +295,13 @@ export async function increaseEnchantmentOfUserItem(
         return;
     }
 
+    logger('debug', slot);
+
     // Then, get the item from that slot.
-    const item = userdata[slot] as StoredArmor | StoredWeapon | StoredShield;
+    const item = userdata[slot as EnchantableSlots] as
+        | StoredArmor
+        | StoredWeapon
+        | StoredShield;
     if (item == null) {
         return;
     }
@@ -292,6 +313,8 @@ export async function increaseEnchantmentOfUserItem(
         `Increasing enchantment from ${currentLevel} to ${currentLevel + 1}.`
     );
     item.enchantments[element] = currentLevel + 1;
+
+    logger('debug', JSON.stringify(item));
 
     // Return the item to it's slot with the new properties.
     await setCharacterMeta(username, item, slot);
